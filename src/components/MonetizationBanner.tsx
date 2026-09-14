@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { Sparkles, DollarSign, Download, X, Zap } from 'lucide-react';
+import { Sparkles, DollarSign, Download, X, Zap, Coffee } from 'lucide-react';
+import { SponsorCoffeeModal } from './SponsorCoffeeModal';
+import { PremiumBundleModal } from './PremiumBundleModal';
 
 export const MonetizationBanner: React.FC = () => {
   const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
+  const [showCoffeeModal, setShowCoffeeModal] = useState<boolean>(false);
+  const [showBundleModal, setShowBundleModal] = useState<boolean>(false);
   const [copiedContact, setCopiedContact] = useState<boolean>(false);
 
   const handleCopy = (text: string) => {
@@ -22,31 +26,41 @@ export const MonetizationBanner: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2 text-xs font-mono">
-                <span className="text-amber-300 font-bold">SPONSOR & COMMERCIAL ADS</span>
+                <span className="text-amber-300 font-bold">MONETIZATION & SPONSOR ENGINE</span>
                 <span className="text-stone-500">·</span>
-                <span className="text-stone-400 text-[11px]">全球 AI 极客与算力品牌赞助专区</span>
+                <span className="text-stone-400 text-[11px]">全球 AI 极客、算力品牌与商业合作通道</span>
               </div>
               <h4 className="text-sm sm:text-base font-serif font-semibold text-white mt-0.5">
-                特约品牌赞助位开放中 · 触达全球高净值技术人群与开发者
+                特约品牌展位 · 资产包下载 · 独立创作者赞助支持通道开启
               </h4>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => setShowSponsorModal(true)}
-              className="liquid-glass-amber px-4 py-2 rounded-full text-xs font-mono font-medium text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-sm"
+              onClick={() => setShowCoffeeModal(true)}
+              className="liquid-glass-amber px-3.5 py-2 rounded-full text-xs font-mono font-medium text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-sm"
+              title="微信 / 支付宝 / 国际通道小额赞助打赏"
             >
-              <DollarSign className="w-3.5 h-3.5" />
-              <span>入驻广告 / 赞助合作</span>
+              <Coffee className="w-3.5 h-3.5" />
+              <span>赞助打赏 ☕</span>
+            </button>
+
+            <button
+              onClick={() => setShowBundleModal(true)}
+              className="liquid-glass-pill px-3.5 py-2 rounded-full text-xs font-mono text-stone-200 hover:text-white flex items-center space-x-1.5 transition-all border border-amber-400/20"
+              title="下载 1.8 万字离线 PDF + 4K 图谱资产包"
+            >
+              <Download className="w-3.5 h-3.5 text-amber-400" />
+              <span>4K 离线资产包</span>
             </button>
 
             <button
               onClick={() => setShowSponsorModal(true)}
               className="liquid-glass-pill px-3.5 py-2 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center space-x-1.5 transition-all"
             >
-              <Download className="w-3.5 h-3.5 text-amber-400" />
-              <span>获取商业白皮书与图谱</span>
+              <DollarSign className="w-3.5 h-3.5 text-amber-400" />
+              <span>商业入驻 / 广告</span>
             </button>
           </div>
         </div>
@@ -131,6 +145,16 @@ export const MonetizationBanner: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Coffee / Direct Support Modal */}
+      {showCoffeeModal && (
+        <SponsorCoffeeModal onClose={() => setShowCoffeeModal(false)} />
+      )}
+
+      {/* 4K Bundle / Digital Assets Modal */}
+      {showBundleModal && (
+        <PremiumBundleModal onClose={() => setShowBundleModal(false)} />
       )}
     </>
   );

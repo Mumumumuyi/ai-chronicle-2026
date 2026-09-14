@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
-import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText } from 'lucide-react';
+import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText, Sparkles } from 'lucide-react';
 
 interface ArticleReaderProps {
   onClose?: () => void;
@@ -183,12 +183,12 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
         {/* Main Article Content */}
         <main className="lg:col-span-9 space-y-12">
-          {ARTICLE_CHAPTERS.map((chapter) => (
-            <article
-              key={chapter.id}
-              id={chapter.id}
-              className="liquid-glass rounded-3xl p-6 sm:p-10 border border-white/10 space-y-8 scroll-mt-24 shadow-xl"
-            >
+          {ARTICLE_CHAPTERS.map((chapter, idx) => (
+            <React.Fragment key={chapter.id}>
+              <article
+                id={chapter.id}
+                className="liquid-glass rounded-3xl p-6 sm:p-10 border border-white/10 space-y-8 scroll-mt-24 shadow-xl"
+              >
               <div>
                 <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
                   <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/30">
@@ -261,7 +261,34 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                 ))}
               </div>
             </article>
-          ))}
+
+            {/* High-Converting In-Article Sponsored Placement */}
+            {idx === 2 && (
+              <div className="my-8 p-6 rounded-3xl liquid-glass border border-amber-400/30 bg-gradient-to-r from-amber-500/[0.05] via-transparent to-amber-500/[0.03] text-center no-print shadow-xl relative glass-sheen">
+                <div className="flex items-center justify-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>SPONSORED ACCELERATION · 算力与工程特约合作</span>
+                </div>
+                <h4 className="text-base sm:text-lg font-serif font-bold text-white mb-2">
+                  深度学习算力受限？体验按秒计费的 H100 / RTX 4090 GPU 集群
+                </h4>
+                <p className="text-xs text-stone-300 font-light max-w-xl mx-auto mb-4 leading-relaxed">
+                  通过本通史专属通道开启前沿模型微调与大并发推理，秒级部署 PyTorch 与 vLLM 环境，免费领取开发者算力礼包。
+                </p>
+                <div className="flex justify-center items-center gap-3">
+                  <a
+                    href="https://runpod.io/?ref=ai-chronicle"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="liquid-glass-amber px-5 py-2 rounded-full text-xs font-mono font-medium text-amber-200 hover:text-white inline-flex items-center space-x-1.5 transition-all shadow-md"
+                  >
+                    <span>领取 $10 专属算力体验金 →</span>
+                  </a>
+                </div>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
 
           <div className="flex justify-between items-center font-mono text-xs text-stone-400 pt-6 no-print">
             <span>通史长卷完 · 截至 2026.09.13 定本</span>

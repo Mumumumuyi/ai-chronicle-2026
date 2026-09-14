@@ -134,6 +134,35 @@ async function runAutomation() {
     await page.waitForTimeout(400);
   }
 
+  // Interaction 9: Multilingual Language Switcher Test
+  console.log('11. 测试全球主流语种切换功能 (切换至 🇺🇸 English)...');
+  const langBtn = await page.locator('button[title*="Language"]').first();
+  if (await langBtn.count() > 0) {
+    await langBtn.click();
+    await page.waitForTimeout(500);
+
+    const enOption = await page.locator('button:has-text("English")').first();
+    if (await enOption.count() > 0) {
+      await enOption.click();
+      await page.waitForTimeout(1000);
+      const shot9 = path.join(outDir, '09_multilingual_english.png');
+      await page.screenshot({ path: shot9 });
+      console.log(`✓ 截图 9 已保存 (English): ${shot9}`);
+    }
+
+    console.log('12. 测试切换至 🇯🇵 日本語...');
+    await langBtn.click();
+    await page.waitForTimeout(500);
+    const jaOption = await page.locator('button:has-text("日本語")').first();
+    if (await jaOption.count() > 0) {
+      await jaOption.click();
+      await page.waitForTimeout(1000);
+      const shot10 = path.join(outDir, '10_multilingual_japanese.png');
+      await page.screenshot({ path: shot10 });
+      console.log(`✓ 截图 10 已保存 (日本語): ${shot10}`);
+    }
+  }
+
   // Copy all shots to artifact directory so Antigravity can link them
   if (fs.existsSync(artifactDir)) {
     for (const f of fs.readdirSync(outDir)) {
@@ -145,7 +174,7 @@ async function runAutomation() {
   }
 
   await browser.close();
-  console.log('11. 全链路自动化测试与巡检全部圆满完成！');
+  console.log('13. 全链路多语言与自动化巡检圆满完成！');
 }
 
 runAutomation().catch(err => {
