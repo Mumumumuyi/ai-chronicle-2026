@@ -5,6 +5,7 @@ import { LiquidParadigmWidget } from './components/LiquidParadigmWidget';
 import { ArticleReader } from './components/ArticleReader';
 import { MilestoneModal } from './components/MilestoneModal';
 import { AboutDesignHub } from './components/AboutDesignHub';
+import { AffiliateEcosystem } from './components/AffiliateEcosystem';
 import { Milestone } from './types';
 import { EPOCHS } from './data/timelineData';
 
@@ -34,7 +35,7 @@ export const App: React.FC = () => {
       {/* 1. Cinematic Warm Liquid Glass Image Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <img
-          src="/bg-warm-glass.jpg"
+          src="./bg-warm-glass.jpg"
           alt="Warm Liquid Glass Background"
           className="w-full h-full object-cover object-center opacity-70 filter brightness-[0.75] contrast-[1.1] scale-105 transition-transform duration-1000"
         />
@@ -69,6 +70,8 @@ export const App: React.FC = () => {
         )}
 
         {activeTab === 'lab' && <LiquidParadigmWidget />}
+
+        {activeTab === 'ecosystem' && <AffiliateEcosystem />}
 
         {activeTab === 'reader' && (
           <ArticleReader onClose={() => setActiveTab('stage')} />

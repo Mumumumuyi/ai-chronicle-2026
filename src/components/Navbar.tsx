@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles, BookOpen, Layers, Zap, Info } from 'lucide-react';
 
-export type ActiveTab = 'stage' | 'lab' | 'reader' | 'about';
+export type ActiveTab = 'stage' | 'lab' | 'reader' | 'ecosystem' | 'about';
 
 interface NavbarProps {
   activeTab: ActiveTab;
@@ -27,7 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none flex justify-center">
+    <header className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none flex justify-center no-print">
       <div className="w-full max-w-6xl pointer-events-auto flex items-center justify-between gap-4">
         {/* Logo & Brand Pill */}
         <div 
@@ -82,7 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">时空剧场</span>
+            <span className="hidden sm:inline">剧场</span>
           </button>
 
           <button
@@ -94,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Zap className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">缩放实验</span>
+            <span className="hidden sm:inline">缩放律</span>
           </button>
 
           <button
@@ -106,7 +106,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">通史长卷</span>
+            <span className="hidden sm:inline">长卷</span>
+          </button>
+
+          <button
+            onClick={() => onTabChange('ecosystem')}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
+              activeTab === 'ecosystem'
+                ? 'liquid-glass-amber text-amber-200 font-semibold'
+                : 'text-stone-300 hover:text-white'
+            }`}
+            title="严选 AI 算力与开发工具独家特权"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">生态特权</span>
           </button>
 
           <button

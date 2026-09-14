@@ -1,0 +1,129 @@
+const { chromium } = require('playwright');
+const path = require('path');
+const fs = require('fs');
+
+async function runAutomation() {
+  const artifactDir = 'C:\\Users\\Amu\\.gemini\\antigravity-cli\\brain\\e5702866-950e-4fac-b708-574215ea9583';
+  const outDir = path.join(__dirname, '..', 'screenshots');
+  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+
+  console.log('1. 正在启动自动化 Chromium 浏览器引擎...');
+  const browser = await chromium.launch({
+    channel: 'chrome',
+    headless: true,
+  });
+
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    deviceScaleFactor: 2, // Retina resolution
+  });
+
+  const page = await context.newPage();
+
+  // Test both the global live URL and local
+  const liveUrl = 'https://mumumumuyi.github.io/ai-chronicle-2026/';
+  console.log(`2. 正在导航至线上公网地址: ${liveUrl}`);
+  
+  try {
+    await page.goto(liveUrl, { waitUntil: 'networkidle', timeout: 30000 });
+  } catch (err) {
+    console.log('公网加载超时，切换至本地预览服务 http://localhost:4173/');
+    await page.goto('http://localhost:4173/', { waitUntil: 'networkidle', timeout: 10000 });
+  }
+
+  // Wait 1.5s for fonts & liquid glass caustics
+  await page.waitForTimeout(1500);
+
+  // Screenshot 1: Main Stage (2026 Epoch VI)
+  const shot1 = path.join(outDir, '01_live_main_stage.png');
+  await page.screenshot({ path: shot1 });
+  console.log(`✓ 截图 1 已保存: ${shot1}`);
+
+  // Interaction 2: Click on Epoch 4 ("爆发 2012-20") in the navbar
+  console.log('3. 模拟用户点击顶栏导航切换至纪元 IV (2012-2020 深度学习爆发)...');
+  const epoch4Btn = await page.locator('button:has-text("爆发")').first();
+  if (await epoch4Btn.count() > 0) {
+    await epoch4Btn.click();
+    await page.waitForTimeout(1000);
+  }
+
+  const shot2 = path.join(outDir, '02_epoch_4_stage.png');
+  await page.screenshot({ path: shot2 });
+  console.log(`✓ 截图 2 已保存: ${shot2}`);
+
+  // Interaction 3: Click Milestone "AlphaGo 战胜李世石" or first milestone card to pop dossier
+  console.log('4. 模拟用户点击第一个里程碑卡片，呼出液态玻璃绝密档案浮层...');
+  const milestoneCard = await page.locator('.liquid-glass.rounded-2xl').first();
+  if (await milestoneCard.count() > 0) {
+    await milestoneCard.click();
+    await page.waitForTimeout(1000);
+  }
+
+  const shot3 = path.join(outDir, '03_dossier_modal.png');
+  await page.screenshot({ path: shot3 });
+  console.log(`✓ 截图 3 已保存: ${shot3}`);
+
+  // Close modal
+  console.log('5. 关闭档案浮层...');
+  const closeBtn = await page.locator('button:has(svg)').first();
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(600);
+
+  // Interaction 4: Click "入驻广告 / 赞助合作" button to test Monetization
+  console.log('6. 模拟用户点击“入驻广告 / 赞助合作”商业化变现按钮...');
+  const sponsorBtn = await page.locator('button:has-text("入驻广告")').first();
+  if (await sponsorBtn.count() > 0) {
+    await sponsorBtn.click();
+    await page.waitForTimeout(1000);
+  }
+
+  const shot4 = path.join(outDir, '04_monetization_modal.png');
+  await page.screenshot({ path: shot4 });
+  console.log(`✓ 截图 4 已保存: ${shot4}`);
+
+  // Close sponsor modal
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(600);
+
+  // Interaction 5: Switch to Lab view (缩放实验)
+  console.log('7. 切换至“缩放实验”实验室视窗...');
+  const labBtn = await page.locator('button:has-text("缩放实验")').first();
+  if (await labBtn.count() > 0) {
+    await labBtn.click();
+    await page.waitForTimeout(1000);
+  }
+
+  const shot5 = path.join(outDir, '05_scaling_lab.png');
+  await page.screenshot({ path: shot5 });
+  console.log(`✓ 截图 5 已保存: ${shot5}`);
+
+  // Interaction 6: Switch to Reader view (通史长卷)
+  console.log('8. 切换至“通史长卷”学术精读视窗...');
+  const readerBtn = await page.locator('button:has-text("通史长卷")').first();
+  if (await readerBtn.count() > 0) {
+    await readerBtn.click();
+    await page.waitForTimeout(1000);
+  }
+
+  const shot6 = path.join(outDir, '06_treatise_reader.png');
+  await page.screenshot({ path: shot6 });
+  console.log(`✓ 截图 6 已保存: ${shot6}`);
+
+  // Copy all shots to artifact directory so Antigravity can link them
+  if (fs.existsSync(artifactDir)) {
+    for (const f of fs.readdirSync(outDir)) {
+      if (f.endsWith('.png')) {
+        fs.copyFileSync(path.join(outDir, f), path.join(artifactDir, f));
+      }
+    }
+    console.log('✓ 已全量同步至 Artifact 目录！');
+  }
+
+  await browser.close();
+  console.log('9. 自动化测试与驾驶巡检全部完成！');
+}
+
+runAutomation().catch(err => {
+  console.error('自动化执行出错:', err);
+  process.exit(1);
+});

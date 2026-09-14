@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
-import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X } from 'lucide-react';
+import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText } from 'lucide-react';
 
 interface ArticleReaderProps {
   onClose?: () => void;
@@ -10,6 +10,11 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
   const [activeChapterId, setActiveChapterId] = useState<string>('chap-0');
   const [copiedQuote, setCopiedQuote] = useState<string | null>(null);
   const [readProgress, setReadProgress] = useState<number>(0);
+  const [showCiteModal, setShowCiteModal] = useState<boolean>(false);
+  const [showSubscribeModal, setShowSubscribeModal] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [subscribed, setSubscribed] = useState<boolean>(false);
+  const [copiedCite, setCopiedCite] = useState<boolean>(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,10 +58,18 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
     setTimeout(() => setCopiedQuote(null), 2000);
   };
 
+  const bibtexCitation = `@article{aichronicle2026,
+  title={人工智能全景通史：从图灵火种到测试时算力新范式 (1943-2026)},
+  author={AI Chronicle Research Group},
+  year={2026},
+  publisher={GitHub Pages},
+  url={https://mumumumuyi.github.io/ai-chronicle-2026/}
+}`;
+
   return (
     <div className="relative min-h-screen pt-24 pb-24 px-4 sm:px-8 max-w-6xl mx-auto">
       {/* Top Reading Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-transparent z-50">
+      <div className="fixed top-0 left-0 right-0 h-1 bg-transparent z-50 no-print">
         <div 
           className="h-full bg-gradient-to-r from-amber-500 to-amber-300 transition-all duration-150"
           style={{ width: `${readProgress}%` }}
@@ -68,7 +81,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
+            className="absolute top-6 right-6 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white no-print"
             title="返回展台"
           >
             <X className="w-4 h-4" />
@@ -97,9 +110,39 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
           {ARTICLE_META.subtitle}
         </p>
 
-        <div className="p-4 rounded-2xl liquid-glass border border-white/5 text-stone-300 text-xs sm:text-sm leading-relaxed font-light">
+        <div className="p-4 rounded-2xl liquid-glass border border-white/5 text-stone-300 text-xs sm:text-sm leading-relaxed font-light mb-6">
           <span className="text-amber-300 font-mono text-xs block mb-1">【史学立论与导言摘要】</span>
           {ARTICLE_META.abstract}
+        </div>
+
+        {/* Academic Utility Action Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10 no-print">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => window.print()}
+              className="liquid-glass-amber px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-sm"
+              title="一键调用浏览器打印，保存为高清学术白皮书 PDF"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>导出 / 打印 PDF 白皮书</span>
+            </button>
+
+            <button
+              onClick={() => setShowCiteModal(true)}
+              className="liquid-glass-pill px-3 py-1.5 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center space-x-1.5 transition-all"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-400" />
+              <span>引用本论著 (BibTeX)</span>
+            </button>
+          </div>
+
+          <button
+            onClick={() => setShowSubscribeModal(true)}
+            className="liquid-glass-pill px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-300 hover:text-white flex items-center space-x-1.5 transition-all border border-amber-400/20"
+          >
+            <Mail className="w-3.5 h-3.5 text-amber-400" />
+            <span>订阅 2026-2030 前沿内参</span>
+          </button>
         </div>
       </div>
 
@@ -220,7 +263,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
             </article>
           ))}
 
-          <div className="flex justify-between items-center font-mono text-xs text-stone-400 pt-6">
+          <div className="flex justify-between items-center font-mono text-xs text-stone-400 pt-6 no-print">
             <span>通史长卷完 · 截至 2026.09.13 定本</span>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -232,6 +275,127 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
           </div>
         </main>
       </div>
+
+      {/* BibTeX Citation Modal */}
+      {showCiteModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+          onClick={() => setShowCiteModal(false)}
+        >
+          <div 
+            className="relative w-full max-w-lg liquid-glass-strong rounded-3xl p-6 text-stone-100 shadow-2xl border border-amber-400/40"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowCiteModal(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
+              <FileText className="w-3.5 h-3.5" />
+              <span>ACADEMIC CITATION · BIBTEX</span>
+            </div>
+
+            <h3 className="text-xl font-serif font-bold text-white mb-3">
+              引用本篇通史
+            </h3>
+
+            <pre className="p-4 rounded-2xl bg-black/60 border border-white/10 text-[11px] font-mono text-amber-200/90 overflow-x-auto mb-4 select-all">
+              {bibtexCitation}
+            </pre>
+
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] font-mono text-stone-400">
+                可直接粘贴至 LaTeX、Overleaf 或 Zotero
+              </span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(bibtexCitation);
+                  setCopiedCite(true);
+                  setTimeout(() => setCopiedCite(false), 2000);
+                }}
+                className="liquid-glass-amber px-4 py-1.5 rounded-full text-xs font-mono text-amber-200 hover:text-white transition-all flex items-center space-x-1"
+              >
+                {copiedCite ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>已复制 BibTeX</span>
+                  </>
+                ) : (
+                  <>
+                    <span>复制 BibTeX</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Newsletter Subscription Modal */}
+      {showSubscribeModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+          onClick={() => setShowSubscribeModal(false)}
+        >
+          <div 
+            className="relative w-full max-w-md liquid-glass-strong rounded-3xl p-6 sm:p-8 text-stone-100 shadow-2xl border border-amber-400/40"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowSubscribeModal(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
+              <Mail className="w-3.5 h-3.5" />
+              <span>AI CHRONICLE DISPATCH</span>
+            </div>
+
+            <h3 className="text-xl font-serif font-bold text-white mb-2">
+              订阅《2026-2030 AGI 演进内参》
+            </h3>
+            <p className="text-xs text-stone-300 font-light mb-5 leading-relaxed">
+              每周五推送全球顶级实验室（OpenAI、Anthropic、Google DeepMind）最新测试时算力论文解读、新模型权重发布与量化技术动态。零垃圾邮件。
+            </p>
+
+            {subscribed ? (
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center">
+                <div className="text-emerald-400 text-sm font-bold mb-1">🎉 订阅成功！</div>
+                <div className="text-xs text-stone-300">首期《2026 测试时算力白皮书》已发送至您的收件箱。</div>
+              </div>
+            ) : (
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (email) setSubscribed(true);
+                }}
+                className="space-y-3"
+              >
+                <input
+                  type="email"
+                  required
+                  placeholder="your.email@university.edu"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-2xl bg-black/50 border border-white/10 text-stone-100 text-xs font-mono focus:outline-none focus:border-amber-400"
+                />
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-2xl liquid-glass-amber text-xs font-mono font-bold text-amber-200 hover:text-white transition-all shadow-md"
+                >
+                  即刻免费订阅
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

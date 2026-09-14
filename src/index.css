@@ -221,3 +221,59 @@ body {
 .glass-sheen:hover::after {
   transform: rotate(25deg) translate(30%, 30%);
 }
+
+/* -------------------------------------------------------------
+   ACADEMIC PRINT & PDF EXPORT STYLESHEET
+   Converts the 18,000-word treatise into an MIT/Harvard style whitepaper
+---------------------------------------------------------------- */
+@media print {
+  body, #root {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  header, nav, footer, .no-print, button, .glass-sheen::after {
+    display: none !important;
+  }
+
+  .liquid-glass, .liquid-glass-strong {
+    background: transparent !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+    color: #111827 !important;
+    backdrop-filter: none !important;
+  }
+
+  .liquid-glass::before, .liquid-glass-strong::before {
+    display: none !important;
+  }
+
+  h1, h2, h3, h4 {
+    color: #111827 !important;
+    page-break-after: avoid;
+  }
+
+  article {
+    page-break-inside: avoid;
+    margin-bottom: 2rem !important;
+    border: 1px solid #e5e7eb !important;
+    padding: 1.5rem !important;
+  }
+
+  p {
+    color: #374151 !important;
+    line-height: 1.7 !important;
+  }
+
+  .text-stone-300, .text-stone-400, .text-stone-500 {
+    color: #4b5563 !important;
+  }
+
+  .text-white {
+    color: #111827 !important;
+  }
+
+  .text-amber-300, .text-amber-400, .text-amber-200 {
+    color: #b45309 !important;
+  }
+}
