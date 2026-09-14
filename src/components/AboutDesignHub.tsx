@@ -1,4 +1,5 @@
 import { ShieldCheck, Brain, Sparkles, Terminal, X } from 'lucide-react';
+import { getLeads, exportLeadsToCSV } from '../utils/leadStorage';
 
 interface AboutDesignHubProps {
   onClose: () => void;
@@ -69,8 +70,34 @@ export const AboutDesignHub: React.FC<AboutDesignHubProps> = ({ onClose }) => {
               自研生成的 3D 液态琥珀与金丝流体背景，配合暗浓缩咖啡灰阶（#0C0A09），赋予整个人工智能通史以普罗米修斯盗火般的文明神圣感与奇点温度。
             </p>
           </div>
+
+          <div className="p-4 rounded-2xl liquid-glass border border-amber-400/30 bg-amber-500/5">
+            <div className="text-amber-300 font-bold mb-1 flex items-center justify-between">
+              <span className="flex items-center">
+                <Brain className="w-3.5 h-3.5 mr-1 text-amber-400" />
+                4. 商业变现闭环与潜客 CRM 资产 (Commercial Engine)
+              </span>
+              <button
+                type="button"
+                onClick={exportLeadsToCSV}
+                className="liquid-glass-amber px-3 py-1 rounded-full text-[11px] text-amber-200 hover:text-white flex items-center space-x-1"
+                title="将本站所有购买用户、赞助商意向与订阅邮箱导出为标准 CSV"
+              >
+                <span>📥 导出线索名单 CSV</span>
+              </button>
+            </div>
+            <p className="text-stone-300 font-sans text-xs leading-relaxed mb-2">
+              全站打通了三层商业漏斗：数字资产包直购（带订单号与即时交付）、B2B 智能广告排期测算器、高价值学术内参订阅。所有潜客与订单数据均沉淀于本地 CRM 账本，随时一键导出对接邮件自动化或商务拜访。
+            </p>
+            <div className="flex items-center space-x-3 text-[11px] font-mono text-amber-300/90 pt-1 border-t border-white/10">
+              <span>当前累积有效线索: <b className="text-white">{getLeads().length}</b> 条</span>
+              <span>·</span>
+              <span className="text-stone-400">支持无缝导入 Beehiiv / Mailchimp / 飞书客户库</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+

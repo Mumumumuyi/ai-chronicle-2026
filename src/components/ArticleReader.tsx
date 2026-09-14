@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
 import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText, Sparkles } from 'lucide-react';
+import { saveLead } from '../utils/leadStorage';
 
 interface ArticleReaderProps {
   onClose?: () => void;
@@ -400,7 +401,10 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
               <form 
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (email) setSubscribed(true);
+                  if (email) {
+                    saveLead(email, 'newsletter', 'zh');
+                    setSubscribed(true);
+                  }
                 }}
                 className="space-y-3"
               >
