@@ -21,7 +21,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (typeof navigator !== 'undefined') {
       const browserLang = navigator.language.toLowerCase();
       if (browserLang.startsWith('zh')) return 'zh';
-      if (browserLang.startsWith('ja')) return 'ja';
       if (browserLang.startsWith('es')) return 'es';
       if (browserLang.startsWith('de')) return 'de';
       if (browserLang.startsWith('fr')) return 'fr';

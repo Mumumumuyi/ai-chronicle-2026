@@ -22,7 +22,7 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
   const recentSupporters = [
     { name: 'Dr. Turing_Fan', amount: '¥99', time: '10分钟前', msg: '极具美感的通史长卷，值得被更多人看见！' },
     { name: 'NeuralNomad', amount: '¥30', time: '1小时前', msg: '测试时算力仿真器做得很惊艳，继续加油。' },
-    { name: 'K. Takahashi', amount: '$15', time: '3小时前', msg: '素晴らしいUIデザインと歴史の深さです！' },
+    { name: 'K. Takahashi', amount: '$15', time: '3小时前', msg: 'Exceptional UI aesthetics and profound historical depth!' },
     { name: 'QuantDev_99', amount: '¥299', time: '昨天', msg: '已将页面置顶为团队学习参考。' },
   ];
 

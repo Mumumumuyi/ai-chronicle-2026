@@ -42,7 +42,8 @@ const AppContent: React.FC = () => {
           className="w-full h-full object-cover object-center opacity-70 filter brightness-[0.75] contrast-[1.1] scale-105 transition-transform duration-1000"
         />
         {/* Warm Ambient Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0C0A09]/60 via-[#0C0A09]/35 to-[#0C0A09]/95 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0C0A09]/60 via-[#0C0A09]/35 to-[#0C0A09]/95 hidden md:block md:backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0C0A09]/80 via-[#0C0A09]/55 to-[#0C0A09]/95 md:hidden" />
         <div className="absolute inset-0 bg-warm-hero" />
       </div>
 

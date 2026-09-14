@@ -1,4 +1,4 @@
-export type SupportedLanguage = 'en' | 'zh' | 'ja' | 'es' | 'de' | 'fr';
+export type SupportedLanguage = 'zh' | 'en' | 'es' | 'de' | 'fr';
 
 export interface LanguageOption {
   code: SupportedLanguage;
@@ -8,9 +8,8 @@ export interface LanguageOption {
 }
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
   { code: 'zh', name: 'Chinese', nativeName: '简体中文', flag: '🇨🇳' },
-  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
   { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
   { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
   { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },

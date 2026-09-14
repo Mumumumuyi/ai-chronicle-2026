@@ -2,12 +2,59 @@ import React, { useState, useEffect } from 'react';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
 import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText, Sparkles } from 'lucide-react';
 import { saveLead } from '../utils/leadStorage';
+import { useLanguage } from '../i18n/LanguageContext';
+
+const CHAPTER_TITLES_I18N: Record<string, Record<string, { num: string; title: string }>> = {
+  'chap-0': {
+    en: { num: 'Prologue', title: 'The Spark of Prometheus: Precursors of Rational Machines (1943 — 1956)' },
+    es: { num: 'Prólogo', title: 'La Chispa de Prometeo: Precursores de las Máquinas Racionales (1943 — 1956)' },
+    de: { num: 'Prolog', title: 'Der Funke des Prometheus: Vorläufer rationaler Maschinen (1943 — 1956)' },
+    fr: { num: 'Prologue', title: 'L’Étincelle de Prométhée : Précurseurs des Machines Rationnelles (1943 — 1956)' },
+  },
+  'chap-1': {
+    en: { num: 'Chapter I', title: 'The Golden Age & Combinatorial Explosion (1956 — 1974)' },
+    es: { num: 'Capítulo I', title: 'La Edad de Oro y la Explosión Combinatoria (1956 — 1974)' },
+    de: { num: 'Kapitel I', title: 'Das Goldene Zeitalter und die kombinatorische Explosion (1956 — 1974)' },
+    fr: { num: 'Chapitre I', title: 'L’Âge d’Or et l’Explosion Combinatoire (1956 — 1974)' },
+  },
+  'chap-2': {
+    en: { num: 'Chapter II', title: 'Expert Systems & The Backpropagation Undercurrent (1975 — 1993)' },
+    es: { num: 'Capítulo II', title: 'Sistemas Expertos y la Corriente de Retropropagación (1975 — 1993)' },
+    de: { num: 'Kapitel II', title: 'Expertensysteme und die Backpropagation-Welle (1975 — 1993)' },
+    fr: { num: 'Chapitre II', title: 'Systèmes Experts et le Courant de Rétropropagation (1975 — 1993)' },
+  },
+  'chap-3': {
+    en: { num: 'Chapter III', title: 'Statistical Learning & The Deep Blue Climax (1993 — 2011)' },
+    es: { num: 'Capítulo III', title: 'Aprendizaje Estadístico y el Triunfo de Deep Blue (1993 — 2011)' },
+    de: { num: 'Kapitel III', title: 'Statistisches Lernen und der Deep-Blue-Triumph (1993 — 2011)' },
+    fr: { num: 'Chapitre III', title: 'Apprentissage Statistique et la Victoire de Deep Blue (1993 — 2011)' },
+  },
+  'chap-4': {
+    en: { num: 'Chapter IV', title: 'The Deep Learning Revolution & Transformer Era (2012 — 2020)' },
+    es: { num: 'Capítulo IV', title: 'La Revolución del Deep Learning y la Era Transformer (2012 — 2020)' },
+    de: { num: 'Kapitel IV', title: 'Die Deep-Learning-Revolution & Transformer-Ära (2012 — 2020)' },
+    fr: { num: 'Chapitre IV', title: 'La Révolution du Deep Learning et l’Ère Transformer (2012 — 2020)' },
+  },
+  'chap-5': {
+    en: { num: 'Chapter V', title: 'Scaling Laws & Large Language Model Emergence (2020 — 2024)' },
+    es: { num: 'Capítulo V', title: 'Leyes de Escala y la Emergencia de Grandes Modelos (2020 — 2024)' },
+    de: { num: 'Kapitel V', title: 'Skalierungsgesetze & Die Entstehung von LLMs (2020 — 2024)' },
+    fr: { num: 'Chapitre V', title: 'Lois d’Échelle et l’Émergence des Grands Modèles (2020 — 2024)' },
+  },
+  'chap-6': {
+    en: { num: 'Chapter VI', title: 'Test-Time Compute, Runtime Loops & Silicon Singularity (2024 — 2026.09)' },
+    es: { num: 'Capítulo VI', title: 'Cómputo en Inferencia, Bucles de Agentes y la Singularidad (2024 — 2026.09)' },
+    de: { num: 'Kapitel VI', title: 'Testzeit-Berechnung, Runtime-Schleifen & Silizium-Singularität (2024 — 2026.09)' },
+    fr: { num: 'Chapitre VI', title: 'Calcul au Temps de Test, Boucles d’Agents et la Singularité (2024 — 2026.09)' },
+  },
+};
 
 interface ArticleReaderProps {
   onClose?: () => void;
 }
 
 export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
+  const { currentLang, t } = useLanguage();
   const [activeChapterId, setActiveChapterId] = useState<string>('chap-0');
   const [copiedQuote, setCopiedQuote] = useState<string | null>(null);
   const [readProgress, setReadProgress] = useState<number>(0);
@@ -68,8 +115,27 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
   url={https://mumumumuyi.github.io/ai-chronicle-2026/}
 }`;
 
+  const isZh = currentLang === 'zh';
+
+  const getChapterDisplay = (ch: (typeof ARTICLE_CHAPTERS)[0]) => {
+    if (isZh) return { num: ch.chapterNumber, title: ch.title };
+    const trans = CHAPTER_TITLES_I18N[ch.id]?.[currentLang] || CHAPTER_TITLES_I18N[ch.id]?.en;
+    return {
+      num: trans?.num || ch.chapterNumber,
+      title: trans?.title || ch.title,
+    };
+  };
+
+  const metaTitle = isZh ? ARTICLE_META.title : 'Fire, Winter & Silicon Singularity: A Panoramic History of AI (1943 — 2026.09)';
+  const metaSubtitle = isZh ? ARTICLE_META.subtitle : 'From Turing’s Question and the Dialectics of Symbolism & Connectionism to Autonomous Agent Runtime Loops';
+  const metaAbstract = isZh 
+    ? ARTICLE_META.abstract 
+    : 'An exhaustive academic treatise spanning eight decades of artificial intelligence philosophy, algorithmic history, and geopolitics. From Alan Turing’s 1950 operational definition of machine thinking and the 1956 Dartmouth summit, through the two harsh AI winters, the quiet triumph of backpropagation, to contemporary test-time compute, System 2 reasoning, and autonomous agent loops on the eve of the Silicon Singularity.';
+
+  const abstractLabel = isZh ? '【史学立论与导言摘要】' : '[ Epistemological Abstract & Historical Thesis ]';
+
   return (
-    <div className="relative min-h-screen pt-24 pb-24 px-4 sm:px-8 max-w-6xl mx-auto">
+    <div className="relative min-h-screen pt-20 sm:pt-24 pb-24 px-3 sm:px-8 max-w-6xl mx-auto">
       {/* Top Reading Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-transparent z-50 no-print">
         <div 
@@ -79,12 +145,12 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
       </div>
 
       {/* Reader Header Pill */}
-      <div className="liquid-glass rounded-3xl p-6 sm:p-8 border border-white/10 mb-10 shadow-2xl relative">
+      <div className="liquid-glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 mb-8 sm:mb-10 shadow-2xl relative">
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white no-print"
-            title="返回展台"
+            className="absolute top-4 sm:top-6 right-4 sm:right-6 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white no-print"
+            title={isZh ? '返回展台' : 'Back to Stage'}
           >
             <X className="w-4 h-4" />
           </button>
@@ -92,41 +158,41 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
         <div className="flex flex-wrap items-center gap-2 mb-3 text-xs font-mono text-amber-300">
           <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/30">
-            学术通史精读长卷
+            {t.readerBadge}
           </span>
           <span className="text-stone-500">·</span>
           <span className="text-stone-400">{ARTICLE_META.version}</span>
           <span className="text-stone-500">·</span>
           <span className="text-stone-400 flex items-center">
             <Clock className="w-3 h-3 mr-1 text-amber-400" />
-            {ARTICLE_META.readingTimeMinutes} 分钟
+            {ARTICLE_META.readingTimeMinutes} {t.readerReadingTime}
           </span>
           <span className="text-stone-500">·</span>
           <span className="text-stone-400">{ARTICLE_META.wordCountTotal}</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight mb-2">
-          {ARTICLE_META.title}
+        <h1 className="text-2xl sm:text-4xl font-serif font-bold text-white tracking-tight mb-2 leading-snug">
+          {metaTitle}
         </h1>
-        <p className="text-xs sm:text-sm font-mono text-amber-300/80 mb-6">
-          {ARTICLE_META.subtitle}
+        <p className="text-xs sm:text-sm font-mono text-amber-300/80 mb-5">
+          {metaSubtitle}
         </p>
 
-        <div className="p-4 rounded-2xl liquid-glass border border-white/5 text-stone-300 text-xs sm:text-sm leading-relaxed font-light mb-6">
-          <span className="text-amber-300 font-mono text-xs block mb-1">【史学立论与导言摘要】</span>
-          {ARTICLE_META.abstract}
+        <div className="p-3.5 sm:p-4 rounded-2xl liquid-glass border border-white/5 text-stone-300 text-xs sm:text-sm leading-relaxed font-light mb-6">
+          <span className="text-amber-300 font-mono text-xs block mb-1">{abstractLabel}</span>
+          {metaAbstract}
         </div>
 
         {/* Academic Utility Action Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10 no-print">
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => window.print()}
-              className="liquid-glass-amber px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-sm"
-              title="一键调用浏览器打印，保存为高清学术白皮书 PDF"
+              className="liquid-glass-amber px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-sm"
+              title="Print / Save as Academic PDF"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>导出 / 打印 PDF 白皮书</span>
+              <span>{t.readerExportPDF}</span>
             </button>
 
             <button
@@ -134,16 +200,16 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
               className="liquid-glass-pill px-3 py-1.5 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center space-x-1.5 transition-all"
             >
               <FileText className="w-3.5 h-3.5 text-amber-400" />
-              <span>引用本论著 (BibTeX)</span>
+              <span>{t.readerCiteBibtex}</span>
             </button>
           </div>
 
           <button
             onClick={() => setShowSubscribeModal(true)}
-            className="liquid-glass-pill px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-300 hover:text-white flex items-center space-x-1.5 transition-all border border-amber-400/20"
+            className="liquid-glass-pill px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-300 hover:text-white flex items-center space-x-1.5 transition-all border border-amber-400/20"
           >
             <Mail className="w-3.5 h-3.5 text-amber-400" />
-            <span>订阅 2026-2030 前沿内参</span>
+            <span>{t.readerSubscribeNewsletter}</span>
           </button>
         </div>
       </div>
@@ -155,7 +221,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
           <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/10 text-stone-400">
             <span className="font-semibold text-stone-200 flex items-center">
               <BookOpen className="w-3.5 h-3.5 mr-1 text-amber-400" />
-              章节目录
+              {t.readerTOC}
             </span>
             <span className="text-[10px] text-amber-300">{Math.round(readProgress)}%</span>
           </div>
@@ -163,6 +229,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
           <nav className="space-y-1">
             {ARTICLE_CHAPTERS.map((chapter) => {
               const isActive = activeChapterId === chapter.id;
+              const chInfo = getChapterDisplay(chapter);
               return (
                 <button
                   key={chapter.id}
@@ -174,9 +241,9 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                   }`}
                 >
                   <span className="text-[10px] text-stone-500 flex-shrink-0 mt-0.5">
-                    {chapter.chapterNumber}
+                    {chInfo.num}
                   </span>
-                  <span className="line-clamp-1">{chapter.title.split('：')[0]}</span>
+                  <span className="line-clamp-1">{chInfo.title.split('：')[0]}</span>
                 </button>
               );
             })}
@@ -185,24 +252,26 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
         {/* Main Article Content */}
         <main className="lg:col-span-9 space-y-12">
-          {ARTICLE_CHAPTERS.map((chapter, idx) => (
-            <React.Fragment key={chapter.id}>
-              <article
-                id={chapter.id}
-                className="liquid-glass rounded-3xl p-6 sm:p-10 border border-white/10 space-y-8 scroll-mt-24 shadow-xl"
-              >
-              <div>
-                <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
-                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/30">
-                    {chapter.chapterNumber}
-                  </span>
-                  <span className="text-stone-500">/</span>
-                  <span className="text-stone-400">{chapter.timeSpan}</span>
-                </div>
+          {ARTICLE_CHAPTERS.map((chapter, idx) => {
+            const chInfo = getChapterDisplay(chapter);
+            return (
+              <React.Fragment key={chapter.id}>
+                <article
+                  id={chapter.id}
+                  className="liquid-glass rounded-3xl p-6 sm:p-10 border border-white/10 space-y-8 scroll-mt-24 shadow-xl"
+                >
+                <div>
+                  <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/30">
+                      {chInfo.num}
+                    </span>
+                    <span className="text-stone-500">/</span>
+                    <span className="text-stone-400">{chapter.timeSpan}</span>
+                  </div>
 
-                <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-3">
-                  {chapter.title}
-                </h2>
+                  <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-3">
+                    {chInfo.title}
+                  </h2>
 
                 {/* Lead Epigraph Quote */}
                 <div className="relative my-4 p-4 rounded-2xl liquid-glass border-l-4 border-amber-400 text-stone-300 font-serif italic text-sm">
@@ -290,7 +359,8 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
               </div>
             )}
           </React.Fragment>
-        ))}
+        );
+      })}
 
           <div className="flex justify-between items-center font-mono text-xs text-stone-400 pt-6 no-print">
             <span>通史长卷完 · 截至 2026.09.13 定本</span>
@@ -394,15 +464,19 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
             {subscribed ? (
               <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center">
-                <div className="text-emerald-400 text-sm font-bold mb-1">🎉 订阅成功！</div>
-                <div className="text-xs text-stone-300">首期《2026 测试时算力白皮书》已发送至您的收件箱。</div>
+                <div className="text-emerald-400 text-sm font-bold mb-1">
+                  {isZh ? '🎉 订阅成功！' : '🎉 Subscribed Successfully!'}
+                </div>
+                <div className="text-xs text-stone-300">
+                  {isZh ? '首期《2026 测试时算力白皮书》已发送至您的收件箱。' : 'The latest 2026-2030 AGI research brief has been dispatched to your inbox.'}
+                </div>
               </div>
             ) : (
               <form 
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (email) {
-                    saveLead(email, 'newsletter', 'zh');
+                    saveLead(email, 'newsletter', currentLang);
                     setSubscribed(true);
                   }
                 }}
@@ -411,7 +485,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                 <input
                   type="email"
                   required
-                  placeholder="your.email@university.edu"
+                  placeholder={t.newsletterInputPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-2xl bg-black/50 border border-white/10 text-stone-100 text-xs font-mono focus:outline-none focus:border-amber-400"
@@ -420,7 +494,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                   type="submit"
                   className="w-full py-2.5 rounded-2xl liquid-glass-amber text-xs font-mono font-bold text-amber-200 hover:text-white transition-all shadow-md"
                 >
-                  即刻免费订阅
+                  {t.newsletterSubmitBtn}
                 </button>
               </form>
             )}
@@ -435,7 +509,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
           className="liquid-glass-amber px-3.5 py-2 rounded-full text-xs font-mono text-amber-200 shadow-xl flex items-center space-x-1.5 backdrop-blur-xl border border-amber-400/40 hover:scale-105 transition-transform"
         >
           <BookOpen className="w-3.5 h-3.5" />
-          <span>{Math.round(readProgress)}% 章节目录</span>
+          <span>{Math.round(readProgress)}% {t.readerTOC}</span>
         </button>
       </div>
 
@@ -452,7 +526,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
               <span className="font-serif font-bold text-white flex items-center text-sm">
                 <BookOpen className="w-4 h-4 mr-2 text-amber-400" />
-                章节快捷导航 ({Math.round(readProgress)}%)
+                {t.readerTOC} ({Math.round(readProgress)}%)
               </span>
               <button
                 onClick={() => setShowMobileTOC(false)}
@@ -465,6 +539,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
             <div className="space-y-1.5">
               {ARTICLE_CHAPTERS.map((ch) => {
                 const isActive = activeChapterId === ch.id;
+                const chInfo = getChapterDisplay(ch);
                 return (
                   <button
                     key={ch.id}
@@ -479,9 +554,9 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                     }`}
                   >
                     <span className="text-[10px] font-mono text-amber-400/80 flex-shrink-0 mt-0.5">
-                      {ch.chapterNumber}
+                      {chInfo.num}
                     </span>
-                    <span className="text-xs line-clamp-1">{ch.title}</span>
+                    <span className="text-xs line-clamp-1">{chInfo.title}</span>
                   </button>
                 );
               })}
