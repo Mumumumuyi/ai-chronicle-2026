@@ -3,6 +3,7 @@ import { EPOCHS } from '../data/timelineData';
 import { Milestone } from '../types';
 import { MonetizationBanner } from './MonetizationBanner';
 import { ChevronLeft, ChevronRight, Sparkles, ArrowUpRight, Cpu, Compass, BookOpen } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface LiquidEpochStageProps {
   activeEpochIndex: number;
@@ -17,6 +18,7 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
   onOpenMilestone,
   onOpenReader,
 }) => {
+  const { t, currentLang } = useLanguage();
   const currentEpoch = EPOCHS[activeEpochIndex];
 
   const handlePrev = () => {
@@ -26,6 +28,62 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
   const handleNext = () => {
     if (activeEpochIndex < EPOCHS.length - 1) onSelectEpoch(activeEpochIndex + 1);
   };
+
+  const heroTitle = currentLang === 'zh' ? (
+    <>
+      火种、严冬与
+      <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 ml-2">
+        硅基奇点
+      </span>
+    </>
+  ) : currentLang === 'ja' ? (
+    <>
+      火種、厳冬、そして
+      <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 ml-2">
+        シリコンの特異点
+      </span>
+    </>
+  ) : currentLang === 'es' ? (
+    <>
+      La Chispa, el Invierno y la
+      <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 ml-2">
+        Singularidad
+      </span>
+    </>
+  ) : currentLang === 'de' ? (
+    <>
+      Der Funke, der Winter und die
+      <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 ml-2">
+        Singularität
+      </span>
+    </>
+  ) : currentLang === 'fr' ? (
+    <>
+      L’Étincelle, l’Hiver et la
+      <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 ml-2">
+        Singularité
+      </span>
+    </>
+  ) : (
+    <>
+      The Spark, The Winter &
+      <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 ml-2">
+        Silicon Singularity
+      </span>
+    </>
+  );
+
+  const heroDesc = currentLang === 'zh'
+    ? '从图灵之问、两次酷烈寒冬到测试时推理与自主智能体集群。以流动的液态玻璃视角，重现八十载智性觉醒长卷。'
+    : currentLang === 'ja'
+    ? 'チューリングの問い、二度の厳しい冬から推论时计算量と自律エージェントまで。流体ガラスで描く知性覚醒の軌跡。'
+    : currentLang === 'es'
+    ? 'Desde el juego de imitación de Turing hasta el cómputo en tiempo de inferencia y enjambres de agentes. Una crónica interactiva de la inteligencia de máquinas.'
+    : currentLang === 'de'
+    ? 'Vom Turing-Test und zwei harten KI-Wintern bis zu Inferenzzeit-Schlussfolgerungen und autonomen Agenten-Schwärmen.'
+    : currentLang === 'fr'
+    ? 'Du jeu d’imitation de Turing aux hivers de l’IA, jusqu’au calcul en temps d’inférence et aux essaims d’agents autonomes.'
+    : 'From the Turing imitation game and two harsh AI winters to test-time reasoning and autonomous agent swarms. An interactive chronicle of machine intelligence.';
 
   return (
     <div className="relative min-h-[90vh] flex flex-col justify-between pt-24 pb-16 px-4 sm:px-8 max-w-7xl mx-auto">
@@ -37,14 +95,11 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-serif text-stone-100 tracking-tight leading-[1.15] mb-3">
-          火种、严冬与
-          <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 ml-2">
-            硅基奇点
-          </span>
+          {heroTitle}
         </h1>
 
         <p className="text-sm sm:text-base text-stone-300/80 font-light leading-relaxed max-w-xl mx-auto">
-          从图灵之问、两次酷烈寒冬到测试时推理与自主智能体集群。以流动的液态玻璃视角，重现八十载智性觉醒长卷。
+          {heroDesc}
         </p>
       </div>
 
@@ -99,10 +154,10 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
             <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-mono">
               <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-stone-300 flex items-center">
                 <Cpu className="w-3 h-3 mr-1.5 text-amber-400" />
-                算力: {currentEpoch.computeOrderOfMagnitude}
+                {t.computePower}: {currentEpoch.computeOrderOfMagnitude}
               </span>
               <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-200">
-                主导: {currentEpoch.dominantParadigm}
+                {t.dominantParadigm}: {currentEpoch.dominantParadigm}
               </span>
             </div>
           </div>
@@ -112,9 +167,9 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
             <div className="flex items-center justify-between text-xs font-mono text-stone-400 mb-1 px-1">
               <span className="flex items-center">
                 <Sparkles className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
-                本纪元关键历史转折与破局时刻
+                {t.milestoneArchiveTitle}
               </span>
-              <span>共 {currentEpoch.milestones.length} 项里程碑</span>
+              <span>{currentEpoch.milestones.length} Milestones</span>
             </div>
 
             <div className="space-y-3">
@@ -160,7 +215,7 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
                 className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-amber-300 flex items-center space-x-1.5 hover:text-amber-100 transition-colors"
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>阅读该阶段 1.8 万字学术通史详案 →</span>
+                <span>{t.readFullTreatise} →</span>
               </button>
             </div>
           </div>

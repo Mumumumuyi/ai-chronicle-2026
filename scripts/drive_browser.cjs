@@ -85,9 +85,9 @@ async function runAutomation() {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(600);
 
-  // Interaction 5: Switch to Lab view (缩放实验)
-  console.log('7. 切换至“缩放实验”实验室视窗...');
-  const labBtn = await page.locator('button:has-text("缩放实验")').first();
+  // Interaction 5: Switch to Lab view (缩放律)
+  console.log('7. 切换至“缩放律”实验室视窗...');
+  const labBtn = await page.locator('button:has-text("缩放律")').first();
   if (await labBtn.count() > 0) {
     await labBtn.click();
     await page.waitForTimeout(1000);
@@ -97,9 +97,21 @@ async function runAutomation() {
   await page.screenshot({ path: shot5 });
   console.log(`✓ 截图 5 已保存: ${shot5}`);
 
-  // Interaction 6: Switch to Reader view (通史长卷)
-  console.log('8. 切换至“通史长卷”学术精读视窗...');
-  const readerBtn = await page.locator('button:has-text("通史长卷")').first();
+  // Interaction 6: Switch to Ecosystem view (生态特权)
+  console.log('8. 切换至“生态特权”AI 算力与开发工具变现中心...');
+  const ecoBtn = await page.locator('button:has-text("生态特权")').first();
+  if (await ecoBtn.count() > 0) {
+    await ecoBtn.click();
+    await page.waitForTimeout(1000);
+  }
+
+  const shot7 = path.join(outDir, '07_affiliate_ecosystem.png');
+  await page.screenshot({ path: shot7 });
+  console.log(`✓ 截图 7 已保存: ${shot7}`);
+
+  // Interaction 7: Switch to Reader view (长卷)
+  console.log('9. 切换至“长卷”学术精读长文视窗...');
+  const readerBtn = await page.locator('button:has-text("长卷")').first();
   if (await readerBtn.count() > 0) {
     await readerBtn.click();
     await page.waitForTimeout(1000);
@@ -108,6 +120,19 @@ async function runAutomation() {
   const shot6 = path.join(outDir, '06_treatise_reader.png');
   await page.screenshot({ path: shot6 });
   console.log(`✓ 截图 6 已保存: ${shot6}`);
+
+  // Interaction 8: Click BibTeX Citation button
+  console.log('10. 呼出学术引用 BibTeX 弹窗...');
+  const citeBtn = await page.locator('button:has-text("引用本论著")').first();
+  if (await citeBtn.count() > 0) {
+    await citeBtn.click();
+    await page.waitForTimeout(800);
+    const shot8 = path.join(outDir, '08_bibtex_modal.png');
+    await page.screenshot({ path: shot8 });
+    console.log(`✓ 截图 8 已保存: ${shot8}`);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+  }
 
   // Copy all shots to artifact directory so Antigravity can link them
   if (fs.existsSync(artifactDir)) {
@@ -120,7 +145,7 @@ async function runAutomation() {
   }
 
   await browser.close();
-  console.log('9. 自动化测试与驾驶巡检全部完成！');
+  console.log('11. 全链路自动化测试与巡检全部圆满完成！');
 }
 
 runAutomation().catch(err => {

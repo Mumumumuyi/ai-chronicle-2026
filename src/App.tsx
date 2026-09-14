@@ -8,12 +8,14 @@ import { AboutDesignHub } from './components/AboutDesignHub';
 import { AffiliateEcosystem } from './components/AffiliateEcosystem';
 import { Milestone } from './types';
 import { EPOCHS } from './data/timelineData';
+import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 
-export const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('stage');
   const [activeEpochIndex, setActiveEpochIndex] = useState<number>(6); // Default to current 2024-2026 epoch
   const [activeMilestone, setActiveMilestone] = useState<Milestone | null>(null);
   const [showAboutModal, setShowAboutModal] = useState<boolean>(false);
+  const { t } = useLanguage();
 
   // Keyboard navigation for epochs (ArrowLeft / ArrowRight)
   useEffect(() => {
@@ -89,15 +91,24 @@ export const App: React.FC = () => {
       )}
 
       {/* 5. Minimalist Ambient Footer */}
-      <footer className="relative z-10 border-t border-white/5 py-8 text-center text-stone-500 text-xs font-mono">
+      <footer className="relative z-10 border-t border-white/5 py-8 text-center text-stone-500 text-xs font-mono no-print">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>AI 全景通史 · 1950 — 2026.09.13 历史定本</span>
-          <span className="text-amber-400/80">液态玻璃交互架构 · AI 第二大脑美学认证</span>
-          <span>按键盘 ← / → 键切换纪元</span>
+          <span>{t.footerCopyright}</span>
+          <span className="text-amber-400/80">{t.footerDesignTag}</span>
+          <span>{t.footerNavHint}</span>
         </div>
       </footer>
     </div>
   );
 };
 
+export const App: React.FC = () => {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+};
+
 export default App;
+
