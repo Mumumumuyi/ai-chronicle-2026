@@ -65,48 +65,49 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </div>
 
-        {/* Navigation Mode Pill & Language Dropdown */}
+        {/* Desktop Navigation Mode Pill & Language Dropdown */}
         <div className="flex items-center space-x-2">
-          <nav className="liquid-glass rounded-full p-1 flex items-center gap-0.5 sm:gap-1">
+          {/* Desktop/Tablet Nav Pill */}
+          <nav className="hidden md:flex liquid-glass rounded-full p-1 items-center gap-1">
             <button
               onClick={() => onTabChange('stage')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === 'stage'
                   ? 'liquid-glass-amber text-amber-200 font-semibold'
                   : 'text-stone-300 hover:text-white'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">{t.navStage}</span>
+              <span>{t.navStage}</span>
             </button>
 
             <button
               onClick={() => onTabChange('lab')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === 'lab'
                   ? 'liquid-glass-amber text-amber-200 font-semibold'
                   : 'text-stone-300 hover:text-white'
               }`}
             >
               <Zap className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">{t.navLab}</span>
+              <span>{t.navLab}</span>
             </button>
 
             <button
               onClick={() => onTabChange('reader')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === 'reader'
                   ? 'liquid-glass-amber text-amber-200 font-semibold'
                   : 'text-stone-300 hover:text-white'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">{t.navReader}</span>
+              <span>{t.navReader}</span>
             </button>
 
             <button
               onClick={() => onTabChange('ecosystem')}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === 'ecosystem'
                   ? 'liquid-glass-amber text-amber-200 font-semibold'
                   : 'text-stone-300 hover:text-white'
@@ -114,12 +115,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               title="Global AI Ecosystem & Compute Perks"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden md:inline">{t.navEcosystem}</span>
+              <span>{t.navEcosystem}</span>
             </button>
 
             <button
               onClick={() => onTabChange('about')}
-              className={`px-2 sm:px-2.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center ${
+              className={`px-2.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center ${
                 activeTab === 'about'
                   ? 'liquid-glass-amber text-amber-200 font-semibold'
                   : 'text-stone-400 hover:text-white'
@@ -130,9 +131,77 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
+          {/* Mobile About Button */}
+          <button
+            onClick={() => onTabChange('about')}
+            className={`md:hidden liquid-glass rounded-full w-8 h-8 flex items-center justify-center text-xs transition-all ${
+              activeTab === 'about'
+                ? 'liquid-glass-amber text-amber-200'
+                : 'text-stone-300 hover:text-white'
+            }`}
+            title={t.navAbout}
+          >
+            <Info className="w-3.5 h-3.5" />
+          </button>
+
           {/* Global Language Switcher */}
           <LanguageDropdown />
         </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* NATIVE-QUALITY MOBILE LIQUID GLASS FLOATING BOTTOM DOCK  */}
+      {/* ======================================================== */}
+      <div className="fixed bottom-4 left-3 right-3 z-50 pointer-events-auto md:hidden flex justify-center no-print">
+        <nav className="w-full max-w-sm liquid-glass-strong rounded-full p-1.5 shadow-2xl border border-amber-400/30 flex items-center justify-around backdrop-blur-2xl glass-sheen">
+          <button
+            onClick={() => onTabChange('stage')}
+            className={`flex-1 py-2 px-1 rounded-full text-[11px] font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+              activeTab === 'stage'
+                ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
+                : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span className="truncate">{t.navStage}</span>
+          </button>
+
+          <button
+            onClick={() => onTabChange('lab')}
+            className={`flex-1 py-2 px-1 rounded-full text-[11px] font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+              activeTab === 'lab'
+                ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
+                : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            <Zap className="w-4 h-4" />
+            <span className="truncate">{t.navLab}</span>
+          </button>
+
+          <button
+            onClick={() => onTabChange('reader')}
+            className={`flex-1 py-2 px-1 rounded-full text-[11px] font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+              activeTab === 'reader'
+                ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
+                : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span className="truncate">{t.navReader}</span>
+          </button>
+
+          <button
+            onClick={() => onTabChange('ecosystem')}
+            className={`flex-1 py-2 px-1 rounded-full text-[11px] font-medium transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+              activeTab === 'ecosystem'
+                ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
+                : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span className="truncate">{t.navEcosystem}</span>
+          </button>
+        </nav>
       </div>
     </header>
   );

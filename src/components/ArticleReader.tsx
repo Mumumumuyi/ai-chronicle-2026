@@ -12,6 +12,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
   const [readProgress, setReadProgress] = useState<number>(0);
   const [showCiteModal, setShowCiteModal] = useState<boolean>(false);
   const [showSubscribeModal, setShowSubscribeModal] = useState<boolean>(false);
+  const [showMobileTOC, setShowMobileTOC] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [copiedCite, setCopiedCite] = useState<boolean>(false);
@@ -422,7 +423,70 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
           </div>
         </div>
       )}
+
+      {/* Mobile Floating TOC Quick-Jump Button */}
+      <div className="fixed bottom-20 right-4 z-40 lg:hidden no-print">
+        <button
+          onClick={() => setShowMobileTOC(true)}
+          className="liquid-glass-amber px-3.5 py-2 rounded-full text-xs font-mono text-amber-200 shadow-xl flex items-center space-x-1.5 backdrop-blur-xl border border-amber-400/40 hover:scale-105 transition-transform"
+        >
+          <BookOpen className="w-3.5 h-3.5" />
+          <span>{Math.round(readProgress)}% 章节目录</span>
+        </button>
+      </div>
+
+      {/* Mobile Bottom Sheet TOC Drawer */}
+      {showMobileTOC && (
+        <div 
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+          onClick={() => setShowMobileTOC(false)}
+        >
+          <div 
+            className="w-full sm:max-w-md max-h-[80vh] overflow-y-auto liquid-glass-strong rounded-t-3xl sm:rounded-3xl p-6 text-stone-100 shadow-2xl border border-amber-400/40"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+              <span className="font-serif font-bold text-white flex items-center text-sm">
+                <BookOpen className="w-4 h-4 mr-2 text-amber-400" />
+                章节快捷导航 ({Math.round(readProgress)}%)
+              </span>
+              <button
+                onClick={() => setShowMobileTOC(false)}
+                className="w-7 h-7 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              {ARTICLE_CHAPTERS.map((ch) => {
+                const isActive = activeChapterId === ch.id;
+                return (
+                  <button
+                    key={ch.id}
+                    onClick={() => {
+                      scrollToChapter(ch.id);
+                      setShowMobileTOC(false);
+                    }}
+                    className={`w-full text-left p-3 rounded-2xl transition-all flex items-start space-x-2.5 ${
+                      isActive
+                        ? 'liquid-glass-amber text-amber-200 font-semibold'
+                        : 'liquid-glass text-stone-300 hover:text-white'
+                    }`}
+                  >
+                    <span className="text-[10px] font-mono text-amber-400/80 flex-shrink-0 mt-0.5">
+                      {ch.chapterNumber}
+                    </span>
+                    <span className="text-xs line-clamp-1">{ch.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
 

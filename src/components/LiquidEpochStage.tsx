@@ -86,32 +86,53 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
     : 'From the Turing imitation game and two harsh AI winters to test-time reasoning and autonomous agent swarms. An interactive chronicle of machine intelligence.';
 
   return (
-    <div className="relative min-h-[90vh] flex flex-col justify-between pt-24 pb-16 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="relative min-h-[90vh] flex flex-col justify-between pt-20 sm:pt-24 pb-28 md:pb-16 px-3 sm:px-6 md:px-8 max-w-7xl mx-auto">
       {/* Top Hero Headline: Minimalist, Refined, Airy */}
-      <div className="text-center max-w-3xl mx-auto mb-8 animate-in fade-in duration-700">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full liquid-glass-pill text-xs font-mono text-amber-300 mb-4 shadow-sm">
+      <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8 animate-in fade-in duration-700">
+        <div className="inline-flex items-center space-x-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full liquid-glass-pill text-[11px] sm:text-xs font-mono text-amber-300 mb-3 sm:mb-4 shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           <span className="tracking-wider uppercase">HISTORICAL CONTINUUM · 1943 — 2026.09.13</span>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl font-serif text-stone-100 tracking-tight leading-[1.15] mb-3">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-stone-100 tracking-tight leading-[1.15] mb-2 sm:mb-3">
           {heroTitle}
         </h1>
 
-        <p className="text-sm sm:text-base text-stone-300/80 font-light leading-relaxed max-w-xl mx-auto">
+        <p className="text-xs sm:text-sm md:text-base text-stone-300/80 font-light leading-relaxed max-w-xl mx-auto px-2">
           {heroDesc}
         </p>
       </div>
 
+      {/* Mobile/Tablet Horizontal Epoch Fast Swiper (< lg screens) */}
+      <div className="lg:hidden flex items-center space-x-2 overflow-x-auto pb-3 mb-4 no-scrollbar px-1">
+        {t.epochPills.map((p, idx) => {
+          const isActive = activeEpochIndex === idx;
+          return (
+            <button
+              key={idx}
+              onClick={() => onSelectEpoch(idx)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 ${
+                isActive
+                  ? 'liquid-glass-amber text-amber-200 font-semibold shadow-md scale-105'
+                  : 'liquid-glass text-stone-400 hover:text-white'
+              }`}
+            >
+              <span>{p.label}</span>
+              <span className="text-[9px] font-mono opacity-60">{p.era}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Main Liquid Glass Showcase Slab */}
-      <div className="relative liquid-glass-strong rounded-3xl p-6 sm:p-10 shadow-2xl glass-sheen border border-white/10 backdrop-blur-3xl">
+      <div className="relative liquid-glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 shadow-2xl glass-sheen border border-white/10 backdrop-blur-3xl">
         {/* Soft Warm Internal Glow Accent */}
         <div className="absolute -top-24 -left-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           {/* Left Column: Epoch Essence & Epigraph */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 space-y-4 sm:space-y-6">
             <div>
               <div className="flex items-center space-x-2.5 mb-2">
                 <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30">

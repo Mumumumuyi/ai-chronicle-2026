@@ -161,6 +161,47 @@ async function runAutomation() {
       await page.screenshot({ path: shot10 });
       console.log(`✓ 截图 10 已保存 (日本語): ${shot10}`);
     }
+
+    // Switch back to Chinese for subsequent modal test
+    await langBtn.click();
+    await page.waitForTimeout(500);
+    const zhOption = await page.locator('button:has-text("简体中文")').first();
+    if (await zhOption.count() > 0) {
+      await zhOption.click();
+      await page.waitForTimeout(600);
+    }
+  }
+
+  // Interaction 10: Test Sponsor Coffee Modal
+  console.log('13. 模拟用户点击“赞助打赏 ☕”呼出双通道支持面板...');
+  const stageBtn = await page.locator('button:has-text("剧场")').first();
+  if (await stageBtn.count() > 0) {
+    await stageBtn.click();
+    await page.waitForTimeout(600);
+  }
+
+  const coffeeBtn = await page.locator('button:has-text("赞助打赏")').first();
+  if (await coffeeBtn.count() > 0) {
+    await coffeeBtn.click();
+    await page.waitForTimeout(800);
+    const shot11 = path.join(outDir, '11_coffee_sponsor_modal.png');
+    await page.screenshot({ path: shot11 });
+    console.log(`✓ 截图 11 已保存: ${shot11}`);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+  }
+
+  // Interaction 11: Test 4K Digital Bundle Modal
+  console.log('14. 模拟用户点击“4K 离线资产包”数字化研报付费购买与下载面板...');
+  const bundleBtn = await page.locator('button:has-text("4K 离线资产包")').first();
+  if (await bundleBtn.count() > 0) {
+    await bundleBtn.click();
+    await page.waitForTimeout(800);
+    const shot12 = path.join(outDir, '12_premium_bundle_modal.png');
+    await page.screenshot({ path: shot12 });
+    console.log(`✓ 截图 12 已保存: ${shot12}`);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
   }
 
   // Copy all shots to artifact directory so Antigravity can link them
@@ -174,7 +215,7 @@ async function runAutomation() {
   }
 
   await browser.close();
-  console.log('13. 全链路多语言与自动化巡检圆满完成！');
+  console.log('15. 全链路高转化商业变现与多语言测试圆满完成！');
 }
 
 runAutomation().catch(err => {
