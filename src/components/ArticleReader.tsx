@@ -378,7 +378,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
       {/* BibTeX Citation Modal */}
       {showCiteModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
           onClick={() => setShowCiteModal(false)}
         >
           <div 
@@ -436,7 +436,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
       {/* Newsletter Subscription Modal */}
       {showSubscribeModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
           onClick={() => setShowSubscribeModal(false)}
         >
           <div 
@@ -516,7 +516,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
       {/* Mobile Bottom Sheet TOC Drawer */}
       {showMobileTOC && (
         <div 
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
           onClick={() => setShowMobileTOC(false)}
         >
           <div 

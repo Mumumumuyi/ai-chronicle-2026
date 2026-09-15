@@ -1,3 +1,5 @@
+import React from 'react';
+import { createPortal } from 'react-dom';
 import { ShieldCheck, Brain, Sparkles, Terminal, X } from 'lucide-react';
 import { getLeads, exportLeadsToCSV } from '../utils/leadStorage';
 
@@ -6,18 +8,20 @@ interface AboutDesignHubProps {
 }
 
 export const AboutDesignHub: React.FC<AboutDesignHubProps> = ({ onClose }) => {
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-stone-950/75 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-stone-950/90 backdrop-blur-md animate-in fade-in duration-200 no-print"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto liquid-glass-strong rounded-3xl p-6 sm:p-8 text-stone-100 shadow-2xl border border-amber-400/30 glass-sheen"
+        className="relative w-full max-w-2xl max-h-[88vh] overflow-y-auto liquid-glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-stone-100 shadow-2xl border border-amber-400/30 glass-sheen"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
         >
           <X className="w-4 h-4" />
         </button>
@@ -97,7 +101,8 @@ export const AboutDesignHub: React.FC<AboutDesignHubProps> = ({ onClose }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

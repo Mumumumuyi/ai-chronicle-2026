@@ -62,7 +62,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* 3. Main Stage Content */}
-      <main className="relative z-10">
+      <main className="relative">
         {activeTab === 'stage' && (
           <LiquidEpochStage
             activeEpochIndex={activeEpochIndex}

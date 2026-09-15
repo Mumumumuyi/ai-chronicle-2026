@@ -21,7 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const { t } = useLanguage();
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 px-3 sm:px-8 pointer-events-none flex justify-center no-print">
+    <header className="fixed top-4 left-0 right-0 z-40 px-3 sm:px-8 pointer-events-none flex justify-center no-print">
       <div className="w-full max-w-6xl pointer-events-auto flex items-center justify-between gap-2 sm:gap-4">
         {/* Logo & Brand Pill */}
         <div 
@@ -152,7 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* ======================================================== */}
       {/* NATIVE-QUALITY MOBILE LIQUID GLASS FLOATING BOTTOM DOCK  */}
       {/* ======================================================== */}
-      <div className="fixed bottom-4 left-3 right-3 z-50 pointer-events-auto md:hidden flex justify-center no-print">
+      <div className="fixed bottom-4 left-3 right-3 z-40 pointer-events-auto md:hidden flex justify-center no-print">
         <nav className="w-full max-w-sm liquid-glass-strong rounded-full p-1.5 shadow-2xl border border-amber-400/30 flex items-center justify-around backdrop-blur-2xl glass-sheen">
           <button
             onClick={() => onTabChange('stage')}

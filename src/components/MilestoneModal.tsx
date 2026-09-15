@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { Milestone } from '../types';
 import { X, Calendar, User, Cpu, FileText, Award, Tag, Sparkles } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -12,13 +13,14 @@ interface MilestoneModalProps {
 export const MilestoneModal: React.FC<MilestoneModalProps> = ({ milestone, onClose }) => {
   const { currentLang } = useLanguage();
   if (!milestone) return null;
+  if (typeof document === 'undefined') return null;
 
   const m = getLocalizedMilestone(milestone, currentLang);
   const isZh = currentLang === 'zh';
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-stone-950/70 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-stone-950/90 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 
@@ -127,6 +129,7 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ milestone, onClo
           ))}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
