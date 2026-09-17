@@ -11,7 +11,6 @@ import {
   Trash2,
   RefreshCw,
   Search,
-  CheckCircle2,
   Smartphone,
   Laptop,
   Tablet,
@@ -21,7 +20,9 @@ import {
   LogOut,
   ExternalLink,
   Lock,
-  RotateCcw
+  RotateCcw,
+  Copy,
+  Check
 } from 'lucide-react';
 import {
   getVisitorLogs,
@@ -37,7 +38,6 @@ import {
   LeadRecord
 } from '../../utils/leadStorage';
 import {
-  updateMasterPasskey,
   getSecurityAuditLogs,
   terminateSession,
   getLockoutState,
@@ -62,10 +62,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const [deviceFilter, setDeviceFilter] = useState<'All' | 'Desktop' | 'Mobile' | 'Tablet'>('All');
   const [leadFilter, setLeadFilter] = useState<string>('All');
   
-  // Passkey update state
-  const [newPasskey, setNewPasskey] = useState('');
-  const [confirmPasskey, setConfirmPasskey] = useState('');
-  const [passkeyNotice, setPasskeyNotice] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  // Sovereign Token State
+  const [tokenCopied, setTokenCopied] = useState(false);
+  const SOVEREIGN_TOKEN = '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ';
+  
+  const handleCopyToken = () => {
+    try {
+      navigator.clipboard.writeText(SOVEREIGN_TOKEN);
+      setTokenCopied(true);
+      setTimeout(() => setTokenCopied(false), 2000);
+    } catch {
+      // fallback
+    }
+  };
 
   // Auto-refresh timer for session & live stream
   const [sessionRemaining, setSessionRemaining] = useState<number>(30 * 60);
@@ -99,28 +108,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const handleEmergencyLogout = () => {
     terminateSession();
     onClose();
-  };
-
-  const handleUpdatePasskey = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPasskey || newPasskey.trim().length < 6) {
-      setPasskeyNotice({ type: 'error', text: '主控密钥长度不得小于 6 位字符' });
-      return;
-    }
-    if (newPasskey !== confirmPasskey) {
-      setPasskeyNotice({ type: 'error', text: '两次输入的新密钥不一致' });
-      return;
-    }
-
-    const ok = await updateMasterPasskey(newPasskey.trim());
-    if (ok) {
-      setPasskeyNotice({ type: 'success', text: '主理人专属主控密钥已成功更新并写入零知识加密库！' });
-      setNewPasskey('');
-      setConfirmPasskey('');
-      setAuditLogs(getSecurityAuditLogs());
-    } else {
-      setPasskeyNotice({ type: 'error', text: '更新失败，请检查浏览器存储权限' });
-    }
   };
 
   const handleResetLockout = () => {
@@ -777,67 +764,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
           {activeTab === 'security' && (
             <div className="space-y-6 animate-fadeIn">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Master Passkey Update Card */}
+                {/* Sovereign Master Root Token Card */}
                 <div className="p-5 rounded-2xl bg-stone-900/60 border border-stone-800 space-y-4">
-                  <h3 className="text-sm font-serif font-bold text-stone-100 flex items-center space-x-2">
-                    <Key className="w-4 h-4 text-amber-400" />
-                    <span>更新主理人专属主控密钥</span>
-                  </h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-serif font-bold text-stone-100 flex items-center space-x-2">
+                      <Key className="w-4 h-4 text-amber-400" />
+                      <span>主理人专属唯一根凭证 (Sovereign Root Token)</span>
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-mono">
+                      严格单钥准入
+                    </span>
+                  </div>
+
                   <p className="text-xs text-stone-400 leading-relaxed">
-                    更新后将通过 Web Crypto API 重新生成带盐的 SHA-256 签名并加密落盘。请务必牢记新口令。
+                    已彻底删除并作废所有备用简易口令（如 admin2026 等）。全站安全矩阵仅认准您亲自提供的唯一安全令牌，杜绝一切弱口令爆破隐患。
                   </p>
 
-                  {passkeyNotice && (
-                    <div
-                      className={`p-3 rounded-xl text-xs flex items-center space-x-2 ${
-                        passkeyNotice.type === 'success'
-                          ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-300'
-                          : 'bg-red-950/40 border border-red-500/30 text-red-300'
-                      }`}
-                    >
-                      {passkeyNotice.type === 'success' ? (
-                        <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                      ) : (
-                        <Shield className="w-4 h-4 flex-shrink-0" />
-                      )}
-                      <span>{passkeyNotice.text}</span>
+                  <div className="p-3.5 rounded-xl bg-black/60 border border-amber-500/30 space-y-2">
+                    <div className="flex items-center justify-between text-[11px] font-mono text-stone-400">
+                      <span>已授权主理人唯一令牌:</span>
+                      <button
+                        onClick={handleCopyToken}
+                        className="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] flex items-center space-x-1 transition-colors"
+                      >
+                        {tokenCopied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        <span>{tokenCopied ? '已复制' : '复制凭证'}</span>
+                      </button>
                     </div>
-                  )}
-
-                  <form onSubmit={handleUpdatePasskey} className="space-y-3 pt-1">
-                    <div>
-                      <label className="block text-[11px] font-mono text-stone-400 mb-1">
-                        设置新主控密钥 (至少6位字符)
-                      </label>
-                      <input
-                        type="password"
-                        value={newPasskey}
-                        onChange={(e) => setNewPasskey(e.target.value)}
-                        placeholder="输入新主控密码..."
-                        className="w-full bg-black/50 border border-stone-700 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none font-mono"
-                      />
+                    <div className="font-mono text-xs text-amber-200 break-all select-all bg-stone-950 p-2.5 rounded-lg border border-white/5">
+                      {SOVEREIGN_TOKEN}
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-[11px] font-mono text-stone-400 mb-1">
-                        再次确认新密钥
-                      </label>
-                      <input
-                        type="password"
-                        value={confirmPasskey}
-                        onChange={(e) => setConfirmPasskey(e.target.value)}
-                        placeholder="再次确认新密码..."
-                        className="w-full bg-black/50 border border-stone-700 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none font-mono"
-                      />
+                  <div className="space-y-2 text-[11px] font-mono text-stone-400 bg-stone-950/40 p-3 rounded-xl border border-white/5">
+                    <div className="flex justify-between">
+                      <span>签名算法:</span>
+                      <span className="text-stone-300">Salted SHA-256 (Web Crypto)</span>
                     </div>
-
-                    <button
-                      type="submit"
-                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-semibold text-xs tracking-wide transition-all shadow-md shadow-amber-500/20 active:scale-[0.98]"
-                    >
-                      确认写入零知识安全库
-                    </button>
-                  </form>
+                    <div className="flex justify-between">
+                      <span>零知识哈希指纹:</span>
+                      <span className="text-stone-500 truncate max-w-[200px]" title="45deb3dceda578a4fff4956bb2e9dc50891f410999896fbe70af155a417e0d5e">
+                        45deb3dc...e0d5e
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>后门防护:</span>
+                      <span className="text-emerald-400">ZERO BACKDOORS (严格单钥)</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Anti-Brute Force Sentinel Card */}

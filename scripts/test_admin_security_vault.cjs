@@ -92,20 +92,27 @@ async function runSecurityVaultVerification() {
     console.log(`[SNAPSHOT] Saved: ${checkpointShot}`);
 
     // 3. Test Invalid Passkey & Brute Force Defense
+    // 3. Test Invalid Passkey & Rejection of Deprecated Weak Keys
     console.log('[ACTION] Testing invalid password rejection and brute force counter');
     await page.fill('input[placeholder*="输入授权凭证"]', 'invalid_hack_attempt');
     await page.click('button:has-text("验证并解锁控制台")');
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(600);
+
+    // Also test that deprecated keys (admin2026, chronicle2026master) are now REJECTED
+    console.log('[ACTION] Testing that deprecated keys (admin2026) are rejected');
+    await page.fill('input[placeholder*="输入授权凭证"]', 'admin2026');
+    await page.click('button:has-text("验证并解锁控制台")');
+    await page.waitForTimeout(600);
 
     const errorMsg = await page.textContent('text=凭证无效！剩余安全尝试机会');
-    console.log(`[CHECK] Brute force warning displayed? ${errorMsg ? 'PASS: ' + errorMsg : 'FAIL'}`);
+    console.log(`[CHECK] Old simple key rejected and brute force counter active? ${errorMsg ? 'PASS: ' + errorMsg : 'FAIL'}`);
 
     const bruteWarningShot = path.join(artifactsDir, 'admin_02_brute_force_warning.png');
     await page.screenshot({ path: bruteWarningShot });
     console.log(`[SNAPSHOT] Saved: ${bruteWarningShot}`);
 
-    // 4. Test Authorized Token Login
-    console.log('[ACTION] Entering authorized owner token');
+    // 4. Test ONLY Authorized Sovereign Token Login
+    console.log('[ACTION] Entering authorized single sovereign token');
     const ownerToken = '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ';
     await page.fill('input[placeholder*="输入授权凭证"]', ownerToken);
     await page.click('button:has-text("验证并解锁控制台")');
@@ -193,8 +200,8 @@ async function runSecurityVaultVerification() {
     await mobilePage.goto(`http://localhost:${port}/ai-chronicle-2026/?admin_vault=chronicle2026`, { waitUntil: 'networkidle' });
     await mobilePage.waitForTimeout(1000);
 
-    // Login on mobile
-    await mobilePage.fill('input[placeholder*="输入授权凭证"]', 'chronicle2026master');
+    // Login on mobile with single owner token
+    await mobilePage.fill('input[placeholder*="输入授权凭证"]', '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ');
     await mobilePage.click('button:has-text("验证并解锁控制台")');
     await mobilePage.waitForTimeout(1000);
 

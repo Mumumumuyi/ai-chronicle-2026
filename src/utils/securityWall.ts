@@ -11,15 +11,9 @@ const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes session duration
 
-// Salted SHA-256 hashes of pre-authorized master passkeys:
-// 1. User token: 4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ
-// 2. Master passkey: chronicle2026master
-// 3. Admin passkey: admin2026
-const AUTHORIZED_HASHES = [
-  '45deb3dceda578a4fff4956bb2e9dc50891f410999896fbe70af155a417e0d5e',
-  '751d48ea126343a706ace171c3e74f490f68bf47fca670a82cdda5c247a18d0e',
-  '35a8341a0d1f33d54e6fdfd2af69e28c7f4427890c7a24bbba396895d5b6439f',
-];
+// Strict Single-Key Authorization: ONLY the token provided by the sovereign owner
+// Owner Token: 4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ
+const SOVEREIGN_AUTHORIZED_HASH = '45deb3dceda578a4fff4956bb2e9dc50891f410999896fbe70af155a417e0d5e';
 
 export interface SecurityAuditEntry {
   id: string;
@@ -126,20 +120,8 @@ export async function verifyPasskey(inputKey: string): Promise<boolean> {
 
   const computedHash = await sha256(inputKey.trim());
   
-  // 1. Check built-in authorized hashes
-  let isAuthorized = AUTHORIZED_HASHES.includes(computedHash);
-
-  // 2. Check custom user-configured hash in localStorage
-  if (!isAuthorized) {
-    try {
-      const customHash = localStorage.getItem(CUSTOM_HASH_KEY);
-      if (customHash && customHash === computedHash) {
-        isAuthorized = true;
-      }
-    } catch {
-      // ignore
-    }
-  }
+  // Strict check: Only the sovereign token provided by the owner is valid
+  const isAuthorized = (computedHash === SOVEREIGN_AUTHORIZED_HASH);
 
   if (isAuthorized) {
     resetFailedAttempts();
