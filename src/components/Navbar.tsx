@@ -10,6 +10,7 @@ interface NavbarProps {
   onTabChange: (tab: ActiveTab) => void;
   activeEpochIndex: number;
   onSelectEpoch: (index: number) => void;
+  onSecretTrigger?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -17,15 +18,36 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   activeEpochIndex,
   onSelectEpoch,
+  onSecretTrigger,
 }) => {
   const { t } = useLanguage();
+  const clickCountRef = React.useRef<number>(0);
+  const clickTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleLogoClick = () => {
+    onTabChange('stage');
+
+    // Secret stealth trigger: 3 clicks within 1200ms
+    clickCountRef.current += 1;
+    if (clickCountRef.current >= 3) {
+      if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+      clickCountRef.current = 0;
+      if (onSecretTrigger) onSecretTrigger();
+      return;
+    }
+
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+    clickTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 1200);
+  };
 
   return (
     <header className="fixed top-4 left-0 right-0 z-40 px-3 sm:px-8 pointer-events-none flex justify-center no-print">
       <div className="w-full max-w-6xl pointer-events-auto flex items-center justify-between gap-2 sm:gap-4">
         {/* Logo & Brand Pill */}
         <div 
-          onClick={() => onTabChange('stage')}
+          onClick={handleLogoClick}
           className="liquid-glass rounded-full px-3 sm:px-4 py-2 flex items-center space-x-2 sm:space-x-2.5 cursor-pointer hover:bg-white/10 transition-all select-none group flex-shrink-0"
         >
           <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-stone-950 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform flex-shrink-0">
