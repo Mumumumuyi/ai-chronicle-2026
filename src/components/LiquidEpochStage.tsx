@@ -95,22 +95,22 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
         </p>
       </div>
 
-      {/* Mobile/Tablet Horizontal Epoch Fast Swiper (< lg screens) */}
-      <div className="lg:hidden flex items-center space-x-2 overflow-x-auto pb-2.5 mb-4 no-scrollbar px-1 -mx-1">
+      {/* Interactive Epoch Timeline Scrubber Ribbon (All screens) */}
+      <div className="flex items-center justify-start md:justify-center space-x-2 overflow-x-auto pb-3 mb-6 no-scrollbar px-1 -mx-1 select-none">
         {t.epochPills.map((p, idx) => {
           const isActive = activeEpochIndex === idx;
           return (
             <button
               key={idx}
               onClick={() => onSelectEpoch(idx)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 ${
                 isActive
-                  ? 'liquid-glass-amber text-amber-200 font-semibold shadow-md scale-105'
-                  : 'liquid-glass text-stone-400 hover:text-white'
+                  ? 'liquid-glass-amber text-amber-200 font-semibold shadow-md scale-105 border border-amber-400/40'
+                  : 'liquid-glass text-stone-300/80 hover:text-white hover:bg-white/10'
               }`}
             >
-              <span>{p.label}</span>
-              <span className="text-[9px] font-mono opacity-60">{p.era}</span>
+              <span className="font-semibold">{p.label}</span>
+              <span className="text-[10px] font-mono opacity-60">{p.era}</span>
             </button>
           );
         })}

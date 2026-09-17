@@ -115,6 +115,7 @@ const AppContent: React.FC = () => {
         onTabChange={handleTabChange}
         activeEpochIndex={activeEpochIndex}
         onSelectEpoch={setActiveEpochIndex}
+        isAboutOpen={showAboutModal}
         onSecretTrigger={handleOpenAdmin}
       />
 

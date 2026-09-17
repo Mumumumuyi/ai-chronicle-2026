@@ -21,15 +21,15 @@ export const LanguageDropdown: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative flex-shrink-0" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="liquid-glass rounded-full px-2.5 sm:px-3 py-1.5 flex items-center space-x-1.5 text-xs font-mono text-stone-200 hover:text-white hover:bg-white/10 transition-all border border-amber-400/25"
+        className="liquid-glass rounded-full px-2.5 sm:px-3 py-1.5 flex items-center space-x-1.5 text-xs font-mono text-stone-200 hover:text-white hover:bg-white/10 transition-all border border-amber-400/25 whitespace-nowrap flex-shrink-0 select-none"
         title="Switch Language / 切换语言"
       >
-        <span className="text-sm">{currentOption.flag}</span>
-        <span className="font-semibold">{currentOption.code.toUpperCase()}</span>
-        <ChevronDown className="w-3 h-3 text-stone-400" />
+        <span className="text-sm flex-shrink-0">{currentOption.flag}</span>
+        <span className="font-semibold whitespace-nowrap">{currentOption.code.toUpperCase()}</span>
+        <ChevronDown className="w-3 h-3 text-stone-400 flex-shrink-0" />
       </button>
 
       {isOpen && (
