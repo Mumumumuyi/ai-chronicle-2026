@@ -12,9 +12,10 @@ import { EPOCHS } from './data/timelineData';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 import { isSessionValid, checkSecretUrlTrigger } from './utils/securityWall';
 import { recordVisitorLog } from './utils/analyticsTracker';
+import { applyRouteMeta, hrefForTab, tabFromLocation } from './utils/routes';
 
 const AppContent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('stage');
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => tabFromLocation());
   const [activeEpochIndex, setActiveEpochIndex] = useState<number>(6); // Default to current 2024-2026 epoch
   const [activeMilestone, setActiveMilestone] = useState<Milestone | null>(null);
   
@@ -47,39 +48,42 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('keydown', handleAdminHotKey);
   }, [handleOpenAdmin]);
 
-  // 2. Secret URL Route Trigger, Deep-link Hash & Initial Telemetry on Mount
+  // 2. Secret URL Route Trigger, Back/Forward Navigation & Initial Telemetry on Mount
   useEffect(() => {
     if (checkSecretUrlTrigger()) {
       handleOpenAdmin();
     }
 
-    // Support deep-linking via URL hash (e.g. #ecosystem, #lab, #reader)
-    const currentHash = window.location.hash.replace('#', '');
-    if (['stage', 'lab', 'ecosystem', 'reader'].includes(currentHash)) {
-      setActiveTab(currentHash as ActiveTab);
-      recordVisitorLog({ path: `/${currentHash}` });
-    } else {
-      // Record initial visitor landing
-      recordVisitorLog({ path: '/stage (首屏启动)' });
+    // Old links used #reader / #lab style hashes; upgrade them to the real path
+    // in place so they keep working and stop competing as separate URLs.
+    if (window.location.hash) {
+      const landed = tabFromLocation();
+      window.history.replaceState({}, '', hrefForTab(landed));
     }
 
-    const handleHashChange = () => {
-      const h = window.location.hash.replace('#', '');
-      if (['stage', 'lab', 'ecosystem', 'reader'].includes(h)) {
-        setActiveTab(h as ActiveTab);
-      }
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    recordVisitorLog({ path: window.location.pathname });
+
+    const handlePopState = () => setActiveTab(tabFromLocation());
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, [handleOpenAdmin]);
 
-  // 3. Track Tab Telemetry
+  // 3. Keep <head> metadata in step with the active route
+  useEffect(() => {
+    applyRouteMeta(activeTab);
+  }, [activeTab]);
+
+  // 4. Navigate to a real URL and track the tab telemetry
   const handleTabChange = (tab: ActiveTab) => {
     setActiveTab(tab);
-    recordVisitorLog({ path: `/${tab}` });
+    const href = hrefForTab(tab);
+    if (window.location.pathname !== href) {
+      window.history.pushState({}, '', href);
+    }
+    recordVisitorLog({ path: href });
   };
 
-  // 4. Track Milestone View Telemetry
+  // 5. Track Milestone View Telemetry
   const handleOpenMilestone = (m: Milestone) => {
     setActiveMilestone(m);
     recordVisitorLog({

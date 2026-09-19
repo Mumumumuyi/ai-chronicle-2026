@@ -3,6 +3,7 @@ import { Sparkles, BookOpen, Layers, Zap, VolumeX } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LanguageDropdown } from './LanguageDropdown';
 import { soundFX } from '../utils/audioEffects';
+import { hrefForTab } from '../utils/routes';
 
 export type ActiveTab = 'stage' | 'lab' | 'reader' | 'ecosystem';
 
@@ -36,6 +37,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleTabClick = (tab: ActiveTab) => {
     soundFX.playClick(680);
     onTabChange(tab);
+  };
+
+  // Nav items are real links so crawlers can reach every route, but a plain
+  // left click stays a client-side transition. Modified clicks and middle
+  // clicks fall through to the browser's own open-in-new-tab behaviour.
+  const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, tab: ActiveTab) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    handleTabClick(tab);
   };
 
   const handleLogoClick = () => {
@@ -91,10 +101,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
-              <button
+              <a
                 key={item.id}
-                onClick={() => handleTabClick(item.id)}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 select-none ${
+                href={hrefForTab(item.id)}
+                onClick={(e) => handleNavLinkClick(e, item.id)}
+                aria-current={isActive ? 'page' : undefined}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 select-none cursor-pointer ${
                   isActive
                     ? 'liquid-glass-amber text-amber-200 font-semibold shadow-sm border border-amber-400/40'
                     : 'text-stone-300 hover:text-white hover:bg-white/5'
@@ -102,7 +114,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${item.id === 'ecosystem' ? 'text-amber-400' : ''}`} />
                 <span className="whitespace-nowrap">{item.label}</span>
-              </button>
+              </a>
             );
           })}
         </nav>
@@ -143,10 +155,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
-              <button
+              <a
                 key={item.id}
-                onClick={() => handleTabClick(item.id)}
-                className={`flex-1 py-1.5 px-2 rounded-full text-[10px] font-medium transition-all flex flex-col items-center justify-center gap-0.5 select-none ${
+                href={hrefForTab(item.id)}
+                onClick={(e) => handleNavLinkClick(e, item.id)}
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex-1 py-1.5 px-2 rounded-full text-[10px] font-medium transition-all flex flex-col items-center justify-center gap-0.5 select-none cursor-pointer ${
                   isActive
                     ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
                     : 'text-stone-400 hover:text-stone-200'
@@ -154,7 +168,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Icon className={`w-4 h-4 flex-shrink-0 ${item.id === 'ecosystem' ? 'text-amber-400' : ''}`} />
                 <span className="truncate whitespace-nowrap text-[10px]">{item.label}</span>
-              </button>
+              </a>
             );
           })}
         </nav>

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node scripts/prerender.cjs",
+    "build:subsite": "tsc && vite build --base=/ai-chronicle-2026/ && node scripts/prerender.cjs --base=/ai-chronicle-2026/",
     "preview": "vite preview"
   },
   "dependencies": {

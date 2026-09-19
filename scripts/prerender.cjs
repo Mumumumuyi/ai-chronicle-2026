@@ -1,0 +1,113 @@
+/**
+ * Build-time prerenderer.
+ *
+ * GitHub Pages has no server, so "a real URL that returns real HTML" has to be
+ * produced at build time. react-dom/server is not an option here: LanguageProvider
+ * reads localStorage during render and the sound layer builds an AudioContext, so
+ * server rendering would crash and every component would need an SSR audit.
+ * Instead we serve the built bundle, render each route in a real headless Chrome,
+ * and snapshot the resulting DOM to dist/<route>/index.html.
+ *
+ * Usage: node scripts/prerender.cjs [--base=/ai-chronicle-2026/]
+ */
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const { chromium } = require('playwright');
+
+const DIST = path.join(__dirname, '..', 'dist');
+const PORT = 4321;
+
+const baseArg = process.argv.find((a) => a.startsWith('--base='));
+const BASE = baseArg ? baseArg.slice('--base='.length) : '/';
+
+// Keep in step with ROUTES in src/utils/routes.ts
+const SEGMENTS = ['', 'reader', 'lab', 'ecosystem'];
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.jpg': 'image/jpeg',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
+  '.txt': 'text/plain; charset=utf-8',
+  '.xml': 'application/xml; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+};
+
+function startServer() {
+  const server = http.createServer((req, res) => {
+    let urlPath = decodeURIComponent(req.url.split('?')[0]);
+    if (BASE !== '/' && urlPath.startsWith(BASE)) urlPath = '/' + urlPath.slice(BASE.length);
+
+    let file = path.join(DIST, urlPath);
+    if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) {
+      // Unknown paths fall back to the SPA shell, the same as a Pages 404 would.
+      file = path.join(DIST, 'index.html');
+    }
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+    fs.createReadStream(file).pipe(res);
+  });
+  return new Promise((resolve) => server.listen(PORT, () => resolve(server)));
+}
+
+(async () => {
+  const server = await startServer();
+  const browser = await chromium.launch({ channel: 'chrome' });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+
+  // Snapshot the Chinese edition so the crawlable HTML matches <html lang="zh-CN">.
+  await context.addInitScript(() => {
+    try {
+      localStorage.setItem('ai_chronicle_lang', 'zh');
+    } catch {
+      /* private mode - the app falls back to its own default */
+    }
+  });
+
+  let failures = 0;
+
+  for (const segment of SEGMENTS) {
+    const url = `http://localhost:${PORT}${BASE}${segment ? segment + '/' : ''}`;
+    const page = await context.newPage();
+    const errors = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+
+    // Not networkidle: the AdSense script never settles on a network that
+    // blocks it, and the snapshot only needs the app's own DOM to be up.
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const root = document.getElementById('root');
+      return !!root && root.children.length > 0;
+    }, { timeout: 30000 });
+    await page.waitForTimeout(1500);
+
+    const html = await page.evaluate(() => '<!DOCTYPE html>\n' + document.documentElement.outerHTML);
+    const textLength = await page.evaluate(() => document.body.innerText.trim().length);
+    const title = await page.title();
+
+    const outDir = segment ? path.join(DIST, segment) : DIST;
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, 'index.html'), html, 'utf8');
+
+    const ok = textLength > 500 && errors.length === 0;
+    if (!ok) failures++;
+    console.log(
+      `[${ok ? 'OK  ' : 'FAIL'}] /${segment || ''}  text=${textLength}  title="${title.slice(0, 40)}"` +
+        (errors.length ? `  pageerror=${JSON.stringify(errors.slice(0, 2))}` : '')
+    );
+
+    await page.close();
+  }
+
+  // GitHub Pages serves 404.html for unknown paths; hand it the SPA shell so a
+  // deep link that outlives a rename still boots the app instead of dead-ending.
+  fs.copyFileSync(path.join(DIST, 'index.html'), path.join(DIST, '404.html'));
+
+  await browser.close();
+  server.close();
+
+  console.log(failures === 0 ? 'PRERENDER_PASS' : `PRERENDER_FAIL=${failures}`);
+  process.exit(failures === 0 ? 0 : 1);
+})();
