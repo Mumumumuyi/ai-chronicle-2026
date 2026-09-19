@@ -157,3 +157,36 @@ Claude Code 可调用 `computer-use-cc`（或提示用户在当前开启的 Edge
 2. **审核结果**：Google 人工审核通常需要数天，结果会在 AdSense 站点页面与邮件通知。
 3. **根域名与子站并存**：两个 URL 提供同一内容，当前靠 canonical 指向子站消解。
    若希望根域名成为唯一主站，需另行调整 canonical / hreflang / sitemap 并重新提交收录。
+
+---
+
+## 八、 令牌泄露修复（2026-09-19 追加 · 只增不改）
+
+### 根因
+`src/components/admin/AdminDashboard.tsx` 曾硬编码明文令牌，仅用于在后台界面回显 + 提供「复制凭证」按钮。
+它随 Vite 打包进 `dist/assets/*.js`，而该 bundle 在两个公开地址均可直接下载 —— 任何访客都能取得管理密钥。
+`src/utils/securityWall.ts` 的加盐 SHA-256 设计本身是正确的（只存指纹、不存明文），是被这个「便利功能」旁路了。
+
+### 已完成（本地已提交，提交 `1383728`）
+- 删除 `SOVEREIGN_TOKEN` 常量、`handleCopyToken`、令牌回显 UI 与孤儿 import `Copy`/`Check`。
+- 轮换 `SOVEREIGN_AUTHORIZED_HASH`（新令牌 240 位熵，明文不入库）。
+- `securityWall.ts` 注释中的明文一并删除。
+- `scripts/test_admin_security_vault.cjs`、`scripts/verify_real_monetization_and_admin.cjs` 改读 `ADMIN_TOKEN` 环境变量。
+- 重新构建：旧 bundle `index-Bj7P-n0l.js` / `index-Bgye3mY_.css` 已被 `index-DJLSc3vt.js` / `index-BhZQXoOl.css` 取代。
+
+验证证据：
+- `grep` 确认 `src/`、`scripts/`、`dist/` 均无旧明文。
+- 浏览器实算 `SHA-256(salt+新令牌)` == 代码常量 `1ca27dee…5188a`。
+- Playwright 实测：新令牌可解锁控制台、旧令牌被拒、渲染后的页面不含任何明文令牌；审计日志记录 `LOGIN_SUCCESS`。
+
+### 未完成（被权限拦截，需用户决定）
+1. **`git push` 两个仓库**：auto mode 分类器以 `[Git Destructive]` 拒绝。
+   后果：**线上仍在服务含明文令牌的旧 bundle**，实测
+   `https://mumumumuyi.github.io/assets/index-Bj7P-n0l.js` 与
+   `https://mumumumuyi.github.io/ai-chronicle-2026/assets/index-Bj7P-n0l.js` 均仍可读出旧令牌。
+2. **历史重写**：`git filter-branch` 同样被拒；`git filter-repo` 未安装且未擅自安装。
+   旧令牌仍存在于 `ai-chronicle-2026` 的 41 个提交历史中（已轮换，因此为失效凭据）。
+
+### 备份
+重写前已生成完整备份（含全部分支）：
+`<scratchpad>/repo-backups/ai-chronicle-2026.bundle`（41 提交）、`mumumumuyi.github.io.bundle`（3 提交）。
