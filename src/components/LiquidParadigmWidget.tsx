@@ -20,11 +20,19 @@ export const LiquidParadigmWidget: React.FC = () => {
     const totalAcc = Math.min(98, baseAcc + bonus);
     const latencySec = (0.2 + (thinkingTokens / 1200)).toFixed(1);
 
+    // Dynamic benchmark projections
+    const math500 = Math.min(96, Math.round(baseAcc * 0.8 + bonus * 1.2));
+    const sweBench = Math.min(78, Math.round(baseAcc * 0.55 + bonus * 0.95));
+    const gpqa = Math.min(82, Math.round(baseAcc * 0.65 + bonus * 1.05));
+
     return {
       baseAcc,
       totalAcc,
       gain: totalAcc - baseAcc,
       latencySec,
+      math500,
+      sweBench,
+      gpqa,
     };
   }, [modelSize, thinkingTokens]);
 
@@ -170,13 +178,18 @@ export const LiquidParadigmWidget: React.FC = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Slider Controls */}
           <div className="lg:col-span-6 space-y-6">
+            {/* Thinking Tokens Slider */}
             <div>
               <div className="flex justify-between text-xs font-mono mb-2">
-                <span className="text-stone-300">{isZh ? '思考 Token 预算 (Thinking Tokens):' : 'Thinking Tokens Budget:'}</span>
-                <span className="text-amber-300 font-bold text-sm">{thinkingTokens} Tokens</span>
+                <span className="text-stone-300 font-medium">
+                  {isZh ? '思考 Token 预算 (Thinking Tokens):' : 'Thinking Tokens Budget:'}
+                </span>
+                <span className="text-amber-300 font-bold text-sm font-mono">
+                  {thinkingTokens.toLocaleString()} Tokens
+                </span>
               </div>
               <input
                 type="range"
@@ -187,85 +200,152 @@ export const LiquidParadigmWidget: React.FC = () => {
                 onChange={(e) => setThinkingTokens(Number(e.target.value))}
                 className="w-full accent-amber-400 cursor-pointer h-2 bg-stone-800 rounded-full"
               />
-              <div className="flex justify-between text-[10px] font-mono text-stone-500 mt-1">
-                <span>{isZh ? '0 (快思考直觉)' : '0 (Fast Intuition)'}</span>
-                <span>{isZh ? '4,096 (标准自省)' : '4,096 (Standard)'}</span>
-                <span>{isZh ? '16,384 (深度推理树)' : '16,384 (Deep Tree Search)'}</span>
+              {/* Presets */}
+              <div className="flex flex-wrap gap-1.5 mt-2.5">
+                {[
+                  { label: isZh ? '0 (直觉)' : '0 (Fast)', val: 0 },
+                  { label: isZh ? '1K (轻度)' : '1K (Light)', val: 1024 },
+                  { label: isZh ? '4K (标准自省)' : '4K (Std)', val: 4096 },
+                  { label: isZh ? '8K (深度推理)' : '8K (Deep)', val: 8192 },
+                  { label: isZh ? '16K (树搜索极值)' : '16K (Max Tree)', val: 16384 },
+                ].map((item) => (
+                  <button
+                    key={item.val}
+                    type="button"
+                    onClick={() => setThinkingTokens(item.val)}
+                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
+                      thinkingTokens === item.val
+                        ? 'bg-amber-500/25 text-amber-200 border border-amber-400/40 font-bold'
+                        : 'bg-white/5 text-stone-400 hover:text-white border border-white/5'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
             </div>
 
+            {/* Base Model Parameters Slider */}
             <div>
               <div className="flex justify-between text-xs font-mono mb-2">
-                <span className="text-stone-300">{isZh ? '预训练基座规模 (Base Parameters):' : 'Base Model Parameters:'}</span>
-                <span className="text-amber-300 font-bold">{modelSize}B {isZh ? '参数' : 'Params'}</span>
+                <span className="text-stone-300 font-medium">
+                  {isZh ? '预训练基座规模 (Base Parameters):' : 'Base Model Parameters:'}
+                </span>
+                <span className="text-amber-300 font-bold text-sm font-mono">{modelSize}B {isZh ? '参数' : 'Params'}</span>
               </div>
               <input
                 type="range"
                 min="7"
-                max="400"
+                max="405"
                 step="1"
                 value={modelSize}
                 onChange={(e) => setModelSize(Number(e.target.value))}
                 className="w-full accent-amber-400 cursor-pointer h-2 bg-stone-800 rounded-full"
               />
-              <div className="flex justify-between text-[10px] font-mono text-stone-500 mt-1">
-                <span>{isZh ? '7B (端侧)' : '7B (Edge)'}</span>
-                <span>{isZh ? '70B (主力)' : '70B (Workhorse)'}</span>
-                <span>{isZh ? '400B+ (前沿)' : '400B+ (Frontier)'}</span>
+              {/* Presets */}
+              <div className="flex flex-wrap gap-1.5 mt-2.5">
+                {[
+                  { label: isZh ? '7B (端侧微型)' : '7B (Edge)', val: 7 },
+                  { label: isZh ? '14B (桌面主力)' : '14B (Desktop)', val: 14 },
+                  { label: isZh ? '70B (工业基准)' : '70B (Industry)', val: 70 },
+                  { label: isZh ? '236B (混合专家)' : '236B (MoE)', val: 236 },
+                  { label: isZh ? '405B (前沿顶峰)' : '405B (Frontier)', val: 405 },
+                ].map((item) => (
+                  <button
+                    key={item.val}
+                    type="button"
+                    onClick={() => setModelSize(item.val)}
+                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
+                      modelSize === item.val
+                        ? 'bg-amber-500/25 text-amber-200 border border-amber-400/40 font-bold'
+                        : 'bg-white/5 text-stone-400 hover:text-white border border-white/5'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
           {/* Real-time Meter Glass Panel */}
-          <div className="lg:col-span-6 liquid-glass p-6 rounded-2xl border border-amber-400/20 font-mono">
-            <div className="flex justify-between text-xs text-stone-400 mb-4 pb-2 border-b border-white/5">
-              <span>{isZh ? '复杂高阶数理题解能力推演' : 'Reasoning Benchmark Accuracy Projection'}</span>
-              <span className="text-amber-400 text-[10px]">LIVE INFERENCE</span>
+          <div className="lg:col-span-6 liquid-glass p-5 sm:p-6 rounded-2xl border border-amber-400/20 font-mono">
+            <div className="flex justify-between items-center text-xs text-stone-400 mb-4 pb-2 border-b border-white/10">
+              <span className="font-semibold text-stone-200">
+                {isZh ? '前沿基准能力投射 (Benchmark Projections)' : 'Reasoning Benchmark Projections'}
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                LIVE TELEMETRY
+              </span>
             </div>
 
-            <div className="space-y-4 mb-6">
+            {/* 3 Benchmark Progress Bars */}
+            <div className="space-y-3.5 mb-5">
+              {/* MATH-500 */}
               <div>
-                <div className="flex justify-between text-xs mb-1 text-stone-400">
-                  <span>{isZh ? '系统一 (System 1 · 仅前向直觉预测):' : 'System 1 (Forward intuition only):'}</span>
-                  <span>{scalingStats.baseAcc}%</span>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-stone-300">MATH-500 (竞赛数学):</span>
+                  <span className="text-amber-300 font-bold">{scalingStats.math500}%</span>
                 </div>
                 <div className="h-2 rounded-full bg-stone-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-stone-500 transition-all duration-300"
-                    style={{ width: `${scalingStats.baseAcc}%` }}
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-300"
+                    style={{ width: `${scalingStats.math500}%` }}
                   />
                 </div>
               </div>
 
+              {/* SWE-bench Verified */}
               <div>
-                <div className="flex justify-between text-xs mb-1 text-amber-300 font-medium">
-                  <span className="flex items-center">
-                    <Zap className="w-3.5 h-3.5 mr-1" />
-                    {isZh ? '系统二 (System 2 · 测试时思考树搜索):' : 'System 2 (Test-time search & verification):'}
-                  </span>
-                  <span className="font-bold text-sm">
-                    {scalingStats.totalAcc}%
-                    <span className="text-xs text-amber-400 ml-1 font-normal">
-                      (+{scalingStats.gain}%)
-                    </span>
-                  </span>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-stone-300">SWE-bench Verified (真实代码仓库解决率):</span>
+                  <span className="text-amber-300 font-bold">{scalingStats.sweBench}%</span>
                 </div>
-                <div className="h-2.5 rounded-full bg-stone-800 overflow-hidden relative">
-                  <div 
-                    className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full transition-all duration-300 shadow-sm shadow-amber-400/50"
-                    style={{ width: `${scalingStats.totalAcc}%` }}
+                <div className="h-2 rounded-full bg-stone-800 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-600 to-amber-300 transition-all duration-300"
+                    style={{ width: `${scalingStats.sweBench}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* GPQA Diamond */}
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-stone-300">GPQA Diamond (博士级高难科学推理):</span>
+                  <span className="text-amber-300 font-bold">{scalingStats.gpqa}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-stone-800 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-500 to-amber-200 transition-all duration-300"
+                    style={{ width: `${scalingStats.gpqa}%` }}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-stone-300 pt-3 border-t border-white/5">
-              <span className="text-[11px] text-stone-400">
-                {isZh ? `预计推演耗时: ${scalingStats.latencySec}s` : `Est. Latency: ${scalingStats.latencySec}s`}
+            {/* System 1 vs System 2 Comparison Badge */}
+            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5 mb-3 text-xs">
+              <div className="flex justify-between items-center text-[11px]">
+                <span className="text-stone-400">{isZh ? '系统一前向直觉准确率:' : 'System 1 (Forward Intuition):'}</span>
+                <span className="text-stone-300">{scalingStats.baseAcc}%</span>
+              </div>
+              <div className="flex justify-between items-center text-xs font-semibold text-amber-300">
+                <span className="flex items-center">
+                  <Zap className="w-3.5 h-3.5 mr-1 text-amber-400" />
+                  {isZh ? '系统二测试时搜索跃迁净增益:' : 'System 2 Search Net Gain:'}
+                </span>
+                <span>+{scalingStats.gain}%</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-stone-300 pt-2 border-t border-white/5">
+              <span className="text-[11px] text-stone-400 font-mono">
+                {isZh ? `预估响应延迟: ${scalingStats.latencySec}s` : `Est. Latency: ${scalingStats.latencySec}s`}
               </span>
               <span className="text-amber-300 text-[11px] flex items-center">
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                {isZh ? '思考越久，解答越准' : 'Longer compute yields higher accuracy'}
+                {isZh ? '思考越深，复杂难题越准' : 'Compute scales verification accuracy'}
               </span>
             </div>
           </div>
@@ -282,35 +362,38 @@ export const LiquidParadigmWidget: React.FC = () => {
           {isZh ? '提纲掣领：跨越 70 年的思想变迁一览' : 'Key Dialectics: 80 Years of Cognitive Architecture Evolution'}
         </p>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse font-sans">
+        <div className="relative overflow-x-auto rounded-xl border border-white/10 no-scrollbar">
+          <table className="w-full text-left text-xs border-collapse font-sans min-w-[720px]">
             <thead>
-              <tr className="border-b border-white/10 font-mono text-[11px] text-stone-400">
-                <th className="p-3">{isZh ? '比较维度' : 'Dimension'}</th>
-                <th className="p-3 text-amber-200">{isZh ? '符号主义 (1956)' : 'Symbolism (1956)'}</th>
-                <th className="p-3 text-amber-200">{isZh ? '连接主义 (1986)' : 'Connectionism (1986)'}</th>
-                <th className="p-3 text-amber-200">{isZh ? '统计学习 (1995)' : 'Statistical (1995)'}</th>
-                <th className="p-3 text-amber-200">{isZh ? '大语言模型 (2020)' : 'LLM Era (2020)'}</th>
-                <th className="p-3 text-amber-300 font-bold bg-amber-500/10 rounded-t-lg">{isZh ? '自主智能体 (2026.09)' : 'Agentic AI (2026.09)'}</th>
+              <tr className="border-b border-white/10 font-mono text-[11px] text-stone-400 bg-stone-900/90 backdrop-blur-md sticky top-0 z-10">
+                <th className="p-3.5 font-semibold text-stone-300">{isZh ? '比较维度' : 'Dimension'}</th>
+                <th className="p-3.5 text-amber-200/90">{isZh ? '符号主义 (1956)' : 'Symbolism (1956)'}</th>
+                <th className="p-3.5 text-amber-200/90">{isZh ? '连接主义 (1986)' : 'Connectionism (1986)'}</th>
+                <th className="p-3.5 text-amber-200/90">{isZh ? '统计学习 (1995)' : 'Statistical (1995)'}</th>
+                <th className="p-3.5 text-amber-200/90">{isZh ? '大语言模型 (2020)' : 'LLM Era (2020)'}</th>
+                <th className="p-3.5 text-amber-300 font-bold bg-amber-500/15 border-l border-r border-amber-400/20">{isZh ? '自主智能体 (2026.09)' : 'Agentic AI (2026.09)'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 font-mono text-[11px]">
               {PARADIGM_MATRIX.map((row, idx) => (
-                <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="p-3 font-semibold text-stone-300 bg-white/[0.01]">
+                <tr key={idx} className="hover:bg-white/[0.03] transition-colors">
+                  <td className="p-3.5 font-semibold text-stone-300 bg-white/[0.01] whitespace-nowrap">
                     {row.dimension}
                   </td>
-                  <td className="p-3 text-stone-400 font-sans">{row.symbolism}</td>
-                  <td className="p-3 text-stone-400 font-sans">{row.connectionism}</td>
-                  <td className="p-3 text-stone-400 font-sans">{row.statistical}</td>
-                  <td className="p-3 text-stone-300 font-sans">{row.llm}</td>
-                  <td className="p-3 text-amber-200 font-sans font-medium bg-amber-500/[0.03]">
+                  <td className="p-3.5 text-stone-400 font-sans leading-relaxed">{row.symbolism}</td>
+                  <td className="p-3.5 text-stone-400 font-sans leading-relaxed">{row.connectionism}</td>
+                  <td className="p-3.5 text-stone-400 font-sans leading-relaxed">{row.statistical}</td>
+                  <td className="p-3.5 text-stone-300 font-sans leading-relaxed">{row.llm}</td>
+                  <td className="p-3.5 text-amber-200 font-sans font-medium bg-amber-500/[0.05] border-l border-r border-amber-400/20 leading-relaxed">
                     {row.agentic2026}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="text-[10px] font-mono text-stone-500 mt-2 text-right md:hidden">
+          ← {isZh ? '左右滑动查看全部 5 大范式横向对比' : 'Scroll horizontally for all 5 paradigms'} →
         </div>
       </div>
     </div>

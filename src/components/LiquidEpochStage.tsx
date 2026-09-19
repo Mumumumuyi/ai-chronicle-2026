@@ -79,20 +79,84 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
 
   return (
     <div className="relative min-h-[90vh] flex flex-col justify-between pt-16 sm:pt-24 pb-28 md:pb-16 px-3 sm:px-6 md:px-8 max-w-7xl mx-auto">
-      {/* Top Hero Headline: Minimalist, Refined, Airy */}
-      <div className="text-center max-w-3xl mx-auto mb-5 sm:mb-8 animate-in fade-in duration-700">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full liquid-glass-pill text-[10px] sm:text-xs font-mono text-amber-300 mb-2 sm:mb-4 shadow-sm">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span className="tracking-wider uppercase">HISTORICAL CONTINUUM · 1943 — 2026.09.13</span>
+      {/* Top Hero Headline: World-Class Editorial Precision */}
+      <div className="text-center max-w-4xl mx-auto mb-6 sm:mb-10 animate-in fade-in duration-700">
+        {/* Editorial Eyebrow with Beacon */}
+        <div className="inline-flex items-center space-x-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full liquid-glass-pill text-[10px] sm:text-xs font-mono text-amber-300 mb-3 sm:mb-5 shadow-sm max-w-full">
+          <span className="relative flex h-2 w-2 flex-shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+          <span className="tracking-widest uppercase font-semibold text-stone-200 whitespace-nowrap flex-shrink-0">
+            CHRONICLE · VOL. IV
+          </span>
+          <span className="text-amber-500/60 flex-shrink-0">/</span>
+          <span className="tracking-wider uppercase text-amber-300/90 whitespace-nowrap">
+            1943 — 2026.09
+          </span>
+          <span className="hidden sm:inline tracking-wider uppercase text-amber-400/75">
+            · 80 YRS OF COGNITION
+          </span>
         </div>
 
-        <h1 className="text-2xl sm:text-5xl md:text-6xl font-serif text-stone-100 tracking-tight leading-[1.2] mb-2 sm:mb-3">
+        {/* Monumental Serif Headline */}
+        <h1 className="text-2xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-stone-100 tracking-tight leading-[1.12] mb-3 sm:mb-4">
           {heroTitle}
         </h1>
 
-        <p className="text-xs sm:text-sm md:text-base text-stone-300/80 font-light leading-relaxed max-w-xl mx-auto px-2">
+        {/* Lead Standfirst Description */}
+        <p className="text-xs sm:text-base md:text-lg text-stone-300/80 font-light leading-relaxed max-w-2xl mx-auto px-2 mb-6">
           {heroDesc}
         </p>
+
+        {/* Key Historical Metametrics (4-Column Bento Stat Strip) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-3xl mx-auto px-1 text-left">
+          <div className="liquid-glass rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-white/10 hover:border-amber-400/30 transition-colors">
+            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">
+              {currentLang === 'zh' ? '智性演进跨度' : 'Continuum'}
+            </div>
+            <div className="text-sm sm:text-base font-mono font-bold text-white">
+              80 <span className="text-xs font-normal text-amber-400">Years</span>
+            </div>
+            <div className="text-[10px] font-mono text-stone-400">1943 — 2026.09</div>
+          </div>
+
+          <div className="liquid-glass rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-white/10 hover:border-amber-400/30 transition-colors">
+            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">
+              {currentLang === 'zh' ? '断代历史纪元' : 'Epochs'}
+            </div>
+            <div className="text-sm sm:text-base font-mono font-bold text-white">
+              7 <span className="text-xs font-normal text-amber-400">Eras</span>
+            </div>
+            <div className="text-[10px] font-mono text-stone-400">
+              {currentLang === 'zh' ? '图灵火种 → 奇点' : 'Turing → Singularity'}
+            </div>
+          </div>
+
+          <div className="liquid-glass rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-white/10 hover:border-amber-400/30 transition-colors">
+            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">
+              {currentLang === 'zh' ? '算力扩张指数' : 'Compute Expansion'}
+            </div>
+            <div className="text-sm sm:text-base font-mono font-bold text-amber-300">
+              10<sup className="text-[10px]">26</sup> <span className="text-xs font-normal text-stone-300">FLOPs</span>
+            </div>
+            <div className="text-[10px] font-mono text-stone-400">
+              {currentLang === 'zh' ? '电子管 → Blackwell' : 'Vacuum Tubes → B200'}
+            </div>
+          </div>
+
+          <div className="liquid-glass rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-white/10 hover:border-amber-400/30 transition-colors">
+            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">
+              {currentLang === 'zh' ? '当代核心范式' : 'Current Frontier'}
+            </div>
+            <div className="text-sm sm:text-base font-mono font-bold text-white">
+              System 2 <span className="text-xs font-normal text-amber-400">Search</span>
+            </div>
+            <div className="text-[10px] font-mono text-stone-400">
+              {currentLang === 'zh' ? '测试时计算 + Agent' : 'Test-Time Compute'}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Interactive Epoch Timeline Scrubber Ribbon (All screens) */}
@@ -105,8 +169,8 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
               onClick={() => onSelectEpoch(idx)}
               className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 ${
                 isActive
-                  ? 'liquid-glass-amber text-amber-200 font-semibold shadow-md scale-105 border border-amber-400/40'
-                  : 'liquid-glass text-stone-300/80 hover:text-white hover:bg-white/10'
+                  ? 'liquid-glass-amber text-amber-200 font-semibold shadow-lg scale-105 border border-amber-400/50'
+                  : 'liquid-glass text-stone-300/80 hover:text-white hover:bg-white/10 border border-white/5'
               }`}
             >
               <span className="font-semibold">{p.label}</span>
@@ -124,14 +188,18 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           {/* Left Column: Epoch Essence & Epigraph */}
-          <div className="lg:col-span-5 space-y-3.5 sm:space-y-6">
+          <div className="lg:col-span-5 space-y-4 sm:space-y-6">
             <div>
-              <div className="flex items-center space-x-2.5 mb-1.5">
-                <span className="px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 whitespace-nowrap flex-shrink-0">
                   {currentEpoch.romanId}
                 </span>
-                <span className="text-xs font-mono text-stone-400 tracking-wider">
+                <span className="text-xs font-mono text-stone-400 tracking-wider whitespace-nowrap">
                   {currentEpoch.era}
+                </span>
+                <span className="text-stone-600 hidden sm:inline">·</span>
+                <span className="text-[11px] font-mono text-amber-400/80">
+                  {currentEpoch.dominantParadigm}
                 </span>
               </div>
 
@@ -149,29 +217,41 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
               {currentEpoch.summary}
             </p>
 
-            {/* Epigraph Callout Pill */}
-            <div className="p-3 sm:p-4 rounded-2xl liquid-glass border border-amber-400/20 text-stone-200">
-              <div className="text-[9px] sm:text-[10px] font-mono text-amber-400 uppercase tracking-wider mb-1 flex items-center">
-                <Compass className="w-3 h-3 mr-1" />
-                {currentLang === 'zh' ? '时代智性回响' : 'Philosophical Epigraph'}
+            {/* Illuminated Epigraph Callout Pill */}
+            <div className="p-3.5 sm:p-4 rounded-2xl liquid-glass border border-amber-400/25 text-stone-200 relative overflow-hidden">
+              <div className="text-[9px] sm:text-[10px] font-mono text-amber-400 uppercase tracking-wider mb-1.5 flex items-center">
+                <Compass className="w-3 h-3 mr-1.5" />
+                {currentLang === 'zh' ? '时代哲学沉思' : 'Philosophical Epigraph'}
               </div>
-              <p className="text-xs sm:text-sm font-serif italic leading-relaxed text-stone-100">
+              <blockquote className="text-xs sm:text-sm font-serif italic leading-relaxed text-stone-100">
                 &ldquo;{currentEpoch.epigraph.quote}&rdquo;
-              </p>
-              <div className="text-[10px] sm:text-[11px] font-mono text-stone-400 mt-1.5 text-right">
+              </blockquote>
+              <div className="text-[10px] sm:text-[11px] font-mono text-amber-300/80 mt-2 text-right">
                 —— {currentEpoch.epigraph.author}
               </div>
             </div>
 
-            {/* Meta Tags Pill Row */}
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1 text-xs font-mono">
-              <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-stone-300 flex items-center text-[11px] sm:text-xs">
-                <Cpu className="w-3 h-3 mr-1.5 text-amber-400" />
-                {t.computePower}: {currentEpoch.computeOrderOfMagnitude}
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-200 text-[11px] sm:text-xs">
-                {t.dominantParadigm}: {currentEpoch.dominantParadigm}
-              </span>
+            {/* Hardware & Compute Specs Bento Micro-Box */}
+            <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+              <div className="p-2.5 sm:p-3 rounded-xl liquid-glass border border-white/10">
+                <div className="text-[10px] text-stone-500 mb-0.5 flex items-center">
+                  <Cpu className="w-3 h-3 mr-1 text-amber-400" />
+                  {t.computePower}
+                </div>
+                <div className="text-amber-200 font-semibold text-xs truncate">
+                  {currentEpoch.computeOrderOfMagnitude}
+                </div>
+              </div>
+
+              <div className="p-2.5 sm:p-3 rounded-xl liquid-glass border border-white/10">
+                <div className="text-[10px] text-stone-500 mb-0.5 flex items-center">
+                  <Sparkles className="w-3 h-3 mr-1 text-amber-400" />
+                  {t.dominantParadigm}
+                </div>
+                <div className="text-stone-200 font-medium text-xs truncate">
+                  {currentEpoch.dominantParadigm}
+                </div>
+              </div>
             </div>
 
             {/* Mobile jump to milestones indicator */}
@@ -195,16 +275,17 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
             </div>
           </div>
 
-          {/* Right Column: Milestone Cards (Interactive Liquid Glass Pills) */}
+          {/* Right Column: Milestone Cards (Interactive Liquid Glass Bento) */}
           <div id="milestones-slab" className="lg:col-span-7 space-y-3 sm:space-y-3.5 scroll-mt-20">
             <div className="flex items-center justify-between text-xs font-mono text-stone-400 mb-1 px-1">
               <span className="flex items-center">
                 <Sparkles className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
                 {t.milestoneArchiveTitle}
               </span>
-              <span>{currentEpoch.milestones.length} Milestones</span>
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-300">
+                {currentEpoch.milestones.length} Dossiers
+              </span>
             </div>
-
 
             <div className="space-y-3">
               {currentEpoch.milestones.map((milestone) => (
@@ -215,12 +296,15 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2 text-xs font-mono mb-1">
-                        <span className="font-bold text-amber-300">{milestone.year}</span>
+                      <div className="flex flex-wrap items-center gap-2 text-xs font-mono mb-1.5">
+                        <span className="font-bold text-amber-300 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-400/25">
+                          {milestone.year}
+                        </span>
+                        <span className="text-stone-300 text-xs">
+                          {milestone.keyFigures[0]}
+                        </span>
                         <span className="text-stone-500">·</span>
-                        <span className="text-stone-400">{milestone.keyFigures[0]}</span>
-                        <span className="text-stone-500">·</span>
-                        <span className="text-[10px] px-2 py-0.2 rounded-full bg-white/5 text-stone-300">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-stone-400 border border-white/10">
                           {milestone.category}
                         </span>
                       </div>
@@ -229,7 +313,7 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
                         {milestone.title}
                       </h3>
 
-                      <p className="text-xs text-stone-300/80 font-light mt-1 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-stone-300/80 font-light mt-1.5 line-clamp-2 leading-relaxed">
                         {milestone.summary}
                       </p>
                     </div>
@@ -303,14 +387,19 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
           })}
         </div>
 
-        <button
-          onClick={handleNext}
-          disabled={activeEpochIndex === EPOCHS.length - 1}
-          className="liquid-glass-pill w-9 h-9 rounded-full flex items-center justify-center text-stone-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-all"
-          title="下一纪元"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleNext}
+            disabled={activeEpochIndex === EPOCHS.length - 1}
+            className="liquid-glass-pill w-9 h-9 rounded-full flex items-center justify-center text-stone-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-all"
+            title="下一纪元"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+          <span className="text-[10px] font-mono text-stone-500 hidden xl:inline-block pr-1 select-none">
+            [← / →]
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -12,6 +12,16 @@ interface MilestoneModalProps {
 
 export const MilestoneModal: React.FC<MilestoneModalProps> = ({ milestone, onClose }) => {
   const { currentLang } = useLanguage();
+
+  // Esc key listener
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   if (!milestone) return null;
   if (typeof document === 'undefined') return null;
 
@@ -31,22 +41,23 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ milestone, onClo
         <button
           onClick={onClose}
           className="absolute top-4 sm:top-5 right-4 sm:right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white transition-all"
+          title="关闭 (Esc)"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Top Dossier Code & Date */}
         <div className="flex flex-wrap items-center gap-2 mb-3 text-xs font-mono">
-          <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center text-[11px]">
+          <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center text-[11px] font-semibold">
             <Sparkles className="w-3 h-3 mr-1" />
-            {m.id.toUpperCase()}
+            DOSSIER · {m.id.toUpperCase()}
           </span>
           <span className="text-stone-400 flex items-center text-[11px]">
             <Calendar className="w-3.5 h-3.5 mr-1 text-amber-400" />
             {m.exactDate || m.year}
           </span>
           <span className="text-stone-500">·</span>
-          <span className="text-stone-300 text-[11px]">{isZh ? '范式' : 'Paradigm'}: {m.paradigm}</span>
+          <span className="text-amber-400/80 text-[11px]">{isZh ? '范式' : 'Paradigm'}: {m.paradigm}</span>
         </div>
 
         {/* Title & Subtitle */}
