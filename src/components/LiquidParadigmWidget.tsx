@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { PARADIGM_MATRIX } from '../data/timelineData';
-import { Zap, RotateCcw, CheckCircle2, Sparkles, Layers } from 'lucide-react';
+import { Zap, RotateCcw, Sparkles, GitBranch, Activity } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { soundFX } from '../utils/audioEffects';
 
 export const LiquidParadigmWidget: React.FC = () => {
   const { currentLang } = useLanguage();
@@ -25,6 +25,10 @@ export const LiquidParadigmWidget: React.FC = () => {
     const sweBench = Math.min(78, Math.round(baseAcc * 0.55 + bonus * 0.95));
     const gpqa = Math.min(82, Math.round(baseAcc * 0.65 + bonus * 1.05));
 
+    // Dynamic tree parameters
+    const treeDepth = Math.min(6, Math.max(1, Math.round(Math.log2(Math.max(64, thinkingTokens) / 64))));
+    const treeNodes = Math.min(32, Math.max(1, Math.round(thinkingTokens / 512)));
+
     return {
       baseAcc,
       totalAcc,
@@ -33,8 +37,47 @@ export const LiquidParadigmWidget: React.FC = () => {
       math500,
       sweBench,
       gpqa,
+      treeDepth,
+      treeNodes,
     };
   }, [modelSize, thinkingTokens]);
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  };
+
+  const handleSelectParadigm = (id: 'symbolism' | 'connectionism' | 'agentic2026') => {
+    soundFX.playClick(720);
+    setActiveParadigm(id);
+  };
+
+  const handleTokenChange = (val: number) => {
+    setThinkingTokens(val);
+    soundFX.playSliderTick(val / 16384);
+  };
+
+  const handleModelChange = (val: number) => {
+    setModelSize(val);
+    soundFX.playSliderTick(val / 405);
+  };
+
+  const handlePresetTokens = (val: number) => {
+    soundFX.playClick(800);
+    setThinkingTokens(val);
+  };
+
+  const handlePresetModel = (val: number) => {
+    soundFX.playClick(800);
+    setModelSize(val);
+  };
+
+  const handleReset = () => {
+    soundFX.playClick(500);
+    setModelSize(70);
+    setThinkingTokens(4096);
+  };
 
   const paradigmCards = isZh ? [
     {
@@ -44,7 +87,6 @@ export const LiquidParadigmWidget: React.FC = () => {
       quote: '“智能即离散符号的形式演算与启发式搜索。”',
       feat: '代表：逻辑理论家、专家系统 (MYCIN)、深蓝国际象棋',
       flaw: '软肋：常识获取瓶颈、组合爆炸、现实噪声易脆断',
-      color: 'from-amber-400/20 to-yellow-600/10',
     },
     {
       id: 'connectionism' as const,
@@ -53,7 +95,6 @@ export const LiquidParadigmWidget: React.FC = () => {
       quote: '“模式蕴含在千亿突触的连续流形与梯度自组织中。”',
       feat: '代表：感知机、反向传播 (BP)、CNN、Transformer',
       flaw: '软肋：黑盒不可解释、需要海量数据、容易出现概率幻觉',
-      color: 'from-orange-400/20 to-amber-700/10',
     },
     {
       id: 'agentic2026' as const,
@@ -62,7 +103,6 @@ export const LiquidParadigmWidget: React.FC = () => {
       quote: '“直觉生成假设，测试时搜索求证，真实环境闭环仲裁。”',
       feat: '代表：o1/R1 思维链树搜索、Runtime Loop、Lean 4 定理证明',
       flaw: '使命：人机共生安全对齐、多轮执行自省与物理具身扩展',
-      color: 'from-amber-300/30 to-rose-500/10',
     },
   ] : [
     {
@@ -72,30 +112,27 @@ export const LiquidParadigmWidget: React.FC = () => {
       quote: '"Intelligence is the formal manipulation and heuristic search of discrete symbols."',
       feat: 'Milestones: Logic Theorist, MYCIN Expert Systems, Deep Blue',
       flaw: 'Bottleneck: Knowledge acquisition bottleneck & combinatorial explosion',
-      color: 'from-amber-400/20 to-yellow-600/10',
     },
     {
       id: 'connectionism' as const,
       name: 'Connectionism (1986)',
       title: 'Neural Weights & Continuous Manifolds',
-      quote: '"Patterns emerge through gradient-based self-organization across synaptic manifolds."',
+      quote: '"Patterns emerge within continuous manifolds of billions of synapses."',
       feat: 'Milestones: Perceptron, Backpropagation, CNNs, Transformers',
-      flaw: 'Bottleneck: Black box opacity, data hunger, hallucinations',
-      color: 'from-orange-400/20 to-amber-700/10',
+      flaw: 'Bottleneck: Black-box uninterpretability & statistical hallucinations',
     },
     {
       id: 'agentic2026' as const,
-      name: 'Agentic AI (2026.09)',
-      title: 'Neuro-Symbolic & System 2 Reasoning',
+      name: 'Autonomous Agents (2026.09)',
+      title: 'Neuro-Symbolic Convergence & System 2',
       quote: '"Intuition hypothesizes, test-time tree search proves, runtime loops arbitrate."',
       feat: 'Milestones: o1/R1 Reasoning Chains, Runtime Loops, Lean 4 proofs',
       flaw: 'Frontier: Symbiotic safety alignment, multi-turn runtime self-repair',
-      color: 'from-amber-300/30 to-rose-500/10',
     },
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-24 space-y-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-24 space-y-12 animate-tab-enter">
       {/* Section Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full liquid-glass-pill text-xs font-mono text-amber-300">
@@ -112,21 +149,22 @@ export const LiquidParadigmWidget: React.FC = () => {
         </p>
       </div>
 
-      {/* Part 1: Interactive Fluid Paradigm Cards */}
+      {/* Part 1: Interactive Fluid Paradigm Cards with Spotlight */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {paradigmCards.map((card) => {
           const isSelected = activeParadigm === card.id;
           return (
             <div
               key={card.id}
-              onClick={() => setActiveParadigm(card.id)}
-              className={`p-6 rounded-3xl cursor-pointer transition-all duration-300 relative glass-sheen ${
+              onClick={() => handleSelectParadigm(card.id)}
+              onMouseMove={handleCardMouseMove}
+              className={`spotlight-card p-6 rounded-3xl cursor-pointer transition-all duration-300 relative glass-sheen ${
                 isSelected
                   ? 'liquid-glass-amber scale-[1.02] shadow-2xl border border-amber-300/40'
                   : 'liquid-glass hover:bg-white/[0.06] border border-white/10'
               }`}
             >
-              <div className="flex items-center justify-between text-xs font-mono mb-2">
+              <div className="flex items-center justify-between text-xs font-mono mb-2 relative z-10">
                 <span className={isSelected ? 'text-amber-300 font-bold' : 'text-stone-400'}>
                   {card.name}
                 </span>
@@ -135,15 +173,15 @@ export const LiquidParadigmWidget: React.FC = () => {
                 )}
               </div>
 
-              <h3 className="text-lg font-serif font-semibold text-white mb-2">
+              <h3 className="text-lg font-serif font-semibold text-white mb-2 relative z-10">
                 {card.title}
               </h3>
 
-              <p className="text-xs font-serif italic text-stone-300/90 mb-4 leading-relaxed">
+              <p className="text-xs font-serif italic text-stone-300/90 mb-4 leading-relaxed relative z-10">
                 {card.quote}
               </p>
 
-              <div className="space-y-1.5 pt-3 border-t border-white/10 text-[11px] font-mono text-stone-400">
+              <div className="space-y-1.5 pt-3 border-t border-white/10 text-[11px] font-mono text-stone-400 relative z-10">
                 <div className="text-stone-300 truncate">{card.feat}</div>
                 <div className="text-amber-200/80 truncate">{card.flaw}</div>
               </div>
@@ -167,11 +205,8 @@ export const LiquidParadigmWidget: React.FC = () => {
             </p>
           </div>
           <button
-            onClick={() => {
-              setModelSize(70);
-              setThinkingTokens(4096);
-            }}
-            className="liquid-glass-pill px-3 py-1 rounded-full text-xs font-mono text-stone-400 hover:text-white flex items-center space-x-1 self-start sm:self-auto"
+            onClick={handleReset}
+            className="liquid-glass-pill px-3 py-1 rounded-full text-xs font-mono text-stone-400 hover:text-white flex items-center space-x-1 self-start sm:self-auto hover:scale-105 active:scale-95 transition-all"
           >
             <RotateCcw className="w-3 h-3" />
             <span>{isZh ? '重置' : 'Reset'}</span>
@@ -197,7 +232,7 @@ export const LiquidParadigmWidget: React.FC = () => {
                 max="16384"
                 step="256"
                 value={thinkingTokens}
-                onChange={(e) => setThinkingTokens(Number(e.target.value))}
+                onChange={(e) => handleTokenChange(Number(e.target.value))}
                 className="w-full accent-amber-400 cursor-pointer h-2 bg-stone-800 rounded-full"
               />
               {/* Presets */}
@@ -212,7 +247,7 @@ export const LiquidParadigmWidget: React.FC = () => {
                   <button
                     key={item.val}
                     type="button"
-                    onClick={() => setThinkingTokens(item.val)}
+                    onClick={() => handlePresetTokens(item.val)}
                     className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
                       thinkingTokens === item.val
                         ? 'bg-amber-500/25 text-amber-200 border border-amber-400/40 font-bold'
@@ -239,7 +274,7 @@ export const LiquidParadigmWidget: React.FC = () => {
                 max="405"
                 step="1"
                 value={modelSize}
-                onChange={(e) => setModelSize(Number(e.target.value))}
+                onChange={(e) => handleModelChange(Number(e.target.value))}
                 className="w-full accent-amber-400 cursor-pointer h-2 bg-stone-800 rounded-full"
               />
               {/* Presets */}
@@ -254,7 +289,7 @@ export const LiquidParadigmWidget: React.FC = () => {
                   <button
                     key={item.val}
                     type="button"
-                    onClick={() => setModelSize(item.val)}
+                    onClick={() => handlePresetModel(item.val)}
                     className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
                       modelSize === item.val
                         ? 'bg-amber-500/25 text-amber-200 border border-amber-400/40 font-bold'
@@ -266,6 +301,61 @@ export const LiquidParadigmWidget: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            {/* Dynamic Interactive System 2 Search Tree Visualizer */}
+            <div className="p-4 rounded-2xl liquid-glass border border-white/10 space-y-3 font-mono">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center space-x-1.5 text-amber-300 font-semibold">
+                  <GitBranch className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{isZh ? '测试时思维链树展开模拟' : 'Test-Time Search Tree Visualizer'}</span>
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-stone-400 border border-white/10">
+                  {isZh ? `搜索深度: ${scalingStats.treeDepth} 级` : `Depth: ${scalingStats.treeDepth}`}
+                </span>
+              </div>
+
+              {/* Dynamic Branching Node Visual */}
+              <div className="h-16 flex items-center justify-between px-3 bg-black/40 rounded-xl border border-white/5 relative overflow-hidden">
+                {/* Root node */}
+                <div className="flex flex-col items-center z-10">
+                  <div className="w-3.5 h-3.5 rounded-full bg-amber-400 flex items-center justify-center shadow-lg shadow-amber-400/50">
+                    <span className="w-1.5 h-1.5 rounded-full bg-black" />
+                  </div>
+                  <span className="text-[8px] text-amber-300 mt-1">Root</span>
+                </div>
+
+                {/* Connecting Search Beams */}
+                <div className="flex-1 h-0.5 mx-2 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500/40 relative">
+                  <div 
+                    className="absolute inset-y-0 left-0 bg-amber-200 shadow-md transition-all duration-300"
+                    style={{ width: `${Math.min(100, (thinkingTokens / 16384) * 100)}%` }}
+                  />
+                </div>
+
+                {/* Search Exploration Nodes */}
+                <div className="flex items-center space-x-2 z-10">
+                  {Array.from({ length: Math.min(5, scalingStats.treeDepth) }).map((_, nIdx) => (
+                    <div key={nIdx} className="flex flex-col items-center">
+                      <div 
+                        className={`w-3 h-3 rounded-full transition-all duration-300 flex items-center justify-center ${
+                          nIdx < scalingStats.treeDepth
+                            ? 'bg-amber-400/80 ring-2 ring-amber-400/30 scale-110'
+                            : 'bg-stone-700 opacity-40'
+                        }`}
+                      >
+                        <span className="w-1 h-1 rounded-full bg-white" />
+                      </div>
+                      <span className="text-[8px] text-stone-400 mt-1">D{nIdx + 1}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between text-[10px] text-stone-400">
+                <span>{isZh ? `已探索思考节点: ~${scalingStats.treeNodes * 128} 状态` : `Explored States: ~${scalingStats.treeNodes * 128}`}</span>
+                <span className="text-amber-300">{isZh ? `搜索耗时: ~${scalingStats.latencySec}s` : `Latency: ~${scalingStats.latencySec}s`}</span>
+              </div>
+            </div>
           </div>
 
           {/* Real-time Meter Glass Panel */}
@@ -274,127 +364,117 @@ export const LiquidParadigmWidget: React.FC = () => {
               <span className="font-semibold text-stone-200">
                 {isZh ? '前沿基准能力投射 (Benchmark Projections)' : 'Reasoning Benchmark Projections'}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                LIVE TELEMETRY
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center space-x-1">
+                <Activity className="w-2.5 h-2.5 animate-pulse" />
+                <span>LIVE TELEMETRY</span>
               </span>
             </div>
 
-            {/* 3 Benchmark Progress Bars */}
-            <div className="space-y-3.5 mb-5">
-              {/* MATH-500 */}
+            <div className="space-y-4">
+              {/* Benchmark 1 */}
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-stone-300">MATH-500 (竞赛数学):</span>
                   <span className="text-amber-300 font-bold">{scalingStats.math500}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-stone-800 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-300"
+                <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/5">
+                  <div 
+                    className="bg-gradient-to-r from-amber-500 to-amber-300 h-full rounded-full transition-all duration-400"
                     style={{ width: `${scalingStats.math500}%` }}
                   />
                 </div>
               </div>
 
-              {/* SWE-bench Verified */}
+              {/* Benchmark 2 */}
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-stone-300">SWE-bench Verified (真实代码仓库解决率):</span>
                   <span className="text-amber-300 font-bold">{scalingStats.sweBench}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-stone-800 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-amber-600 to-amber-300 transition-all duration-300"
+                <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/5">
+                  <div 
+                    className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-200 h-full rounded-full transition-all duration-400"
                     style={{ width: `${scalingStats.sweBench}%` }}
                   />
                 </div>
               </div>
 
-              {/* GPQA Diamond */}
+              {/* Benchmark 3 */}
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-stone-300">GPQA Diamond (博士级高难科学推理):</span>
                   <span className="text-amber-300 font-bold">{scalingStats.gpqa}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-stone-800 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-amber-500 to-amber-200 transition-all duration-300"
+                <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/5">
+                  <div 
+                    className="bg-gradient-to-r from-amber-500 to-yellow-300 h-full rounded-full transition-all duration-400"
                     style={{ width: `${scalingStats.gpqa}%` }}
                   />
                 </div>
               </div>
             </div>
 
-            {/* System 1 vs System 2 Comparison Badge */}
-            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5 mb-3 text-xs">
-              <div className="flex justify-between items-center text-[11px]">
-                <span className="text-stone-400">{isZh ? '系统一前向直觉准确率:' : 'System 1 (Forward Intuition):'}</span>
-                <span className="text-stone-300">{scalingStats.baseAcc}%</span>
+            {/* Intuition vs Search Delta */}
+            <div className="mt-6 p-4 rounded-xl bg-black/30 border border-white/5 space-y-2 text-xs">
+              <div className="flex justify-between text-stone-400">
+                <span>{isZh ? '系统一前向直觉准确率:' : 'System 1 Instinct Acc:'}</span>
+                <span className="text-stone-200">{scalingStats.baseAcc}%</span>
               </div>
-              <div className="flex justify-between items-center text-xs font-semibold text-amber-300">
+              <div className="flex justify-between text-amber-300 font-bold pt-1 border-t border-white/5">
                 <span className="flex items-center">
-                  <Zap className="w-3.5 h-3.5 mr-1 text-amber-400" />
-                  {isZh ? '系统二测试时搜索跃迁净增益:' : 'System 2 Search Net Gain:'}
+                  <Zap className="w-3 h-3 mr-1 text-amber-400" />
+                  {isZh ? '系统二测试时搜索净增益:' : 'System 2 Test-Time Delta:'}
                 </span>
                 <span>+{scalingStats.gain}%</span>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-stone-300 pt-2 border-t border-white/5">
-              <span className="text-[11px] text-stone-400 font-mono">
-                {isZh ? `预估响应延迟: ${scalingStats.latencySec}s` : `Est. Latency: ${scalingStats.latencySec}s`}
-              </span>
-              <span className="text-amber-300 text-[11px] flex items-center">
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                {isZh ? '思考越深，复杂难题越准' : 'Compute scales verification accuracy'}
-              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Part 3: Minimalist 5 Paradigms Matrix Table */}
-      <div className="liquid-glass rounded-3xl p-6 sm:p-8 border border-white/10">
-        <div className="flex items-center space-x-2 text-white font-serif text-lg font-semibold mb-2">
-          <Layers className="w-4 h-4 text-amber-400" />
-          <span>{isZh ? '五大历史范式全景对照矩阵' : 'Five Evolutionary Paradigms Comparison Matrix'}</span>
-        </div>
-        <p className="text-xs font-mono text-stone-400 mb-6">
-          {isZh ? '提纲掣领：跨越 70 年的思想变迁一览' : 'Key Dialectics: 80 Years of Cognitive Architecture Evolution'}
-        </p>
-
-        <div className="relative overflow-x-auto rounded-xl border border-white/10 no-scrollbar">
-          <table className="w-full text-left text-xs border-collapse font-sans min-w-[720px]">
-            <thead>
-              <tr className="border-b border-white/10 font-mono text-[11px] text-stone-400 bg-stone-900/90 backdrop-blur-md sticky top-0 z-10">
-                <th className="p-3.5 font-semibold text-stone-300">{isZh ? '比较维度' : 'Dimension'}</th>
-                <th className="p-3.5 text-amber-200/90">{isZh ? '符号主义 (1956)' : 'Symbolism (1956)'}</th>
-                <th className="p-3.5 text-amber-200/90">{isZh ? '连接主义 (1986)' : 'Connectionism (1986)'}</th>
-                <th className="p-3.5 text-amber-200/90">{isZh ? '统计学习 (1995)' : 'Statistical (1995)'}</th>
-                <th className="p-3.5 text-amber-200/90">{isZh ? '大语言模型 (2020)' : 'LLM Era (2020)'}</th>
-                <th className="p-3.5 text-amber-300 font-bold bg-amber-500/15 border-l border-r border-amber-400/20">{isZh ? '自主智能体 (2026.09)' : 'Agentic AI (2026.09)'}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5 font-mono text-[11px]">
-              {PARADIGM_MATRIX.map((row, idx) => (
-                <tr key={idx} className="hover:bg-white/[0.03] transition-colors">
-                  <td className="p-3.5 font-semibold text-stone-300 bg-white/[0.01] whitespace-nowrap">
-                    {row.dimension}
-                  </td>
-                  <td className="p-3.5 text-stone-400 font-sans leading-relaxed">{row.symbolism}</td>
-                  <td className="p-3.5 text-stone-400 font-sans leading-relaxed">{row.connectionism}</td>
-                  <td className="p-3.5 text-stone-400 font-sans leading-relaxed">{row.statistical}</td>
-                  <td className="p-3.5 text-stone-300 font-sans leading-relaxed">{row.llm}</td>
-                  <td className="p-3.5 text-amber-200 font-sans font-medium bg-amber-500/[0.05] border-l border-r border-amber-400/20 leading-relaxed">
-                    {row.agentic2026}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="text-[10px] font-mono text-stone-500 mt-2 text-right md:hidden">
-          ← {isZh ? '左右滑动查看全部 5 大范式横向对比' : 'Scroll horizontally for all 5 paradigms'} →
-        </div>
+      {/* Part 3: Paradigm Matrix Deep Comparison */}
+      <div className="liquid-glass rounded-3xl p-6 sm:p-8 border border-white/10 shadow-xl overflow-x-auto">
+        <h3 className="text-lg font-serif font-semibold text-white mb-4">
+          {isZh ? '三大 AI 范式横向对比矩阵 (1943 - 2026)' : 'AI Paradigm Comparison Matrix'}
+        </h3>
+        <table className="w-full text-left text-xs font-mono border-collapse min-w-[600px]">
+          <thead>
+            <tr className="border-b border-white/10 text-stone-400">
+              <th className="py-2.5 px-3">{isZh ? '对比维度' : 'Dimension'}</th>
+              <th className="py-2.5 px-3 text-amber-300">{isZh ? '符号主义 (1956)' : 'Symbolism (1956)'}</th>
+              <th className="py-2.5 px-3 text-amber-300">{isZh ? '连接主义 (1986)' : 'Connectionism (1986)'}</th>
+              <th className="py-2.5 px-3 text-amber-200 font-bold bg-amber-500/10 rounded-t-lg">
+                {isZh ? '自主智能体 (2026.09)' : 'Autonomous Agents (2026.09)'}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5 text-stone-300">
+            <tr>
+              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '核心表征' : 'Representation'}</td>
+              <td className="py-3 px-3">{isZh ? '离散符号、谓词公理' : 'Discrete symbols'}</td>
+              <td className="py-3 px-3">{isZh ? '连续稠密向量、流形' : 'Dense continuous vectors'}</td>
+              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '神经直觉 + 离散检验/树搜索' : 'Neuro-symbolic search trees'}</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '知识获取' : 'Acquisition'}</td>
+              <td className="py-3 px-3">{isZh ? '专家手工形式化编码' : 'Manual expert rules'}</td>
+              <td className="py-3 px-3">{isZh ? '海量互联网文本梯度自监督' : 'Large-scale self-supervision'}</td>
+              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '环境自闭环强化学习 + 慢思考自省' : 'RL on verifiable environments'}</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '推理机制' : 'Reasoning'}</td>
+              <td className="py-3 px-3">{isZh ? '形式推导、归结消解' : 'Strict deductive deduction'}</td>
+              <td className="py-3 px-3">{isZh ? '单向前向传播 (System 1)' : 'Forward pass (System 1)'}</td>
+              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '测试时动态多步自反思 (System 2)' : 'Runtime test-time search (System 2)'}</td>
+            </tr>
+            <tr>
+              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '致命软肋' : 'Key Flaw'}</td>
+              <td className="py-3 px-3">{isZh ? '常识获取瓶颈、组合爆炸' : 'Combinatorial explosion'}</td>
+              <td className="py-3 px-3">{isZh ? '概率幻觉、黑盒不可溯' : 'Hallucination & lack of rigor'}</td>
+              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '长程执行漂移、对齐与安全边界' : 'Long-horizon drift & alignment'}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

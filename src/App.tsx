@@ -121,22 +121,34 @@ const AppContent: React.FC = () => {
       />
 
       {/* 3. Main Stage Content */}
-      <main className="relative">
+      <main className="relative" key={activeTab}>
         {activeTab === 'stage' && (
-          <LiquidEpochStage
-            activeEpochIndex={activeEpochIndex}
-            onSelectEpoch={setActiveEpochIndex}
-            onOpenMilestone={handleOpenMilestone}
-            onOpenReader={() => handleTabChange('reader')}
-          />
+          <div className="animate-tab-enter">
+            <LiquidEpochStage
+              activeEpochIndex={activeEpochIndex}
+              onSelectEpoch={setActiveEpochIndex}
+              onOpenMilestone={handleOpenMilestone}
+              onOpenReader={() => handleTabChange('reader')}
+            />
+          </div>
         )}
 
-        {activeTab === 'lab' && <LiquidParadigmWidget />}
+        {activeTab === 'lab' && (
+          <div className="animate-tab-enter">
+            <LiquidParadigmWidget />
+          </div>
+        )}
 
-        {activeTab === 'ecosystem' && <AffiliateEcosystem />}
+        {activeTab === 'ecosystem' && (
+          <div className="animate-tab-enter">
+            <AffiliateEcosystem />
+          </div>
+        )}
 
         {activeTab === 'reader' && (
-          <ArticleReader onClose={() => handleTabChange('stage')} />
+          <div className="animate-tab-enter">
+            <ArticleReader onClose={() => handleTabChange('stage')} />
+          </div>
         )}
       </main>
 

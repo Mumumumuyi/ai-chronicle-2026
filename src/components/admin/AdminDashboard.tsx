@@ -44,6 +44,8 @@ import {
   resetFailedAttempts,
   SecurityAuditEntry,
 } from '../../utils/securityWall';
+import { useAnimatedPresence } from '../../hooks/useAnimatedPresence';
+import { soundFX } from '../../utils/audioEffects';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -53,6 +55,7 @@ interface AdminDashboardProps {
 type TabType = 'analytics' | 'crm' | 'security';
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
+  const { isMounted, isAnimatingOut } = useAnimatedPresence(isOpen, 220);
   const [activeTab, setActiveTab] = useState<TabType>('analytics');
   const [visitorLogs, setVisitorLogs] = useState<VisitorLogEntry[]>([]);
   const [stats, setStats] = useState<TelemetryStats | null>(null);
@@ -65,6 +68,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   // Sovereign Token State
   const [tokenCopied, setTokenCopied] = useState(false);
   const SOVEREIGN_TOKEN = '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ';
+  
+  useEffect(() => {
+    if (isOpen) {
+      soundFX.playModalOpen();
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    soundFX.playModalClose();
+    onClose();
+  };
   
   const handleCopyToken = () => {
     try {
@@ -150,9 +164,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  if (!isMounted) return null;
+
   return createPortal(
-    <div className="fixed inset-0 z-[200] overflow-y-auto bg-[#0C0A09]/95 text-stone-100 backdrop-blur-2xl selection:bg-amber-500/30 selection:text-amber-200">
-      <div className="min-h-screen flex flex-col">
+    <div className={`fixed inset-0 z-[200] overflow-y-auto bg-[#0C0A09]/95 text-stone-100 backdrop-blur-2xl selection:bg-amber-500/30 selection:text-amber-200 ${
+      isAnimatingOut ? 'animate-modal-backdrop-exit' : 'animate-modal-backdrop-enter'
+    }`}>
+      <div className={`min-h-screen flex flex-col ${
+        isAnimatingOut ? 'animate-modal-box-exit' : 'animate-modal-box-enter'
+      }`}>
         {/* Top Sovereign Navigation Header */}
         <header className="sticky top-0 z-50 border-b border-amber-500/20 bg-stone-950/80 backdrop-blur-md px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 shadow-lg shadow-black/50">
           <div className="flex items-center space-x-3">
@@ -236,7 +256,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
             </button>
 
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-1.5 rounded-lg bg-stone-800/60 hover:bg-stone-700/60 text-stone-400 hover:text-white transition-colors"
               title="暂时返回前台网页"
             >

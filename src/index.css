@@ -299,6 +299,208 @@ body {
 }
 
 /* -------------------------------------------------------------
+   DYNAMIC INTERACTIVE MOTION SYSTEM (Entrance & Exit Keyframes)
+---------------------------------------------------------------- */
+
+/* 1. Page & Tab Entrance */
+@keyframes tab-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-tab-enter {
+  animation: tab-enter 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* 2. Directional Epoch Transitions */
+@keyframes epoch-slide-right {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes epoch-slide-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-epoch-slide-right {
+  animation: epoch-slide-right 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-epoch-slide-left {
+  animation: epoch-slide-left 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* 3. Modal Backdrop Entrance & Exit */
+@keyframes modal-backdrop-enter {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+@keyframes modal-backdrop-exit {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+.animate-modal-backdrop-enter {
+  animation: modal-backdrop-enter 0.22s ease-out forwards;
+}
+
+.animate-modal-backdrop-exit {
+  animation: modal-backdrop-exit 0.2s ease-in forwards;
+}
+
+/* 4. Modal Box Entrance & Exit */
+@keyframes modal-box-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.93) translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modal-box-exit {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+}
+
+.animate-modal-box-enter {
+  animation: modal-box-enter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-modal-box-exit {
+  animation: modal-box-exit 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* 5. Staggered Entrance for Milestone Dossiers */
+@keyframes dossier-cascade {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dossier-0 { animation: dossier-cascade 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.02s backwards; }
+.animate-dossier-1 { animation: dossier-cascade 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.07s backwards; }
+.animate-dossier-2 { animation: dossier-cascade 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.12s backwards; }
+.animate-dossier-3 { animation: dossier-cascade 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.17s backwards; }
+.animate-dossier-4 { animation: dossier-cascade 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.22s backwards; }
+
+/* 6. Equalizer Wave Animation for Audio Feedback Toggle */
+@keyframes sound-wave-1 {
+  0%, 100% { height: 4px; }
+  50% { height: 14px; }
+}
+
+@keyframes sound-wave-2 {
+  0%, 100% { height: 12px; }
+  50% { height: 5px; }
+}
+
+@keyframes sound-wave-3 {
+  0%, 100% { height: 6px; }
+  50% { height: 16px; }
+}
+
+.animate-sound-1 { animation: sound-wave-1 0.7s ease-in-out infinite; }
+.animate-sound-2 { animation: sound-wave-2 0.85s ease-in-out infinite 0.15s; }
+.animate-sound-3 { animation: sound-wave-3 0.65s ease-in-out infinite 0.3s; }
+
+/* 7. Cursor Spotlight Radial Glow for Interactive Bento Cards */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    rgba(245, 158, 11, 0.12),
+    transparent 80%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* 8. Pulsing Glowing Badge Ring */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* -------------------------------------------------------------
    ACADEMIC PRINT & PDF EXPORT STYLESHEET
    Converts the 18,000-word treatise into an MIT/Harvard style whitepaper
 ---------------------------------------------------------------- */

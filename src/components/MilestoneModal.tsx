@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Milestone } from '../types';
 import { X, Calendar, User, Cpu, FileText, Award, Tag, Sparkles } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getLocalizedMilestone } from '../data/timelineTranslations';
+import { useAnimatedPresence } from '../hooks/useAnimatedPresence';
+import { soundFX } from '../utils/audioEffects';
 
 interface MilestoneModalProps {
   milestone: Milestone | null;
@@ -12,35 +14,60 @@ interface MilestoneModalProps {
 
 export const MilestoneModal: React.FC<MilestoneModalProps> = ({ milestone, onClose }) => {
   const { currentLang } = useLanguage();
+  const lastMilestoneRef = useRef<Milestone | null>(null);
+
+  if (milestone) {
+    lastMilestoneRef.current = milestone;
+  }
+
+  const { isMounted, isAnimatingOut } = useAnimatedPresence(Boolean(milestone), 220);
+
+  // Play sound effects on open/close
+  useEffect(() => {
+    if (milestone) {
+      soundFX.playModalOpen();
+    }
+  }, [milestone]);
+
+  const handleClose = () => {
+    soundFX.playModalClose();
+    onClose();
+  };
 
   // Esc key listener
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape' && isMounted && !isAnimatingOut) {
+        handleClose();
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [isMounted, isAnimatingOut]);
 
-  if (!milestone) return null;
+  if (!isMounted || !lastMilestoneRef.current) return null;
   if (typeof document === 'undefined') return null;
 
-  const m = getLocalizedMilestone(milestone, currentLang);
+  const m = getLocalizedMilestone(lastMilestoneRef.current, currentLang);
   const isZh = currentLang === 'zh';
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-stone-950/90 backdrop-blur-md animate-in fade-in duration-200"
-      onClick={onClose}
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-stone-950/85 ${
+        isAnimatingOut ? 'animate-modal-backdrop-exit' : 'animate-modal-backdrop-enter'
+      }`}
+      onClick={handleClose}
     >
       <div 
-        className="relative w-full max-w-2xl max-h-[88vh] overflow-y-auto liquid-glass-strong rounded-3xl p-5 sm:p-8 text-stone-100 shadow-2xl border border-amber-400/30 glass-sheen"
+        className={`relative w-full max-w-2xl max-h-[88vh] overflow-y-auto liquid-glass-strong rounded-3xl p-5 sm:p-8 text-stone-100 shadow-2xl border border-amber-400/30 glass-sheen ${
+          isAnimatingOut ? 'animate-modal-box-exit' : 'animate-modal-box-enter'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Close Button */}
         <button
-          onClick={onClose}
-          className="absolute top-4 sm:top-5 right-4 sm:right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white transition-all"
+          onClick={handleClose}
+          className="absolute top-4 sm:top-5 right-4 sm:right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white transition-all hover:scale-105"
           title="关闭 (Esc)"
         >
           <X className="w-4 h-4" />

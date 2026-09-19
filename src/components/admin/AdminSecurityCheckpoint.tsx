@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ShieldAlert, ShieldCheck, Lock, Key, AlertTriangle, Eye, EyeOff, X, Terminal } from 'lucide-react';
 import { verifyPasskey, getLockoutState, LockoutState } from '../../utils/securityWall';
+import { useAnimatedPresence } from '../../hooks/useAnimatedPresence';
+import { soundFX } from '../../utils/audioEffects';
 
 interface AdminSecurityCheckpointProps {
   isOpen: boolean;
@@ -14,6 +16,7 @@ export const AdminSecurityCheckpoint: React.FC<AdminSecurityCheckpointProps> = (
   onClose,
   onAuthenticated,
 }) => {
+  const { isMounted, isAnimatingOut } = useAnimatedPresence(isOpen, 220);
   const [passkey, setPasskey] = useState('');
   const [showPasskey, setShowPasskey] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -23,6 +26,17 @@ export const AdminSecurityCheckpoint: React.FC<AdminSecurityCheckpointProps> = (
     remainingSeconds: 0,
     failedAttempts: 0,
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      soundFX.playModalOpen();
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    soundFX.playModalClose();
+    onClose();
+  };
 
   // Sync lockout state every second if locked
   useEffect(() => {
@@ -39,17 +53,17 @@ export const AdminSecurityCheckpoint: React.FC<AdminSecurityCheckpointProps> = (
 
   // Handle escape key to close
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isMounted || isAnimatingOut) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        handleClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isMounted, isAnimatingOut]);
 
-  if (!isOpen) return null;
+  if (!isMounted) return null;
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -87,21 +101,25 @@ export const AdminSecurityCheckpoint: React.FC<AdminSecurityCheckpointProps> = (
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 select-none animate-fadeIn">
+    <div className={`fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 select-none ${
+      isAnimatingOut ? 'animate-modal-backdrop-exit' : 'animate-modal-backdrop-enter'
+    }`}>
       {/* Deep Cyber Backdrop */}
       <div
-        className="absolute inset-0 bg-[#0C0A09]/90 backdrop-blur-xl transition-opacity"
-        onClick={onClose}
+        className="absolute inset-0 bg-[#0C0A09]/90 backdrop-blur-xl"
+        onClick={handleClose}
       />
 
       {/* Futuristic Glass Container */}
-      <div className="relative w-full max-w-md rounded-2xl bg-gradient-to-b from-stone-900/95 to-black/95 border border-amber-500/30 p-6 sm:p-8 shadow-[0_0_50px_rgba(245,158,11,0.15)] overflow-hidden text-stone-100">
+      <div className={`relative w-full max-w-md rounded-2xl bg-gradient-to-b from-stone-900/95 to-black/95 border border-amber-500/30 p-6 sm:p-8 shadow-[0_0_50px_rgba(245,158,11,0.15)] overflow-hidden text-stone-100 ${
+        isAnimatingOut ? 'animate-modal-box-exit' : 'animate-modal-box-enter'
+      }`}>
         {/* Neon scanline accent */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400 to-transparent animate-pulse" />
 
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 p-2 rounded-full text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
           title="关闭验证门"
         >

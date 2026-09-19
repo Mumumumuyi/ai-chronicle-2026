@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
-import { Sparkles, BookOpen, Layers, Zap } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { Sparkles, BookOpen, Layers, Zap, VolumeX } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LanguageDropdown } from './LanguageDropdown';
+import { soundFX } from '../utils/audioEffects';
 
 export type ActiveTab = 'stage' | 'lab' | 'reader' | 'ecosystem';
 
@@ -19,8 +20,23 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSecretTrigger,
 }) => {
   const { t } = useLanguage();
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(soundFX.getEnabled());
   const clickCountRef = useRef<number>(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setSoundEnabled(soundFX.getEnabled());
+  }, []);
+
+  const handleToggleSound = () => {
+    const newState = soundFX.toggle();
+    setSoundEnabled(newState);
+  };
+
+  const handleTabClick = (tab: ActiveTab) => {
+    soundFX.playClick(680);
+    onTabChange(tab);
+  };
 
   const handleLogoClick = () => {
     onTabChange('stage');
@@ -77,7 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             return (
               <button
                 key={item.id}
-                onClick={() => onTabChange(item.id)}
+                onClick={() => handleTabClick(item.id)}
                 className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 select-none ${
                   isActive
                     ? 'liquid-glass-amber text-amber-200 font-semibold shadow-sm border border-amber-400/40'
@@ -91,8 +107,29 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Right: Global Language Switcher */}
+        {/* Right: Sound FX & Global Language Switcher */}
         <div className="flex items-center space-x-2 flex-shrink-0">
+          {/* Interactive Sound FX Toggle Pill */}
+          <button
+            onClick={handleToggleSound}
+            className="liquid-glass rounded-full px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center space-x-1.5 cursor-pointer hover:bg-white/10 transition-all border border-white/10 text-xs font-mono select-none"
+            title={soundEnabled ? '声效已开启 (点击静音)' : '声效已静音 (点击开启沉浸声效)'}
+            aria-label="Sound Effects Toggle"
+          >
+            {soundEnabled ? (
+              <div className="flex items-end space-x-0.5 h-3 px-0.5">
+                <span className="w-0.5 bg-amber-400 rounded-full animate-sound-1" />
+                <span className="w-0.5 bg-amber-400 rounded-full animate-sound-2" />
+                <span className="w-0.5 bg-amber-400 rounded-full animate-sound-3" />
+              </div>
+            ) : (
+              <VolumeX className="w-3.5 h-3.5 text-stone-400" />
+            )}
+            <span className="hidden sm:inline text-[11px] text-stone-300">
+              {soundEnabled ? 'FX' : 'Mute'}
+            </span>
+          </button>
+
           <LanguageDropdown />
         </div>
       </div>
@@ -108,7 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             return (
               <button
                 key={item.id}
-                onClick={() => onTabChange(item.id)}
+                onClick={() => handleTabClick(item.id)}
                 className={`flex-1 py-1.5 px-2 rounded-full text-[10px] font-medium transition-all flex flex-col items-center justify-center gap-0.5 select-none ${
                   isActive
                     ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
