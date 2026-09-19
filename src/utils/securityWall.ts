@@ -11,9 +11,11 @@ const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes session duration
 
-// Strict Single-Key Authorization: ONLY the token provided by the sovereign owner
-// Owner Token: 4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ
-const SOVEREIGN_AUTHORIZED_HASH = '45deb3dceda578a4fff4956bb2e9dc50891f410999896fbe70af155a417e0d5e';
+// Strict Single-Key Authorization: ONLY the token provided by the sovereign owner.
+// The plaintext token is NEVER stored in this repo or shipped in the bundle - only
+// its salted SHA-256 fingerprint lives here. Rotating the key means replacing this
+// hash; the owner keeps the plaintext outside the codebase.
+const SOVEREIGN_AUTHORIZED_HASH = '1ca27dee19b7fa481da9e8e60e8831d0e71f65f8262f08a74e9184a7d365188a';
 
 export interface SecurityAuditEntry {
   id: string;

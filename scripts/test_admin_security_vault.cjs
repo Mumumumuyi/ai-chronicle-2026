@@ -3,6 +3,14 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 
+// Never hardcode the admin token - it would ship in git history. Pass it at run time:
+//   ADMIN_TOKEN=<token> node scripts/test_admin_security_vault.cjs
+const OWNER_TOKEN = process.env.ADMIN_TOKEN;
+if (!OWNER_TOKEN) {
+  console.error('[FATAL] ADMIN_TOKEN environment variable is required.');
+  process.exit(1);
+}
+
 function startStaticServer(distDir, port) {
   const mimeTypes = {
     '.html': 'text/html',
@@ -113,8 +121,7 @@ async function runSecurityVaultVerification() {
 
     // 4. Test ONLY Authorized Sovereign Token Login
     console.log('[ACTION] Entering authorized single sovereign token');
-    const ownerToken = '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ';
-    await page.fill('input[placeholder*="输入授权凭证"]', ownerToken);
+    await page.fill('input[placeholder*="输入授权凭证"]', OWNER_TOKEN);
     await page.click('button:has-text("验证并解锁控制台")');
     await page.waitForTimeout(1000);
 
@@ -201,7 +208,7 @@ async function runSecurityVaultVerification() {
     await mobilePage.waitForTimeout(1000);
 
     // Login on mobile with single owner token
-    await mobilePage.fill('input[placeholder*="输入授权凭证"]', '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ');
+    await mobilePage.fill('input[placeholder*="输入授权凭证"]', OWNER_TOKEN);
     await mobilePage.click('button:has-text("验证并解锁控制台")');
     await mobilePage.waitForTimeout(1000);
 

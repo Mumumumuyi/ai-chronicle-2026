@@ -6,7 +6,13 @@ const { chromium } = require('playwright');
 const PORT = 4192;
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const ARTIFACT_DIR = 'C:\\Users\\Amu\\.gemini\\antigravity-cli\\brain\\e5702866-950e-4fac-b708-574215ea9583';
-const SOVEREIGN_TOKEN = '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ';
+// Never hardcode the admin token - it would ship in git history. Pass it at run time:
+//   ADMIN_TOKEN=<token> node scripts/verify_real_monetization_and_admin.cjs
+const SOVEREIGN_TOKEN = process.env.ADMIN_TOKEN;
+if (!SOVEREIGN_TOKEN) {
+  console.error('[FATAL] ADMIN_TOKEN environment variable is required.');
+  process.exit(1);
+}
 
 const MIME_TYPES = {
   '.html': 'text/html',

@@ -21,8 +21,6 @@ import {
   ExternalLink,
   Lock,
   RotateCcw,
-  Copy,
-  Check,
   Sparkles
 } from 'lucide-react';
 import {
@@ -66,11 +64,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const [searchTerm, setSearchTerm] = useState('');
   const [deviceFilter, setDeviceFilter] = useState<'All' | 'Desktop' | 'Mobile' | 'Tablet'>('All');
   const [leadFilter, setLeadFilter] = useState<string>('All');
-  
-  // Sovereign Token State
-  const [tokenCopied, setTokenCopied] = useState(false);
-  const SOVEREIGN_TOKEN = '4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ';
-  
+
   useEffect(() => {
     if (isOpen) {
       soundFX.playModalOpen();
@@ -80,16 +74,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const handleClose = () => {
     soundFX.playModalClose();
     onClose();
-  };
-  
-  const handleCopyToken = () => {
-    try {
-      navigator.clipboard.writeText(SOVEREIGN_TOKEN);
-      setTokenCopied(true);
-      setTimeout(() => setTokenCopied(false), 2000);
-    } catch {
-      // fallback
-    }
   };
 
   // Auto-refresh timer for session & live stream
@@ -817,21 +801,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                     已彻底删除并作废所有备用简易口令（如 admin2026 等）。全站安全矩阵仅认准您亲自提供的唯一安全令牌，杜绝一切弱口令爆破隐患。
                   </p>
 
-                  <div className="p-3.5 rounded-xl bg-black/60 border border-amber-500/30 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-stone-400">
-                      <span>已授权主理人唯一令牌:</span>
-                      <button
-                        onClick={handleCopyToken}
-                        className="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] flex items-center space-x-1 transition-colors"
-                      >
-                        {tokenCopied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                        <span>{tokenCopied ? '已复制' : '复制凭证'}</span>
-                      </button>
-                    </div>
-                    <div className="font-mono text-xs text-amber-200 break-all select-all bg-stone-950 p-2.5 rounded-lg border border-white/5">
-                      {SOVEREIGN_TOKEN}
-                    </div>
-                  </div>
+                  <p className="text-xs text-amber-200/80 leading-relaxed bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
+                    令牌明文不再内置于前端产物，本页也不再回显或提供复制——静态站点的任何可见内容都会随 bundle 公开。
+                    此处仅保留加盐 SHA-256 指纹用于比对，请在本站之外自行保管您的令牌。
+                  </p>
 
                   <div className="space-y-2 text-[11px] font-mono text-stone-400 bg-stone-950/40 p-3 rounded-xl border border-white/5">
                     <div className="flex justify-between">
@@ -840,8 +813,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                     </div>
                     <div className="flex justify-between">
                       <span>零知识哈希指纹:</span>
-                      <span className="text-stone-500 truncate max-w-[200px]" title="45deb3dceda578a4fff4956bb2e9dc50891f410999896fbe70af155a417e0d5e">
-                        45deb3dc...e0d5e
+                      <span className="text-stone-500 truncate max-w-[200px]" title="1ca27dee19b7fa481da9e8e60e8831d0e71f65f8262f08a74e9184a7d365188a">
+                        1ca27dee...5188a
                       </span>
                     </div>
                     <div className="flex justify-between">
