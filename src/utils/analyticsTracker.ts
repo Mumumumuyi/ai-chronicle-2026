@@ -1,5 +1,6 @@
 // Zero-Dependency Client-Side Telemetry & Visitor Tracking Engine for AI Chronicle 2026
 // Tracks Pageviews, Unique Visitors, Milestones, Dwell Time, Referrers, Devices, and Screen Specs
+import { recordAffiliateInteraction, getCloudSyncConfig } from './monetizationConfig';
 
 export interface VisitorLogEntry {
   id: string;
@@ -124,139 +125,20 @@ function cleanReferrer(ref: string): string {
   }
 }
 
-// Pre-seed realistic telemetry data if storage is fresh
-function seedInitialTelemetry(): VisitorLogEntry[] {
-  const seedList: VisitorLogEntry[] = [
-    {
-      id: 'log_seed_01',
-      visitorId: 'v_us_92a81f',
-      sessionId: 's_81f09',
-      timestamp: new Date(Date.now() - 3 * 60 * 1000).toISOString(),
-      path: '/stage (2024-2026 具身智能)',
-      milestoneId: 'ms_deepseek_r1',
-      milestoneTitle: 'DeepSeek-R1 开源推理模型冲击波',
-      referrer: 'X / Twitter',
-      deviceType: 'Mobile',
-      os: 'iOS',
-      browser: 'Safari',
-      screenResolution: '393x852',
-      language: 'en-US',
-      dwellSeconds: 245,
-    },
-    {
-      id: 'log_seed_02',
-      visitorId: 'v_cn_41c09b',
-      sessionId: 's_9921a',
-      timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-      path: '/ecosystem (全球生态算力特权)',
-      referrer: 'GitHub',
-      deviceType: 'Desktop',
-      os: 'macOS',
-      browser: 'Chrome',
-      screenResolution: '1728x1117',
-      language: 'zh-CN',
-      dwellSeconds: 380,
-    },
-    {
-      id: 'log_seed_03',
-      visitorId: 'v_eu_77f43e',
-      sessionId: 's_33d91',
-      timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-      path: '/stage (2022-2023 大语言模型大爆发)',
-      milestoneId: 'ms_gpt4',
-      milestoneTitle: 'GPT-4 发布与多模态跃升',
-      referrer: 'Google Search',
-      deviceType: 'Desktop',
-      os: 'Windows',
-      browser: 'Edge',
-      screenResolution: '1920x1080',
-      language: 'de-DE',
-      dwellSeconds: 512,
-    },
-    {
-      id: 'log_seed_04',
-      visitorId: 'v_jp_52b11a',
-      sessionId: 's_44c12',
-      timestamp: new Date(Date.now() - 48 * 60 * 1000).toISOString(),
-      path: '/lab (范式演化实验室)',
-      referrer: 'Hacker News',
-      deviceType: 'Desktop',
-      os: 'Linux',
-      browser: 'Firefox',
-      screenResolution: '2560x1440',
-      language: 'en-US',
-      dwellSeconds: 620,
-    },
-    {
-      id: 'log_seed_05',
-      visitorId: 'v_cn_88d30e',
-      sessionId: 's_11b89',
-      timestamp: new Date(Date.now() - 75 * 60 * 1000).toISOString(),
-      path: '/stage (2024-2026 具身智能)',
-      milestoneId: 'ms_claude_35_sonnet',
-      milestoneTitle: 'Claude 3.5 Sonnet 与智能体工作流',
-      referrer: '知乎 (Zhihu)',
-      deviceType: 'Mobile',
-      os: 'Android',
-      browser: 'Chrome',
-      screenResolution: '412x915',
-      language: 'zh-CN',
-      dwellSeconds: 195,
-    },
-    {
-      id: 'log_seed_06',
-      visitorId: 'v_sg_33e99a',
-      sessionId: 's_77b02',
-      timestamp: new Date(Date.now() - 110 * 60 * 1000).toISOString(),
-      path: '/reader (深度编年史通读)',
-      referrer: 'Direct / Direct Traffic',
-      deviceType: 'Desktop',
-      os: 'macOS',
-      browser: 'Safari',
-      screenResolution: '1440x900',
-      language: 'en-GB',
-      dwellSeconds: 840,
-    },
-    {
-      id: 'log_seed_07',
-      visitorId: 'v_kr_19f72c',
-      sessionId: 's_65e10',
-      timestamp: new Date(Date.now() - 160 * 60 * 1000).toISOString(),
-      path: '/stage (2012-2016 深度学习觉醒)',
-      milestoneId: 'ms_alexnet',
-      milestoneTitle: 'AlexNet 夺得 ImageNet 冠军',
-      referrer: 'Google Search',
-      deviceType: 'Tablet',
-      os: 'iOS',
-      browser: 'Safari',
-      screenResolution: '820x1180',
-      language: 'ko-KR',
-      dwellSeconds: 310,
-    }
-  ];
-
-  try {
-    localStorage.setItem(VISITOR_LOGS_KEY, JSON.stringify(seedList));
-  } catch (e) {
-    console.error(e);
-  }
-  return seedList;
-}
-
-// Retrieve all visitor logs
+// Retrieve all authentic visitor logs (100% real, strictly zero simulated/mock data)
 export function getVisitorLogs(): VisitorLogEntry[] {
   try {
     const raw = localStorage.getItem(VISITOR_LOGS_KEY);
-    if (!raw) {
-      return seedInitialTelemetry();
-    }
+    if (!raw) return [];
     const logs: VisitorLogEntry[] = JSON.parse(raw);
-    if (logs.length === 0) {
-      return seedInitialTelemetry();
+    // Strict purity filter: strip out any previous test or seed logs
+    const realLogs = logs.filter(log => !log.id.startsWith('log_seed_'));
+    if (realLogs.length !== logs.length) {
+      localStorage.setItem(VISITOR_LOGS_KEY, JSON.stringify(realLogs));
     }
-    return logs;
+    return realLogs;
   } catch {
-    return seedInitialTelemetry();
+    return [];
   }
 }
 
@@ -308,8 +190,65 @@ export function recordVisitorLog(entry: {
       logs.length = 500;
     }
     localStorage.setItem(VISITOR_LOGS_KEY, JSON.stringify(logs));
+
+    // Optional asynchronous zero-dependency cloud synchronization (e.g. Supabase / Worker)
+    const cloudCfg = getCloudSyncConfig();
+    if (cloudCfg.enableCloudSync && cloudCfg.supabaseUrl && cloudCfg.supabaseAnonKey) {
+      try {
+        const endpoint = `${cloudCfg.supabaseUrl.replace(/\/$/, '')}/rest/v1/visitor_logs`;
+        fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'apikey': cloudCfg.supabaseAnonKey,
+            'Authorization': `Bearer ${cloudCfg.supabaseAnonKey}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal',
+          },
+          body: JSON.stringify(newLog),
+        }).catch(() => {});
+      } catch {
+        // Non-blocking
+      }
+    }
   } catch (err) {
     console.error('Failed to record telemetry:', err);
+  }
+}
+
+// Record 100% genuine affiliate link clicks and coupon copies
+export function recordAffiliateAction(
+  toolId: string,
+  toolName: string,
+  actionType: 'click' | 'promo_copy'
+): void {
+  recordAffiliateInteraction(toolId, toolName, actionType);
+  recordVisitorLog({
+    path: `/ecosystem/${toolId}`,
+    milestoneTitle: actionType === 'click' ? `[商业转化] 点击直达 ${toolName}` : `[商业转化] 复制优惠码 ${toolName}`,
+  });
+}
+
+// Optional: Fetch real logs from cloud if Supabase integration is active
+export async function fetchCloudVisitorLogs(): Promise<VisitorLogEntry[] | null> {
+  const cloudCfg = getCloudSyncConfig();
+  if (!cloudCfg.enableCloudSync || !cloudCfg.supabaseUrl || !cloudCfg.supabaseAnonKey) {
+    return null;
+  }
+  try {
+    const endpoint = `${cloudCfg.supabaseUrl.replace(/\/$/, '')}/rest/v1/visitor_logs?select=*&order=timestamp.desc&limit=500`;
+    const res = await fetch(endpoint, {
+      headers: {
+        'apikey': cloudCfg.supabaseAnonKey,
+        'Authorization': `Bearer ${cloudCfg.supabaseAnonKey}`,
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data as VisitorLogEntry[];
+    }
+    return null;
+  } catch {
+    return null;
   }
 }
 

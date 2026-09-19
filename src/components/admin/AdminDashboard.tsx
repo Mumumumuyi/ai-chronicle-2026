@@ -22,7 +22,8 @@ import {
   Lock,
   RotateCcw,
   Copy,
-  Check
+  Check,
+  Sparkles
 } from 'lucide-react';
 import {
   getVisitorLogs,
@@ -46,13 +47,14 @@ import {
 } from '../../utils/securityWall';
 import { useAnimatedPresence } from '../../hooks/useAnimatedPresence';
 import { soundFX } from '../../utils/audioEffects';
+import { AdminMonetizationHub } from './AdminMonetizationHub';
 
 interface AdminDashboardProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type TabType = 'analytics' | 'crm' | 'security';
+type TabType = 'analytics' | 'crm' | 'monetization' | 'security';
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
   const { isMounted, isAnimatingOut } = useAnimatedPresence(isOpen, 220);
@@ -224,6 +226,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                   {leads.length}
                 </span>
               )}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('monetization')}
+              className={`px-3 sm:px-4 py-1.5 rounded-lg transition-all flex items-center space-x-1.5 ${
+                activeTab === 'monetization'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm'
+                  : 'text-stone-400 hover:text-white'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>商业变现与推广</span>
             </button>
 
             <button
@@ -780,7 +794,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
             </div>
           )}
 
-          {/* TAB 3: 安全防线与主控密钥 */}
+          {/* TAB 3: 商业变现与推广中心 */}
+          {activeTab === 'monetization' && <AdminMonetizationHub />}
+
+          {/* TAB 4: 安全防线与主控密钥 */}
           {activeTab === 'security' && (
             <div className="space-y-6 animate-fadeIn">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

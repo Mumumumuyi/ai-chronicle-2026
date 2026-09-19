@@ -47,13 +47,30 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('keydown', handleAdminHotKey);
   }, [handleOpenAdmin]);
 
-  // 2. Secret URL Route Trigger & Initial Telemetry on Mount
+  // 2. Secret URL Route Trigger, Deep-link Hash & Initial Telemetry on Mount
   useEffect(() => {
     if (checkSecretUrlTrigger()) {
       handleOpenAdmin();
     }
-    // Record initial visitor landing
-    recordVisitorLog({ path: '/stage (首屏启动)' });
+
+    // Support deep-linking via URL hash (e.g. #ecosystem, #lab, #reader)
+    const currentHash = window.location.hash.replace('#', '');
+    if (['stage', 'lab', 'ecosystem', 'reader'].includes(currentHash)) {
+      setActiveTab(currentHash as ActiveTab);
+      recordVisitorLog({ path: `/${currentHash}` });
+    } else {
+      // Record initial visitor landing
+      recordVisitorLog({ path: '/stage (首屏启动)' });
+    }
+
+    const handleHashChange = () => {
+      const h = window.location.hash.replace('#', '');
+      if (['stage', 'lab', 'ecosystem', 'reader'].includes(h)) {
+        setActiveTab(h as ActiveTab);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, [handleOpenAdmin]);
 
   // 3. Track Tab Telemetry
