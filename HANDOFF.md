@@ -108,3 +108,52 @@ Claude Code 可调用 `computer-use-cc`（或提示用户在当前开启的 Edge
 - `karpathy-guidelines`：编码与修改前置准则，严格保持外科手术式修改与真实验证。
 - `computer-use-cc`：若需要继续操作 Edge 浏览器完成 UI 点击。
 - `commit-work`：规范化 Git Commit。
+
+---
+
+## 七、 续接执行记录（2026-09-19，本地 Claude Code 追加 · 只增不改）
+
+### 任务 1 — 根仓库上线：已完成
+- 推送 `Mumumumuyi/mumumumuyi.github.io`，首次提交 `59b9084`。
+- GitHub Pages 自动启用（`source=main /`，`https_enforced=true`），构建 `status=built`。
+
+### 任务 2 — 根域名连通性：已通过
+基线（推送前）：`/` 与 `/ads.txt` 均为 `HTTP 404`，与 §3 根因判断一致。
+推送后全部 `HTTP 200`：
+
+| 路径 | 状态 | Content-Type |
+| :--- | :--- | :--- |
+| `/` | 200 | text/html |
+| `/ads.txt` | 200 | text/plain |
+| `/robots.txt` | 200 | text/plain |
+| `/sitemap.xml` | 200 | application/xml |
+| `/assets/index-Bj7P-n0l.js` | 200 | application/javascript |
+| `/assets/index-Bgye3mY_.css` | 200 | text/css |
+| `/bg-warm-glass.jpg` | 200 | image/jpeg |
+
+根首页含 `ca-pub-8861051283907117` 与 `google-site-verification`；根 `ads.txt` 含 `google.com, pub-8861051283907117, DIRECT, f08c47fec0942fa0`。
+
+### 任务 2b — 根域名改为完整内容站（用户决定，非原计划）
+原方案的根首页是 2.5 KB `meta refresh` 跳转壳页，存在 AdSense「低价值内容」拒批风险。
+经用户确认后改为：把 `dist/` 完整站点部署到根仓库（提交 `0c09686`），根域名首页本身即完整通史站点。
+- `vite.config.ts` 为 `base: './'`（相对路径），同一份构建产物在根路径可直接运行，**无需重新构建**。
+- 副带修正：`robots.txt` 移到域名根目录后才真正生效（此前位于子路径，爬虫不读取）。
+- 保留 `canonical -> /ai-chronicle-2026/`，避免同域重复内容争抢权重；子站 `/ai-chronicle-2026/` 未改动。
+
+真实渲染验证（Playwright，走系统已装 Chrome 通道，未安装额外浏览器）：
+`1440x900 / 1200x800 / 1024x768 / 768x1024 / 390x844 / 360x740` 六个断点 **全部 PASS** —
+`#root` 有子节点、正文文本 1467–1524 字符、无横向溢出、无 pageerror、无站点资源加载失败。
+唯一失败请求为 `pagead2.googlesyndication.com`（本机网络阻断），非站点缺陷。
+
+### 任务 3 — AdSense 后台核验：已完成
+- Chrome 未登录 AdSense（被重定向到登录页），改用 `computer-use-cc` 操作用户已登录的 Edge 窗口 `0x00700B1E`。
+- 勾选 `I've placed the code` -> 点击 `Verify` -> 弹窗返回 **`Your site is verified`**。
+- 点击 `Request review` -> 站点状态由 `Requires review` 变为 **`Getting ready`**，
+  `Verify site ownership` 与 `Review requested` 均为绿色对勾。
+
+### 遗留待办（需用户决定，未擅自处理）
+1. **CMP 同意声明**：AdSense 页面新出现 `Create a consent message for your sites`（EEA/UK/瑞士）。
+   提供三个选项（Google CMP 两选项 / 三选项 / 第三方认证 CMP），涉及法务与 UX 取舍，未代为选择。
+2. **审核结果**：Google 人工审核通常需要数天，结果会在 AdSense 站点页面与邮件通知。
+3. **根域名与子站并存**：两个 URL 提供同一内容，当前靠 canonical 指向子站消解。
+   若希望根域名成为唯一主站，需另行调整 canonical / hreflang / sitemap 并重新提交收录。
