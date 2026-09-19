@@ -1,7 +1,6 @@
 import React from 'react';
 import { EPOCHS } from '../data/timelineData';
 import { Milestone } from '../types';
-import { MonetizationBanner } from './MonetizationBanner';
 import { ChevronLeft, ChevronRight, Sparkles, ArrowUpRight, Cpu, Compass, BookOpen } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getLocalizedEpoch } from '../data/timelineTranslations';
@@ -330,7 +329,7 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
             <div className="pt-2 flex justify-end">
               <button
                 onClick={onOpenReader}
-                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-amber-300 flex items-center space-x-1.5 hover:text-amber-100 transition-colors"
+                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-amber-300 flex items-center space-x-1.5 hover:text-amber-100 transition-colors border border-amber-400/25"
               >
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>{t.readFullTreatise} →</span>
@@ -339,9 +338,6 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Monetization & Commercial Sponsor Strip */}
-      <MonetizationBanner />
 
       {/* Dynamic Liquid Glass Scrubber Dock */}
       <div className="mt-8 liquid-glass rounded-full p-2.5 sm:p-3.5 flex items-center justify-between gap-4 shadow-xl border border-white/10">

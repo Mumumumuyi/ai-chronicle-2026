@@ -23,7 +23,6 @@ export interface TranslationDictionary {
   navLab: string;
   navReader: string;
   navEcosystem: string;
-  navAbout: string;
   
   // Epochs Nav Pills
   epochPills: { label: string; era: string }[];

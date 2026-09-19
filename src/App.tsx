@@ -4,7 +4,6 @@ import { LiquidEpochStage } from './components/LiquidEpochStage';
 import { LiquidParadigmWidget } from './components/LiquidParadigmWidget';
 import { ArticleReader } from './components/ArticleReader';
 import { MilestoneModal } from './components/MilestoneModal';
-import { AboutDesignHub } from './components/AboutDesignHub';
 import { AffiliateEcosystem } from './components/AffiliateEcosystem';
 import { AdminSecurityCheckpoint } from './components/admin/AdminSecurityCheckpoint';
 import { AdminDashboard } from './components/admin/AdminDashboard';
@@ -18,7 +17,6 @@ const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('stage');
   const [activeEpochIndex, setActiveEpochIndex] = useState<number>(6); // Default to current 2024-2026 epoch
   const [activeMilestone, setActiveMilestone] = useState<Milestone | null>(null);
-  const [showAboutModal, setShowAboutModal] = useState<boolean>(false);
   
   // Sovereign Admin Vault State
   const [showAdminCheckpoint, setShowAdminCheckpoint] = useState<boolean>(false);
@@ -60,13 +58,8 @@ const AppContent: React.FC = () => {
 
   // 3. Track Tab Telemetry
   const handleTabChange = (tab: ActiveTab) => {
-    if (tab === 'about') {
-      setShowAboutModal(true);
-      recordVisitorLog({ path: '/about (关于编年史)' });
-    } else {
-      setActiveTab(tab);
-      recordVisitorLog({ path: `/${tab}` });
-    }
+    setActiveTab(tab);
+    recordVisitorLog({ path: `/${tab}` });
   };
 
   // 4. Track Milestone View Telemetry
@@ -82,7 +75,7 @@ const AppContent: React.FC = () => {
   // Keyboard navigation for epochs (ArrowLeft / ArrowRight)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (activeMilestone || showAboutModal || showAdminCheckpoint || showAdminDashboard || activeTab !== 'stage') return;
+      if (activeMilestone || showAdminCheckpoint || showAdminDashboard || activeTab !== 'stage') return;
       if (e.key === 'ArrowLeft' && activeEpochIndex > 0) {
         setActiveEpochIndex((prev) => prev - 1);
       } else if (e.key === 'ArrowRight' && activeEpochIndex < EPOCHS.length - 1) {
@@ -92,21 +85,30 @@ const AppContent: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeEpochIndex, activeMilestone, showAboutModal, showAdminCheckpoint, showAdminDashboard, activeTab]);
+  }, [activeEpochIndex, activeMilestone, showAdminCheckpoint, showAdminDashboard, activeTab]);
 
   return (
-    <div className="relative min-h-screen bg-[#0C0A09] text-[#F5F5F4] overflow-x-hidden selection:bg-amber-500/30 selection:text-amber-200">
-      {/* 1. Cinematic Warm Liquid Glass Image Background */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <img
-          src="./bg-warm-glass.jpg"
-          alt="Warm Liquid Glass Background"
-          className="w-full h-full object-cover object-center opacity-70 filter brightness-[0.75] contrast-[1.1] scale-105 transition-transform duration-1000"
+    <div className="relative min-h-screen bg-[#070709] text-[#F4F4F2] overflow-x-hidden selection:bg-amber-500/30 selection:text-amber-200">
+      {/* 1. Architectural Deep Void Canvas (Blueprint Grid + Ambient Radial Sheen) */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Subtle 48px Blueprint Coordinate Grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage: `linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)`,
+            backgroundSize: '48px 48px'
+          }}
         />
-        {/* Warm Ambient Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0C0A09]/60 via-[#0C0A09]/35 to-[#0C0A09]/95 hidden md:block md:backdrop-blur-[2px]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0C0A09]/80 via-[#0C0A09]/55 to-[#0C0A09]/95 md:hidden" />
-        <div className="absolute inset-0 bg-warm-hero" />
+        {/* Ethereal Warm Amber Atmosphere Glow */}
+        <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-b from-amber-500/12 via-amber-600/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 -right-40 w-[500px] h-[500px] bg-amber-400/[0.025] rounded-full blur-3xl pointer-events-none" />
+        {/* Radial Edge Dark Vignette */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at 50% 30%, transparent 40%, rgba(7, 7, 9, 0.85) 100%)'
+          }}
+        />
       </div>
 
       {/* 2. Floating Liquid Glass Navbar */}
@@ -115,7 +117,6 @@ const AppContent: React.FC = () => {
         onTabChange={handleTabChange}
         activeEpochIndex={activeEpochIndex}
         onSelectEpoch={setActiveEpochIndex}
-        isAboutOpen={showAboutModal}
         onSecretTrigger={handleOpenAdmin}
       />
 
@@ -145,10 +146,6 @@ const AppContent: React.FC = () => {
         onClose={() => setActiveMilestone(null)}
       />
 
-      {showAboutModal && (
-        <AboutDesignHub onClose={() => setShowAboutModal(false)} />
-      )}
-
       {/* 5. Sovereign Admin Console Modals */}
       <AdminSecurityCheckpoint
         isOpen={showAdminCheckpoint}
@@ -164,12 +161,12 @@ const AppContent: React.FC = () => {
         onClose={() => setShowAdminDashboard(false)}
       />
 
-      {/* 6. Minimalist Ambient Footer */}
-      <footer className="relative z-10 border-t border-white/5 py-8 text-center text-stone-500 text-xs font-mono no-print">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>{t.footerCopyright}</span>
+      {/* 6. Minimalist Architectural Monograph Footer */}
+      <footer className="relative z-10 border-t border-white/[0.06] py-8 text-center text-stone-500 text-xs font-mono no-print">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span className="text-stone-400">{t.footerCopyright}</span>
           <span className="text-amber-400/80">{t.footerDesignTag}</span>
-          <span>{t.footerNavHint}</span>
+          <span className="text-stone-500">{t.footerNavHint}</span>
         </div>
       </footer>
     </div>

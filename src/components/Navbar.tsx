@@ -1,23 +1,21 @@
 import React, { useRef } from 'react';
-import { Sparkles, BookOpen, Layers, Zap, Info } from 'lucide-react';
+import { Sparkles, BookOpen, Layers, Zap } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LanguageDropdown } from './LanguageDropdown';
 
-export type ActiveTab = 'stage' | 'lab' | 'reader' | 'ecosystem' | 'about';
+export type ActiveTab = 'stage' | 'lab' | 'reader' | 'ecosystem';
 
 interface NavbarProps {
   activeTab: ActiveTab;
   onTabChange: (tab: ActiveTab) => void;
   activeEpochIndex: number;
   onSelectEpoch: (index: number) => void;
-  isAboutOpen?: boolean;
   onSecretTrigger?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   onTabChange,
-  isAboutOpen = false,
   onSecretTrigger,
 }) => {
   const { t } = useLanguage();
@@ -47,7 +45,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'lab' as const, label: t.navLab, icon: Zap },
     { id: 'reader' as const, label: t.navReader, icon: BookOpen },
     { id: 'ecosystem' as const, label: t.navEcosystem, icon: Sparkles },
-    { id: 'about' as const, label: t.navAbout, icon: Info },
   ];
 
   return (
@@ -56,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Left: Brand Logo Pill */}
         <div 
           onClick={handleLogoClick}
-          className="liquid-glass rounded-full px-3 sm:px-4 py-2 flex items-center space-x-2 sm:space-x-2.5 cursor-pointer hover:bg-white/10 transition-all select-none group flex-shrink-0"
+          className="liquid-glass rounded-full px-3.5 sm:px-4 py-2 flex items-center space-x-2 sm:space-x-2.5 cursor-pointer hover:bg-white/10 transition-all select-none group flex-shrink-0 border border-white/10"
           title="AI Chronicle"
         >
           <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-stone-950 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform flex-shrink-0">
@@ -66,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="font-serif text-xs sm:text-sm font-semibold tracking-wide text-stone-100 group-hover:text-amber-300 transition-colors whitespace-nowrap">
               {t.brandTitle}
             </span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 whitespace-nowrap hidden lg:inline">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/25 whitespace-nowrap hidden lg:inline">
               {t.brandSubtitle}
             </span>
           </div>
@@ -76,14 +73,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         <nav className="hidden md:flex liquid-glass rounded-full p-1 items-center gap-1 flex-shrink-0 shadow-lg border border-white/10">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.id === 'about' ? isAboutOpen : (activeTab === item.id && !isAboutOpen);
+            const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 select-none ${
+                className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 select-none ${
                   isActive
-                    ? 'liquid-glass-amber text-amber-200 font-semibold shadow-sm'
+                    ? 'liquid-glass-amber text-amber-200 font-semibold shadow-sm border border-amber-400/40'
                     : 'text-stone-300 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -103,23 +100,23 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* ======================================================== */}
       {/* NATIVE MOBILE FLOATING BOTTOM DOCK (< md screens)         */}
       {/* ======================================================== */}
-      <div className="fixed bottom-4 left-3 right-3 z-40 pointer-events-auto md:hidden flex justify-center no-print">
+      <div className="fixed bottom-4 left-4 right-4 z-40 pointer-events-auto md:hidden flex justify-center no-print">
         <nav className="w-full max-w-sm liquid-glass-strong rounded-full p-1.5 shadow-2xl border border-amber-400/30 flex items-center justify-around backdrop-blur-2xl glass-sheen">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.id === 'about' ? isAboutOpen : (activeTab === item.id && !isAboutOpen);
+            const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`flex-1 py-1.5 px-1 rounded-full text-[10px] font-medium transition-all flex flex-col items-center justify-center gap-0.5 select-none ${
+                className={`flex-1 py-1.5 px-2 rounded-full text-[10px] font-medium transition-all flex flex-col items-center justify-center gap-0.5 select-none ${
                   isActive
                     ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
                     : 'text-stone-400 hover:text-stone-200'
                 }`}
               >
                 <Icon className={`w-4 h-4 flex-shrink-0 ${item.id === 'ecosystem' ? 'text-amber-400' : ''}`} />
-                <span className="truncate whitespace-nowrap text-[9px] sm:text-[10px]">{item.label}</span>
+                <span className="truncate whitespace-nowrap text-[10px]">{item.label}</span>
               </button>
             );
           })}

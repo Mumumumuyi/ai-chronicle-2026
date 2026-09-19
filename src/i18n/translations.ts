@@ -11,7 +11,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     navLab: 'Scaling Laws',
     navReader: 'Treatise',
     navEcosystem: 'Ecosystem & Perks',
-    navAbout: 'Aesthetics',
 
     epochPills: [
       { label: 'Dawn', era: '1943-56' },
@@ -99,7 +98,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     navLab: '缩放律',
     navReader: '长卷',
     navEcosystem: '生态特权',
-    navAbout: '美学',
 
     epochPills: [
       { label: '黎明', era: '1943-56' },
@@ -187,7 +185,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     navLab: 'Leyes de Escala',
     navReader: 'Tratado',
     navEcosystem: 'Ecosistema',
-    navAbout: 'Estética',
 
     epochPills: [
       { label: 'Amanecer', era: '1943-56' },
@@ -275,7 +272,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     navLab: 'Skalierungsgesetze',
     navReader: 'Abhandlung',
     navEcosystem: 'Ökosystem',
-    navAbout: 'Ästhetik',
 
     epochPills: [
       { label: 'Morgengrauen', era: '1943-56' },
@@ -363,7 +359,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     navLab: 'Lois d’Échelle',
     navReader: 'Traité',
     navEcosystem: 'Écosystème',
-    navAbout: 'Esthétique',
 
     epochPills: [
       { label: 'Aube', era: '1943-56' },
