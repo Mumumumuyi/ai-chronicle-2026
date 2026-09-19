@@ -1,0 +1,110 @@
+# 项目交接与续接执行文档 (HANDOFF.md)
+
+> **项目名称**：AI Chronicle 2026（火种、严冬与硅基奇点：人工智能演进全景通史 1943 — 2026.09）  
+> **交接对象**：本地 Claude Code（agy / cc 环境）  
+> **创建时间**：2026-09-19  
+> **工作区绝对路径**：`C:\Users\Amu\Desktop\scratch_wb`  
+> **线上公网地址**：[https://mumumumuyi.github.io/ai-chronicle-2026/](https://mumumumuyi.github.io/ai-chronicle-2026/)  
+> **后台管理令牌**：`4/0ATsMZqDbEqJWdiTVSo1cTG7kOIk3fhnr68dn0c-lJTpRNOL5gm7JiAQB95oemjosrVXSwQ`
+
+---
+
+## 一、 用户核心指令与硬约束 (Provenance & Hard Constraints)
+
+1. **[用户明确] 网站视觉与架构**：采用液态玻璃（Liquid Glass）暖光前沿美学与世界一流设计重构，已通过本地及移动端/平板响应式视觉校验。
+2. **[用户明确] 隐私与红线**：严禁将用户电脑内本地知识库或任何隐私文件上传至公开网络。
+3. **[用户明确] 100% 真实数据原则**：后台统计、访客监控与变现中心必须使用纯真实数据，**绝对禁止**任何 Mock 或伪造数据。
+4. **[用户明确] 收益与变现**：打通 Google 商业化生态（AdSense 广告）与高客单价赞助/返佣体系，切实将访问转化为真实收益。
+5. **[用户明确] 交接目标**：由本地 Claude Code 无缝续接剩余操作，按本文件列出的全部步骤依次推进。
+
+---
+
+## 二、 当前已完成工作与验证证据 (Current Status & Verified Evidence)
+
+| 模块 | 完成动作 | 验证证据 / 状态 |
+| :--- | :--- | :--- |
+| **搜索引擎自动化收录** | 编写并通过 [`scripts/push_search_engines.cjs`](file:///C:/Users/Amu/Desktop/scratch_wb/scripts/push_search_engines.cjs) 执行 IndexNow 协议提交 | Bing / Yandex / Naver 接口返回 `HTTP 200 OK`，推送 7 个深度路由 |
+| **Google Search Console** | 根目录 `<head>` 注入所有权标记并全站部署 | `curl.exe` 实测返回 `<meta name="google-site-verification" content="LMj9O8-Z49DiyMLAI15lCROJCblRF7ClLnXrzLAYwiI" />` |
+| **Google AdSense ID 发现** | 使用 Computer Use 深入用户本地 Edge 窗口自动捕获发布商编号 | 确认真实 Publisher ID：`pub-8861051283907117`（Client ID：`ca-pub-8861051283907117`） |
+| **AdSense 代码部署** | 在 [`index.html`](file:///C:/Users/Amu/Desktop/scratch_wb/index.html) 嵌入官方 AdSense 异步加载脚本 | 线上实测已生效并正常加载 |
+| **广告反欺诈认证文件** | 创建 [`public/ads.txt`](file:///C:/Users/Amu/Desktop/scratch_wb/public/ads.txt) 与 [`dist/ads.txt`](file:///C:/Users/Amu/Desktop/scratch_wb/dist/ads.txt) | `curl.exe https://mumumumuyi.github.io/ai-chronicle-2026/ads.txt` 实测返回正式授权行 |
+| **GitHub 根仓库准备** | 用户在 AdSense 提交的是根域名 `mumumumuyi.github.io` | 已通过 `gh repo create Mumumumuyi/mumumumuyi.github.io --public` 在 GitHub 成功建好根仓库 |
+
+---
+
+## 三、 核心阻断点根因分析 (Root Cause Analysis)
+
+在 AdSense 界面点击验证时提示：`Couldn't verify your site`。
+- **根本原因**：
+  Google AdSense 将网站视作主域名 `mumumumuyi.github.io` 进行爬虫校验，其爬虫直接请求 `https://mumumumuyi.github.io/`（根路径）。
+  而 GitHub Pages 的规则是：**用户级根域名必须由同名仓库 `Mumumumuyi/mumumumuyi.github.io` 承载**。在此仓库存在并有页面前，`https://mumumumuyi.github.io/` 会直接返回 `404 Not Found`，导致 AdSense 爬虫无法读取代码与 `ads.txt`。
+
+---
+
+## 四、 Claude Code 续接操作全流程 (Step-by-Step Execution Guide)
+
+请 Claude Code 按照以下步骤依次执行：
+
+### 任务 1：初始化并推送 `mumumumuyi.github.io` 根仓库页面
+
+由于本地已在 `C:\Users\Amu\AppData\Local\Temp\root_gh_pages` 准备好了文件，Claude Code 可直接运行以下命令完成推送：
+
+```bash
+# 进入临时目录或克隆仓库
+cd C:\Users\Amu\AppData\Local\Temp\root_gh_pages
+
+# 配置提交身份（使用用户 GitHub 账号）
+git config user.name "Mumumumuyi"
+git config user.email "200943864+Mumumumuyi@users.noreply.github.com"
+
+# 提交并推送到 GitHub 根域名仓库
+git add .
+git commit -m "feat: setup root user pages with Google AdSense tag, GSC verification and ads.txt"
+git remote add origin https://github.com/Mumumumuyi/mumumumuyi.github.io.git
+git push -u origin main
+```
+
+> **文件内容确认**：
+> 1. `index.html`：包含 `<meta name="google-site-verification" ... />` 与 AdSense 官方 script，并包含自动跳向主站的 `<meta http-equiv="refresh" content="0; url=https://mumumumuyi.github.io/ai-chronicle-2026/">`。
+> 2. `ads.txt`：包含 `google.com, pub-8861051283907117, DIRECT, f08c47fec0942fa0`。
+
+### 任务 2：验证根域名 HTTP 200 连通性
+
+推送完成后，等待约 30 秒 GitHub Pages CDN 生效，运行验证：
+
+```bash
+# 验证根路径是否返回 200 OK 并带有 AdSense 标签
+curl.exe -s -L "https://mumumumuyi.github.io/" | Select-String -Pattern "ca-pub-8861051283907117"
+
+# 验证根路径 ads.txt 是否返回 200 OK 并带有真实发布商 ID
+curl.exe -s -L "https://mumumumuyi.github.io/ads.txt"
+```
+**通过标准**：两条请求均返回 `HTTP 200` 且包含 `pub-8861051283907117`。
+
+### 任务 3：在 Google AdSense 后台完成最终核验
+
+Claude Code 可调用 `computer-use-cc`（或提示用户在当前开启的 Edge 浏览器中）：
+1. 访问/刷新页面：`https://adsense.google.com/adsense/u/0/pub-8861051283907117/sites/detail/url=mumumumuyi.github.io`
+2. 勾选 **「I've placed the code」**。
+3. 点击 **「Verify」** 按钮。
+4. 验证通过后，在下方点击 **「Request review」** 提交审核。
+
+---
+
+## 五、 进阶变现落地（算力推广与赞助）
+
+当用户提供 GPU 云或赞助商链接时：
+1. **GPU 推广链接 (Affiliate CPS)**：
+   - 涉及文件：[`src/components/ScalingLab.tsx`](file:///C:/Users/Amu/Desktop/scratch_wb/src/components/ScalingLab.tsx)
+   - 在各前沿模型卡片旁配置“在 AutoDL / RunPod 一键开机复现”入口，带入用户的推荐码。
+2. **赞助商与合作管理**：
+   - 涉及文件：[`src/components/EcosystemView.tsx`](file:///C:/Users/Amu/Desktop/scratch_wb/src/components/EcosystemView.tsx)
+   - 商业询盘与后台数据通过 LocalStorage 真实持久化，所有数据在 `#admin` 页面实时呈现。
+
+---
+
+## 六、 推荐 Claude Code 启用的专项技能 (Suggested Skills)
+
+- `karpathy-guidelines`：编码与修改前置准则，严格保持外科手术式修改与真实验证。
+- `computer-use-cc`：若需要继续操作 Edge 浏览器完成 UI 点击。
+- `commit-work`：规范化 Git Commit。
