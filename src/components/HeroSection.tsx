@@ -30,7 +30,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </span>
           <span className="px-2 py-0.5 rounded bg-white/5 text-slate-400 text-xs font-mono border border-white/5 flex items-center">
             <Shield className="w-3 h-3 mr-1 text-slate-500" />
-            基于 AI 第二大脑认知框架与严密史实
+            基于严密史实与前沿认知框架
           </span>
         </div>
 

@@ -85,7 +85,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     newsletterSuccessMsg: 'Subscription confirmed! Welcome to the AGI frontier.',
 
     footerCopyright: 'AI Global Chronicle · 1943 — 2026.09 Canonical Edition',
-    footerDesignTag: 'Liquid Glass Design Architecture · AI Second Brain Certified',
+    footerDesignTag: 'Liquid Glass Design Architecture · Edition 2026',
     footerNavHint: 'Press ← / → Arrow keys to switch historical epochs',
   },
 
@@ -173,7 +173,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     newsletterSuccessMsg: '🎉 订阅成功！首期内参已发送至您的收件箱。',
 
     footerCopyright: 'AI 全景通史 · 1943 — 2026.09.13 历史定本',
-    footerDesignTag: '液态玻璃交互架构 · AI 第二大脑美学认证',
+    footerDesignTag: '液态玻璃交互架构 · 2026 典藏版',
     footerNavHint: '按键盘 ← / → 键切换纪元',
   },
 
@@ -261,7 +261,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     newsletterSuccessMsg: '¡Suscripción confirmada! Bienvenido a la frontera de la IA.',
 
     footerCopyright: 'Crónica Global de la IA · Edición Canónica 1943 — 2026.09',
-    footerDesignTag: 'Arquitectura de Diseño Liquid Glass · Certificado por Segundo Cerebro',
+    footerDesignTag: 'Arquitectura de Diseño Liquid Glass · Edición 2026',
     footerNavHint: 'Presione ← / → para cambiar de época histórica',
   },
 
@@ -349,7 +349,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     newsletterSuccessMsg: 'Erfolgreich abonniert! Willkommen an der Forschungsfront.',
 
     footerCopyright: 'Globale KI-Chronik · Kanonische Ausgabe 1943 — 2026.09',
-    footerDesignTag: 'Liquid Glass Designarchitektur · Zertifiziert vom KI-Zweitgehirn',
+    footerDesignTag: 'Liquid Glass Designarchitektur · Ausgabe 2026',
     footerNavHint: 'Pfeiltasten ← / → drücken, um Epochen zu wechseln',
   },
 
@@ -437,7 +437,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     newsletterSuccessMsg: 'Abonnement confirmé ! Bienvenue à la frontière de l’AGI.',
 
     footerCopyright: 'Chronique Mondiale de l’IA · Édition Canonique 1943 — 2026.09',
-    footerDesignTag: 'Architecture Liquid Glass · Certifié par le Second Cerveau IA',
+    footerDesignTag: 'Architecture Liquid Glass · Édition 2026',
     footerNavHint: 'Appuyez sur ← / → pour changer d’époque historique',
   },
 };

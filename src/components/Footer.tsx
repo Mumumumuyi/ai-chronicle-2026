@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
         <div className="flex flex-wrap items-center gap-6 text-[11px]">
           <span className="flex items-center text-slate-400">
             <Shield className="w-3 h-3 mr-1 text-[#00F0FF]" />
-            遵循 AI 第二大脑反AI味设计基准
+            遵循高密度反AI味设计基准
           </span>
           <span className="text-slate-600">|</span>
           <span className="text-slate-500">
