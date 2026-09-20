@@ -39,6 +39,25 @@ export const LiquidParadigmWidget: React.FC = () => {
     perkBadgeEn: '¥20 Voucher',
   };
 
+  const togetherPartner = partners.find(p => p.id === 'together') || {
+    id: 'together',
+    name: 'Together.ai API',
+    affiliateUrl: 'https://together.ai',
+    officialFallbackUrl: 'https://together.ai',
+    promoCode: 'TOGETHER2026',
+    perkBadgeZh: '立赠 $5 额度',
+    perkBadgeEn: '$5 Instant Credit',
+  };
+
+  const lambdaPartner = partners.find(p => p.id === 'lambdalabs') || {
+    id: 'lambdalabs',
+    name: 'Lambda Labs GPU Cloud',
+    affiliateUrl: 'https://lambdalabs.com/service/gpu-cloud',
+    officialFallbackUrl: 'https://lambdalabs.com/service/gpu-cloud',
+    perkBadgeZh: '单卡低至 $0.50/h',
+    perkBadgeEn: 'From $0.50/hr',
+  };
+
   const handlePartnerClick = (partner: { id: string; name: string; affiliateUrl?: string; officialFallbackUrl?: string }) => {
     soundFX.playClick(900);
     recordAffiliateAction(partner.id, partner.name, 'click');
@@ -684,6 +703,37 @@ export const LiquidParadigmWidget: React.FC = () => {
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
             </div>
+          </div>
+        </div>
+
+        {/* Supplementary Serverless & Bare-Metal Fast Channels */}
+        <div className="mt-4 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <span className="text-stone-400 text-[11px]">
+            {isZh ? '更多极速推演与集群选型通道：' : 'Additional inference & bare-metal channels:'}
+          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <a
+              href={togetherPartner.affiliateUrl || togetherPartner.officialFallbackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => handlePartnerClick(togetherPartner as any)}
+              className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-400/20 text-purple-200 hover:text-white flex items-center space-x-1.5 transition-all"
+            >
+              <Zap className="w-3 h-3 text-purple-400" />
+              <span>Together.ai ({isZh ? togetherPartner.perkBadgeZh : togetherPartner.perkBadgeEn})</span>
+              <ArrowUpRight className="w-3 h-3 text-purple-400" />
+            </a>
+            <a
+              href={lambdaPartner.affiliateUrl || lambdaPartner.officialFallbackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => handlePartnerClick(lambdaPartner as any)}
+              className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-400/20 text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all"
+            >
+              <Server className="w-3 h-3 text-amber-400" />
+              <span>Lambda Labs ({isZh ? lambdaPartner.perkBadgeZh : lambdaPartner.perkBadgeEn})</span>
+              <ArrowUpRight className="w-3 h-3 text-amber-400" />
+            </a>
           </div>
         </div>
 

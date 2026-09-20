@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Download, Check, Sparkles, FileText, Image, ShieldCheck, X, ArrowDownToLine, Zap, QrCode, Copy, ArrowLeft } from 'lucide-react';
+import { Download, Check, Sparkles, FileText, Image, ShieldCheck, X, ArrowDownToLine, Zap, QrCode, Copy, ArrowLeft, CreditCard, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { saveLead } from '../utils/leadStorage';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
+import { getOwnerContact } from '../utils/monetizationConfig';
+import { recordAffiliateAction } from '../utils/analyticsTracker';
 
 interface PremiumBundleModalProps {
   onClose: () => void;
@@ -17,6 +19,7 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
   const [orderId] = useState<string>(() => `AC-${Math.floor(1000 + Math.random() * 9000)}`);
   const [buyerEmail, setBuyerEmail] = useState<string>('');
   const [copiedOrder, setCopiedOrder] = useState<boolean>(false);
+  const ownerContact = getOwnerContact();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -424,6 +427,36 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
                 </button>
               </div>
               <div className="text-amber-200 font-bold">{texts.pendingPay}</div>
+            </div>
+
+            {/* Direct 1-Click Online Payment Channels */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {ownerContact.afdianUrl && (
+                <a
+                  href={ownerContact.afdianUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => recordAffiliateAction('bundle_pay', 'Afdian Bundle Unlock', 'click')}
+                  className="p-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-200 hover:text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all text-center"
+                >
+                  <Zap className="w-3.5 h-3.5 text-purple-300" />
+                  <span>{isZh ? '爱发电在线支持 ¥19.9' : 'Tip ¥19.9 via Afdian'}</span>
+                  <ArrowUpRight className="w-3 h-3 text-purple-300" />
+                </a>
+              )}
+              {ownerContact.buyMeACoffeeUrl && (
+                <a
+                  href={ownerContact.buyMeACoffeeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => recordAffiliateAction('bundle_pay', 'BuyMeACoffee Bundle Unlock', 'click')}
+                  className="p-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 hover:text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all text-center"
+                >
+                  <CreditCard className="w-3.5 h-3.5 text-amber-300" />
+                  <span>{isZh ? '国际卡支付 $2.99 USD' : 'Pay $2.99 USD via Card'}</span>
+                  <ArrowUpRight className="w-3 h-3 text-amber-300" />
+                </a>
+              )}
             </div>
 
             {/* QR Code Container */}

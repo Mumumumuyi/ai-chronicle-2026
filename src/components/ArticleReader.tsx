@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
-import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText, Copy, Server, ArrowUpRight, Code } from 'lucide-react';
+import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText, Copy, Server, ArrowUpRight, Code, Download, Coffee, DollarSign, Sparkles } from 'lucide-react';
 import { saveLead } from '../utils/leadStorage';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getMonetizationPartners, DEFAULT_PARTNERS, MonetizationPartner } from '../utils/monetizationConfig';
 import { recordAffiliateAction } from '../utils/analyticsTracker';
+import { PremiumBundleModal } from './PremiumBundleModal';
+import { SponsorCoffeeModal } from './SponsorCoffeeModal';
+import { SponsorCalculator } from './SponsorCalculator';
 
 const CHAPTER_TITLES_I18N: Record<string, Record<string, { num: string; title: string }>> = {
   'chap-0': {
@@ -66,6 +69,9 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
   const [email, setEmail] = useState<string>('');
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [copiedCite, setCopiedCite] = useState<boolean>(false);
+  const [showBundleModal, setShowBundleModal] = useState<boolean>(false);
+  const [showCoffeeModal, setShowCoffeeModal] = useState<boolean>(false);
+  const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
   const [partners, setPartners] = useState<MonetizationPartner[]>([]);
   const [copiedPartnerId, setCopiedPartnerId] = useState<string | null>(null);
 
@@ -559,6 +565,55 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
         );
       })}
 
+          {/* Post-Monograph Academic Bundle & Patron Support Card (Monetization Funnel) */}
+          <div className="my-10 p-6 sm:p-8 rounded-3xl liquid-glass border border-amber-400/40 bg-gradient-to-br from-amber-500/[0.08] via-black/40 to-stone-900/60 shadow-2xl relative overflow-hidden glass-sheen no-print">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+              <div className="space-y-2 max-w-xl">
+                <div className="flex items-center space-x-2 text-xs font-mono text-amber-300">
+                  <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+                  <span className="font-semibold tracking-wider">ACADEMIC ASSET PACK & PATRON GRANTS</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-white leading-snug">
+                  {isZh ? '《2026 AI 全景通史》学术典藏离线包与创作者支持' : 'AI Chronicle Academic Bundle & Patron Support'}
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
+                  {isZh 
+                    ? '恭喜读完 1.8 万字全卷。本通史由独立极客潜心研创，您可以下载包含 4K 矢量图谱、BibTeX 文献库与离线仿真器的完整数字资产包，或为服务器与带宽开销添一杯咖啡。'
+                    : 'Thank you for reading this 18,000-word canonical treatise. Download the full 4K asset pack, BibTeX citation database, and offline simulator, or support our independent research infrastructure.'}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowBundleModal(true)}
+                  className="liquid-glass-amber px-4 py-2.5 rounded-full text-xs font-mono font-bold text-amber-200 hover:text-white flex items-center justify-center space-x-1.5 transition-all shadow-md"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>{isZh ? '获取 4K 离线资产包' : 'Get 4K Asset Pack'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowCoffeeModal(true)}
+                  className="liquid-glass-pill px-4 py-2.5 rounded-full text-xs font-mono text-stone-200 hover:text-white flex items-center justify-center space-x-1.5 transition-all border border-amber-400/20"
+                >
+                  <Coffee className="w-4 h-4 text-amber-400" />
+                  <span>{isZh ? '赞助打赏 ☕' : 'Tip Coffee ☕'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowSponsorModal(true)}
+                  className="liquid-glass-pill px-4 py-2.5 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center justify-center space-x-1.5 transition-all"
+                >
+                  <DollarSign className="w-4 h-4 text-amber-400" />
+                  <span>{isZh ? '特约品牌合作' : 'B2B Partner'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="flex justify-between items-center font-mono text-xs text-stone-400 pt-6 no-print">
             <span>通史长卷完 · 截至 2026.09.13 定本</span>
             <button
@@ -760,6 +815,17 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Monetization & Support Modals */}
+      {showBundleModal && (
+        <PremiumBundleModal onClose={() => setShowBundleModal(false)} />
+      )}
+      {showCoffeeModal && (
+        <SponsorCoffeeModal onClose={() => setShowCoffeeModal(false)} />
+      )}
+      {showSponsorModal && (
+        <SponsorCalculator onClose={() => setShowSponsorModal(false)} />
       )}
     </div>
   );

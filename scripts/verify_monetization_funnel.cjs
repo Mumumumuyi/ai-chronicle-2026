@@ -126,6 +126,11 @@ async function verifyMonetizationFunnel() {
       }
     }
 
+    // Check Lab chips
+    const togetherChip = page.locator('text=Together.ai').first();
+    const hasTogetherChip = (await togetherChip.count()) > 0;
+    console.log(`[${vp.name}] Lab Together.ai fast chip: ${hasTogetherChip ? 'PASS' : 'FAIL'}`);
+
     const shotLab = path.join(ARTIFACT_DIR, `monetization_lab_${vp.name}.png`);
     await page.screenshot({ path: shotLab });
 
@@ -144,6 +149,34 @@ async function verifyMonetizationFunnel() {
     const devEcosystem = page.locator('text=DEVELOPER ECOSYSTEM').first();
     const hasDevEcosystem = (await devEcosystem.count()) > 0;
     console.log(`[${vp.name}] In-article Developer Tooling placement (Chapter 4): ${hasDevEcosystem ? 'PASS' : 'FAIL'}`);
+
+    // Check post-monograph closing card
+    const postMonographCard = page.locator('text=ACADEMIC ASSET PACK & PATRON GRANTS').first();
+    const hasPostCard = (await postMonographCard.count()) > 0;
+    console.log(`[${vp.name}] Post-monograph closing asset & patron card: ${hasPostCard ? 'PASS' : 'FAIL'}`);
+
+    // Test clicking bundle download in reader
+    if (vp.name === 'desktop') {
+      const getBundleBtn = page.locator('button:has-text("获取 4K 离线资产包")').first();
+      if ((await getBundleBtn.count()) > 0) {
+        await getBundleBtn.click();
+        await page.waitForTimeout(500);
+        const unlockBtn = page.locator('button:has-text("立即购买解锁")').first();
+        if ((await unlockBtn.count()) > 0) {
+          await unlockBtn.click();
+          await page.waitForTimeout(500);
+          const afdianPay = page.locator('text=爱发电在线支持').first();
+          const hasAfdianPay = (await afdianPay.count()) > 0;
+          console.log(`[${vp.name}] Bundle checkout 1-click Afdian payment button: ${hasAfdianPay ? 'PASS' : 'FAIL'}`);
+        }
+        // Close modal
+        const closeBundleBtn = page.locator('button[aria-label="close"], button:has(svg.lucide-x)').last();
+        if ((await closeBundleBtn.count()) > 0) {
+          await closeBundleBtn.click();
+          await page.waitForTimeout(300);
+        }
+      }
+    }
 
     const shotReader = path.join(ARTIFACT_DIR, `monetization_reader_${vp.name}.png`);
     await page.screenshot({ path: shotReader });
