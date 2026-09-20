@@ -115,8 +115,17 @@ export const AffiliateEcosystem: React.FC = () => {
   const handleCopyText = (text: string, tag: string) => {
     navigator.clipboard.writeText(text);
     setCopiedCode(tag);
+    recordAffiliateAction('b2b_sponsor', `B2B Sponsor (${tag})`, 'promo_copy');
     setTimeout(() => setCopiedCode(null), 2000);
   };
+
+  const sponsorMailtoUrl = `mailto:${ownerContact.contactEmail}?subject=${encodeURIComponent(
+    isZh ? '【AI Chronicle 2026】品牌赞助与生态入驻咨询' : 'Inquiry: Sponsorship & Partnership for AI Chronicle 2026'
+  )}&body=${encodeURIComponent(
+    isZh 
+      ? `尊敬的 AI Chronicle 主理人：\n\n您好！我们希望申请 AI Chronicle 2026 的特约赞助/品牌展位/生态入驻合作。\n\n1. 品牌/产品名称：\n2. 意向合作档位（特约品牌展位 / 独家冠名 / 定制专栏）：\n3. 官方网址/产品链接：\n4. 意向合作周期：\n5. 期望上线时间：\n6. 商务联系人及电话/微信：\n\n期待与您的回复与合作！`
+      : `Dear AI Chronicle Team,\n\nWe would like to explore partnership and sponsorship opportunities with AI Chronicle 2026.\n\n1. Brand / Product Name:\n2. Target Sponsorship Tier:\n3. Product URL:\n4. Desired Duration:\n5. Contact Information:\n\nLooking forward to hearing from you!`
+  )}`;
 
   return (
     <div className="relative min-h-screen pt-20 sm:pt-24 pb-24 px-3 sm:px-8 max-w-6xl mx-auto no-print">
@@ -332,23 +341,33 @@ export const AffiliateEcosystem: React.FC = () => {
 
             {/* Direct Contact Channels */}
             <div className="space-y-2.5 mb-5">
-              <div className="p-3 sm:p-3.5 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-between gap-2">
+              <div className="p-3 sm:p-3.5 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="min-w-0">
                   <div className="text-[10px] font-mono text-amber-300 flex items-center space-x-1">
                     <Mail className="w-3 h-3" />
-                    <span>官方商务合作邮箱</span>
+                    <span>{isZh ? '官方商务合作邮箱' : 'Official Business Email'}</span>
                   </div>
                   <div className="text-xs text-white font-mono mt-0.5 truncate font-semibold">
                     {ownerContact.contactEmail}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(ownerContact.contactEmail, 'email')}
-                  className="liquid-glass-amber px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-200 hover:text-white transition-all flex-shrink-0"
-                >
-                  {copiedCode === 'email' ? texts.copiedBtn : texts.copyEmailBtn}
-                </button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <a
+                    href={sponsorMailtoUrl}
+                    onClick={() => recordAffiliateAction('b2b_sponsor', 'B2B Sponsor (mailto)', 'click')}
+                    className="liquid-glass-amber px-3 py-1.5 rounded-full text-xs font-mono font-medium text-amber-200 hover:text-white transition-all flex items-center space-x-1 hover:scale-105"
+                  >
+                    <span>{isZh ? '一键发信对接' : 'Send Email'}</span>
+                    <ArrowUpRight className="w-3 h-3" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyText(ownerContact.contactEmail, 'email')}
+                    className="liquid-glass-pill px-3 py-1.5 rounded-full text-xs font-mono text-stone-300 hover:text-white transition-all"
+                  >
+                    {copiedCode === 'email' ? texts.copiedBtn : texts.copyEmailBtn}
+                  </button>
+                </div>
               </div>
 
               {ownerContact.wechatId && (

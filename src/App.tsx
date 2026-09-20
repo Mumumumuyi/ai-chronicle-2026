@@ -5,6 +5,7 @@ import { LiquidParadigmWidget } from './components/LiquidParadigmWidget';
 import { ArticleReader } from './components/ArticleReader';
 import { MilestoneModal } from './components/MilestoneModal';
 import { AffiliateEcosystem } from './components/AffiliateEcosystem';
+import { MonetizationBanner } from './components/MonetizationBanner';
 import { AdminSecurityCheckpoint } from './components/admin/AdminSecurityCheckpoint';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { Milestone } from './types';
@@ -151,6 +152,9 @@ const AppContent: React.FC = () => {
               onOpenMilestone={handleOpenMilestone}
               onOpenReader={() => handleTabChange('reader')}
             />
+            <div className="max-w-6xl mx-auto px-3 sm:px-8 pb-10">
+              <MonetizationBanner />
+            </div>
           </div>
         )}
 

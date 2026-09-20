@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
-import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText, Sparkles } from 'lucide-react';
+import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, Mail, FileText, Copy, Server, ArrowUpRight, Code } from 'lucide-react';
 import { saveLead } from '../utils/leadStorage';
 import { useLanguage } from '../i18n/LanguageContext';
+import { getMonetizationPartners, DEFAULT_PARTNERS, MonetizationPartner } from '../utils/monetizationConfig';
+import { recordAffiliateAction } from '../utils/analyticsTracker';
 
 const CHAPTER_TITLES_I18N: Record<string, Record<string, { num: string; title: string }>> = {
   'chap-0': {
@@ -64,6 +66,28 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
   const [email, setEmail] = useState<string>('');
   const [subscribed, setSubscribed] = useState<boolean>(false);
   const [copiedCite, setCopiedCite] = useState<boolean>(false);
+  const [partners, setPartners] = useState<MonetizationPartner[]>([]);
+  const [copiedPartnerId, setCopiedPartnerId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPartners(getMonetizationPartners());
+  }, []);
+
+  const runpodPartner = partners.find(p => p.id === 'runpod') || DEFAULT_PARTNERS[0];
+  const autodlPartner = partners.find(p => p.id === 'autodl') || DEFAULT_PARTNERS[1];
+  const cursorPartner = partners.find(p => p.id === 'cursor') || DEFAULT_PARTNERS[3];
+  const groqPartner = partners.find(p => p.id === 'groq') || DEFAULT_PARTNERS[5];
+
+  const handleAffiliateClick = (partner: MonetizationPartner) => {
+    recordAffiliateAction(partner.id, partner.name, 'click');
+  };
+
+  const handleCopyPromo = (code: string, partner: MonetizationPartner) => {
+    navigator.clipboard.writeText(code);
+    setCopiedPartnerId(partner.id);
+    recordAffiliateAction(partner.id, partner.name, 'promo_copy');
+    setTimeout(() => setCopiedPartnerId(null), 2000);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -333,28 +357,201 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
               </div>
             </article>
 
-            {/* High-Converting In-Article Sponsored Placement */}
+            {/* High-Converting In-Article Sponsored Placement 1: GPU Compute (After Chapter II) */}
             {idx === 2 && (
-              <div className="my-8 p-6 rounded-3xl liquid-glass border border-amber-400/30 bg-gradient-to-r from-amber-500/[0.05] via-transparent to-amber-500/[0.03] text-center no-print shadow-xl relative glass-sheen">
-                <div className="flex items-center justify-center space-x-2 text-xs font-mono text-amber-400 mb-2">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>SPONSORED ACCELERATION · 算力与工程特约合作</span>
+              <div className="my-8 p-6 sm:p-8 rounded-3xl liquid-glass border border-amber-400/30 bg-gradient-to-r from-amber-500/[0.05] via-transparent to-amber-500/[0.03] no-print shadow-2xl relative glass-sheen">
+                <div className="flex items-center justify-center space-x-2 text-xs font-mono text-amber-300 mb-2">
+                  <Server className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{isZh ? 'SPONSORED ACCELERATION · 算力与工程特约通道' : 'SPONSORED ACCELERATION · COMPUTE PARTNERS'}</span>
                 </div>
-                <h4 className="text-base sm:text-lg font-serif font-bold text-white mb-2">
-                  深度学习算力受限？体验按秒计费的 H100 / RTX 4090 GPU 集群
+                <h4 className="text-base sm:text-xl font-serif font-bold text-white text-center mb-2">
+                  {isZh ? '深度学习与模型复现算力受限？直达官方特约 GPU 算力云' : 'Scaling Constraints? Deploy Instant Cloud GPUs with Exclusive Perks'}
                 </h4>
-                <p className="text-xs text-stone-300 font-light max-w-xl mx-auto mb-4 leading-relaxed">
-                  通过本通史专属通道开启前沿模型微调与大并发推理，秒级部署 PyTorch 与 vLLM 环境，免费领取开发者算力礼包。
+                <p className="text-xs text-stone-300 font-light max-w-2xl mx-auto text-center mb-6 leading-relaxed">
+                  {isZh 
+                    ? '通过本通史特约渠道启动前沿模型微调与大并发推理，秒级拉起 PyTorch 与 vLLM 容器环境，免费领取开发者算力代金券。'
+                    : 'Provision on-demand H100, A100, and RTX 4090 instances in seconds. Exclusive developer vouchers pre-applied.'}
                 </p>
-                <div className="flex justify-center items-center gap-3">
-                  <a
-                    href="https://runpod.io/?ref=ai-chronicle"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="liquid-glass-amber px-5 py-2 rounded-full text-xs font-mono font-medium text-amber-200 hover:text-white inline-flex items-center space-x-1.5 transition-all shadow-md"
-                  >
-                    <span>领取 $10 专属算力体验金 →</span>
-                  </a>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                  {/* AutoDL Domestic Card */}
+                  <div className="p-4 rounded-2xl bg-black/40 border border-emerald-500/30 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-1 mb-1.5">
+                        <span className="font-mono text-xs font-bold text-white">{autodlPartner.name}</span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
+                          {isZh ? autodlPartner.perkBadgeZh : autodlPartner.perkBadgeEn}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                        {isZh ? '国内高校与团队首选，预装主流框架镜像，微信/支付宝按时计费。' : 'Domestic low-latency mirrors & instant framework containers.'}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2 pt-2 border-t border-white/5">
+                      {autodlPartner.promoCode && (
+                        <div className="flex items-center justify-between bg-black/50 px-2.5 py-1 rounded-lg text-[11px] font-mono">
+                          <span className="text-stone-400">{isZh ? '立减码:' : 'Code:'} <b className="text-white">{autodlPartner.promoCode}</b></span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyPromo(autodlPartner.promoCode!, autodlPartner)}
+                            className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1"
+                          >
+                            {copiedPartnerId === autodlPartner.id ? (
+                              <>
+                                <Check className="w-3 h-3" />
+                                <span>{isZh ? '已复制' : 'Copied'}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>{isZh ? '复制' : 'Copy'}</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
+                      <a
+                        href={autodlPartner.affiliateUrl || autodlPartner.officialFallbackUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => handleAffiliateClick(autodlPartner)}
+                        className="w-full py-2 px-3 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                      >
+                        <span>{isZh ? '直通 AutoDL 开机' : 'Launch AutoDL'}</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* RunPod Global Card */}
+                  <div className="p-4 rounded-2xl bg-black/40 border border-cyan-500/30 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-1 mb-1.5">
+                        <span className="font-mono text-xs font-bold text-white">{runpodPartner.name}</span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">
+                          {isZh ? runpodPartner.perkBadgeZh : runpodPartner.perkBadgeEn}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                        {isZh ? '全球海外按秒计费，H100 / RTX 4090 裸金属即开即停，领 $10 体验金。' : 'Global hyperscale GPU containers, spot pricing & $10 credits.'}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2 pt-2 border-t border-white/5">
+                      {runpodPartner.promoCode && (
+                        <div className="flex items-center justify-between bg-black/50 px-2.5 py-1 rounded-lg text-[11px] font-mono">
+                          <span className="text-stone-400">{isZh ? '返利码:' : 'Code:'} <b className="text-white">{runpodPartner.promoCode}</b></span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyPromo(runpodPartner.promoCode!, runpodPartner)}
+                            className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1"
+                          >
+                            {copiedPartnerId === runpodPartner.id ? (
+                              <>
+                                <Check className="w-3 h-3" />
+                                <span>{isZh ? '已复制' : 'Copied'}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>{isZh ? '复制' : 'Copy'}</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
+                      <a
+                        href={runpodPartner.affiliateUrl || runpodPartner.officialFallbackUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => handleAffiliateClick(runpodPartner)}
+                        className="w-full py-2 px-3 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-cyan-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                      >
+                        <span>{isZh ? '领取 $10 并拉起' : 'Claim $10 on RunPod'}</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* High-Converting In-Article Sponsored Placement 2: Dev Tools & AdSense Container (After Chapter IV) */}
+            {idx === 4 && (
+              <div className="my-8 p-6 sm:p-8 rounded-3xl liquid-glass border border-amber-400/30 bg-gradient-to-r from-amber-500/[0.04] via-transparent to-amber-500/[0.02] no-print shadow-xl relative glass-sheen">
+                <div className="flex items-center justify-center space-x-2 text-xs font-mono text-amber-300 mb-2">
+                  <Code className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{isZh ? 'DEVELOPER ECOSYSTEM · 智能体研发与极速推理工具' : 'DEVELOPER ECOSYSTEM · AI IDEs & LPU INFERENCE'}</span>
+                </div>
+                <h4 className="text-base sm:text-xl font-serif font-bold text-white text-center mb-2">
+                  {isZh ? '打造下一代自主 Agent：前沿研发利器专属通道' : 'Accelerate Your AI Engineering: Verified Frontier Tools'}
+                </h4>
+                <p className="text-xs text-stone-300 font-light max-w-2xl mx-auto text-center mb-6 leading-relaxed">
+                  {isZh
+                    ? '工欲善其事，必先利其器。精选已被全球核心学术圈与工程团队实测验证的代码感知 IDE 与极速推理引擎。'
+                    : 'Frontier developer tooling trusted by leading AI labs, including context-aware code editors and deterministic LPU chips.'}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                  {/* Cursor Card */}
+                  <div className="p-4 rounded-2xl bg-black/40 border border-amber-400/20 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-1 mb-1.5">
+                        <span className="font-mono text-xs font-bold text-white">{cursorPartner.name}</span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">
+                          {isZh ? cursorPartner.perkBadgeZh : cursorPartner.perkBadgeEn}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                        {isZh ? '全库语义索引与 Claude 3.5 智能改写，现代工程师必备的 AI IDE。' : 'Next-gen code editor with deep codebase indexing and contextual generation.'}
+                      </p>
+                    </div>
+
+                    <a
+                      href={cursorPartner.affiliateUrl || cursorPartner.officialFallbackUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleAffiliateClick(cursorPartner)}
+                      className="w-full py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                    >
+                      <span>{isZh ? '免费体验 Cursor Pro' : 'Try Cursor Pro Free'}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+
+                  {/* Groq Card */}
+                  <div className="p-4 rounded-2xl bg-black/40 border border-purple-400/20 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-1 mb-1.5">
+                        <span className="font-mono text-xs font-bold text-white">{groqPartner.name}</span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">
+                          {isZh ? groqPartner.perkBadgeZh : groqPartner.perkBadgeEn}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                        {isZh ? '500+ Tokens/秒硬件级极速 LPU，为智能体多步反思提供瞬间响应。' : '500+ Tokens/sec hardware LPU engine for deterministic low-latency agents.'}
+                      </p>
+                    </div>
+
+                    <a
+                      href={groqPartner.affiliateUrl || groqPartner.officialFallbackUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleAffiliateClick(groqPartner)}
+                      className="w-full py-2 px-3 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/30 text-purple-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                    >
+                      <span>{isZh ? '获取免费极速 API Key' : 'Get Free Groq API Key'}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Optional Google AdSense Responsive Slot with Fallback */}
+                <div className="mt-4 pt-4 border-t border-white/5 text-center">
+                  <div className="text-[10px] font-mono text-stone-400">
+                    {isZh ? '⚡ 广告与特约赞助通道 · 赞助支持 AI 通史持续迭代与学术分发' : '⚡ Official Ad & Partner Channel · Supporting Independent AI Research'}
+                  </div>
                 </div>
               </div>
             )}

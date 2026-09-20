@@ -1,15 +1,91 @@
-import React, { useState, useMemo } from 'react';
-import { Zap, RotateCcw, Sparkles, GitBranch, Activity } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Zap, RotateCcw, Sparkles, GitBranch, Activity, Server, Cpu, ArrowUpRight, Copy, Check, Tag } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { soundFX } from '../utils/audioEffects';
+import { getMonetizationPartners, MonetizationPartner } from '../utils/monetizationConfig';
+import { recordAffiliateAction } from '../utils/analyticsTracker';
 
 export const LiquidParadigmWidget: React.FC = () => {
   const { currentLang } = useLanguage();
   const [activeParadigm, setActiveParadigm] = useState<'symbolism' | 'connectionism' | 'agentic2026'>('agentic2026');
   const [thinkingTokens, setThinkingTokens] = useState<number>(4096);
   const [modelSize, setModelSize] = useState<number>(70);
+  const [partners, setPartners] = useState<MonetizationPartner[]>([]);
+  const [copiedPartnerId, setCopiedPartnerId] = useState<string | null>(null);
 
   const isZh = currentLang === 'zh';
+
+  useEffect(() => {
+    setPartners(getMonetizationPartners());
+  }, []);
+
+  const runpodPartner = partners.find(p => p.id === 'runpod') || {
+    id: 'runpod',
+    name: 'RunPod Cloud GPUs',
+    affiliateUrl: 'https://runpod.io/?ref=ai-chronicle',
+    officialFallbackUrl: 'https://runpod.io',
+    promoCode: 'CHRONICLE10',
+    perkBadgeZh: '立享 10% 算力返利',
+    perkBadgeEn: '10% Rebate',
+  };
+
+  const autodlPartner = partners.find(p => p.id === 'autodl') || {
+    id: 'autodl',
+    name: 'AutoDL 算力云 (国内首选)',
+    affiliateUrl: 'https://www.autodl.com',
+    officialFallbackUrl: 'https://www.autodl.com',
+    promoCode: 'AUTODL2026',
+    perkBadgeZh: '新人立减 ¥20',
+    perkBadgeEn: '¥20 Voucher',
+  };
+
+  const handlePartnerClick = (partner: { id: string; name: string; affiliateUrl?: string; officialFallbackUrl?: string }) => {
+    soundFX.playClick(900);
+    recordAffiliateAction(partner.id, partner.name, 'click');
+  };
+
+  const handleCopyPromo = (code: string, partner: { id: string; name: string }) => {
+    soundFX.playClick(1000);
+    navigator.clipboard.writeText(code);
+    setCopiedPartnerId(partner.id);
+    recordAffiliateAction(partner.id, partner.name, 'promo_copy');
+    setTimeout(() => setCopiedPartnerId(null), 2000);
+  };
+
+  // Hardware provisioning estimates
+  const hardwareRec = useMemo(() => {
+    if (modelSize <= 14) {
+      return {
+        vramFp16: `${modelSize * 2} GB`,
+        vramInt4: `${Math.round(modelSize * 0.75)} GB`,
+        gpuName: '1x NVIDIA RTX 4090 (24GB)',
+        descZh: '单卡消费级旗舰即可跑满，适合个人微调与量化推理',
+        descEn: 'Single consumer flagship card, ideal for local fine-tuning',
+        autoDlCost: '约 ¥1.8/小时',
+        runpodCost: '$0.44/hr',
+      };
+    } else if (modelSize <= 72) {
+      return {
+        vramFp16: `${modelSize * 2} GB`,
+        vramInt4: `${Math.round(modelSize * 0.75)} GB`,
+        gpuName: '2x ~ 4x A100 / RTX 4090 集群',
+        descZh: '中型前沿模型标准配置，支持长上下文与多步树搜索',
+        descEn: 'Multi-GPU cluster for reasoning search & long context',
+        autoDlCost: '约 ¥7.5/小时 (2卡)',
+        runpodCost: '$1.76/hr (4x 4090)',
+      };
+    } else {
+      return {
+        vramFp16: `${modelSize * 2} GB`,
+        vramInt4: `${Math.round(modelSize * 0.75)} GB`,
+        gpuName: '8x H100 80GB SXM5 张量并行集群',
+        descZh: '千亿级旗舰模型全精度运行，企业与实验室科研顶配',
+        descEn: '8x H100 80GB cluster for 405B dense inference',
+        autoDlCost: '需专属裸金属算力节点',
+        runpodCost: '$19.9/hr (8x H100)',
+      };
+    }
+  }, [modelSize]);
 
   // Compute test-time scaling metrics
   const scalingStats = useMemo(() => {
@@ -430,6 +506,193 @@ export const LiquidParadigmWidget: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Real-time Hardware Provisioning & 1-Click Replication Card (Monetization Funnel) */}
+      <div className="liquid-glass rounded-3xl p-6 sm:p-8 border border-amber-400/30 shadow-2xl relative overflow-hidden glass-sheen">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
+          <div>
+            <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
+              <Server className="w-4 h-4 text-amber-400 animate-pulse" />
+              <span className="font-semibold tracking-wider">COMPUTE PROVISIONING · 算力实机部署与一键复现</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-wide">
+              {isZh ? `${modelSize}B 模型实机复现算力配置与一键起机` : `Hardware Provisioning & 1-Click Deploy for ${modelSize}B Model`}
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-300 font-light mt-1 max-w-2xl leading-relaxed">
+              {isZh 
+                ? '根据您在上方设定的模型参数量与测试时思考长度，动态推算最低与最优显存。直达认证算力云，领取开发者专属算力礼包。'
+                : 'Dynamically calculated VRAM footprint and recommended compute nodes based on your model size and search horizon.'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 self-start md:self-auto bg-amber-500/10 border border-amber-400/20 px-3.5 py-2 rounded-2xl">
+            <Cpu className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <div className="text-xs font-mono">
+              <span className="text-stone-400 block text-[10px] uppercase">{isZh ? '推荐硬件规格' : 'Recommended Spec'}</span>
+              <span className="text-amber-200 font-bold">{hardwareRec.gpuName}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Dynamic Spec Badges */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
+            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? 'FP16 权重显存' : 'FP16 VRAM'}</span>
+            <span className="text-sm sm:text-base font-mono font-bold text-white mt-1 block">{hardwareRec.vramFp16}</span>
+            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? '不含 KV Cache 冗余' : 'Raw weight space'}</span>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
+            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? 'INT4 量化最低显存' : 'INT4 Quant VRAM'}</span>
+            <span className="text-sm sm:text-base font-mono font-bold text-amber-300 mt-1 block">{hardwareRec.vramInt4}</span>
+            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? 'AWQ / GPTQ 压缩' : 'AWQ / GPTQ footprint'}</span>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
+            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? '国内 AutoDL 参考单价' : 'AutoDL Est. Cost'}</span>
+            <span className="text-sm sm:text-base font-mono font-bold text-emerald-300 mt-1 block">{hardwareRec.autoDlCost}</span>
+            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? '支持微信/支付宝按时计费' : 'Hourly billing'}</span>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
+            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? '全球 RunPod 参考单价' : 'RunPod Est. Cost'}</span>
+            <span className="text-sm sm:text-base font-mono font-bold text-cyan-300 mt-1 block">{hardwareRec.runpodCost}</span>
+            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? '按秒计费 · 即开即停' : 'Per-second billing'}</span>
+          </div>
+        </div>
+
+        <div className="text-xs text-stone-300 font-light mb-6 p-3 rounded-2xl bg-stone-900/40 border border-white/5 flex items-center gap-2">
+          <Activity className="w-4 h-4 text-amber-400 flex-shrink-0" />
+          <span>{isZh ? hardwareRec.descZh : hardwareRec.descEn}</span>
+        </div>
+
+        {/* Dual Provider Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Provider 1: AutoDL */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-black/40 to-black/60 border border-emerald-400/30 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="font-bold text-white text-sm font-mono">{autodlPartner.name}</span>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  {isZh ? autodlPartner.perkBadgeZh : autodlPartner.perkBadgeEn}
+                </span>
+              </div>
+              <p className="text-xs text-stone-300 font-light leading-relaxed mb-4">
+                {isZh 
+                  ? '国内极速低延迟网络，预装 PyTorch、vLLM、Ollama 等常用大模型镜像与中文网盘加速通道，高校与个人首选。'
+                  : 'Leading domestic GPU cloud for researchers with pre-configured weights and localized bandwidth.'}
+              </p>
+            </div>
+
+            <div className="space-y-2 pt-2 border-t border-white/5">
+              {autodlPartner.promoCode && (
+                <div className="flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-xl border border-white/5 text-xs font-mono">
+                  <div className="flex items-center space-x-1.5 text-stone-400">
+                    <Tag className="w-3 h-3 text-emerald-400" />
+                    <span>{isZh ? '新人立减码:' : 'Promo Code:'}</span>
+                    <span className="text-white font-bold">{autodlPartner.promoCode}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyPromo(autodlPartner.promoCode!, autodlPartner)}
+                    className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 text-[11px]"
+                  >
+                    {copiedPartnerId === autodlPartner.id ? (
+                      <>
+                        <Check className="w-3 h-3" />
+                        <span>{isZh ? '已复制' : 'Copied'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>{isZh ? '复制' : 'Copy'}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              <a
+                href={autodlPartner.affiliateUrl || autodlPartner.officialFallbackUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handlePartnerClick(autodlPartner)}
+                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-mono text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-emerald-900/30 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>{isZh ? '前往 AutoDL 一键起机开跑' : 'Launch on AutoDL Cloud'}</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Provider 2: RunPod */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-cyan-500/10 via-black/40 to-black/60 border border-cyan-400/30 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                  <span className="font-bold text-white text-sm font-mono">{runpodPartner.name}</span>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  {isZh ? runpodPartner.perkBadgeZh : runpodPartner.perkBadgeEn}
+                </span>
+              </div>
+              <p className="text-xs text-stone-300 font-light leading-relaxed mb-4">
+                {isZh 
+                  ? '全球顶级高性价比算力，提供 H100、A100、L40S 与 RTX 4090 裸金属容器，按秒计费，支持海外信用卡与加密结算。'
+                  : 'Global hyperscale GPU instances with per-second billing, spot instances, and instant vLLM/PyTorch deployments.'}
+              </p>
+            </div>
+
+            <div className="space-y-2 pt-2 border-t border-white/5">
+              {runpodPartner.promoCode && (
+                <div className="flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-xl border border-white/5 text-xs font-mono">
+                  <div className="flex items-center space-x-1.5 text-stone-400">
+                    <Tag className="w-3 h-3 text-cyan-400" />
+                    <span>{isZh ? '专属返利码:' : 'Promo Code:'}</span>
+                    <span className="text-white font-bold">{runpodPartner.promoCode}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyPromo(runpodPartner.promoCode!, runpodPartner)}
+                    className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[11px]"
+                  >
+                    {copiedPartnerId === runpodPartner.id ? (
+                      <>
+                        <Check className="w-3 h-3" />
+                        <span>{isZh ? '已复制' : 'Copied'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>{isZh ? '复制' : 'Copy'}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              <a
+                href={runpodPartner.affiliateUrl || runpodPartner.officialFallbackUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handlePartnerClick(runpodPartner)}
+                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-mono text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-cyan-900/30 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>{isZh ? '在 RunPod 领取 $10 并拉起算力' : 'Claim $10 & Deploy on RunPod'}</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Affiliate Commission & Transparency Footer */}
+        <p className="text-[10px] text-stone-400 font-mono text-center mt-5 pt-4 border-t border-white/5">
+          {isZh 
+            ? '⚡ 算力生态合作说明：本站所推荐算力通道均经实测验证，点击通道注册即可享受对应折扣优惠；收益全数用于通史开源与独立维护。' 
+            : '⚡ Affiliate Transparency: Verified GPU partner links provide discount perks. Commissions support our independent AI research.'}
+        </p>
       </div>
 
       {/* Part 3: Paradigm Matrix Deep Comparison */}
