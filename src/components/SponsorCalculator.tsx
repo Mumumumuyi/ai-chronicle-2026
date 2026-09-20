@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Sparkles, Calculator, Check, Copy, Send, Download, Building2, CheckCircle2, ShieldAlert, X } from 'lucide-react';
+import { Sparkles, Calculator, Check, Copy, Send, Download, Building2, CheckCircle2, ShieldAlert, X, Mail, ArrowUpRight } from 'lucide-react';
 import { saveLead, getLeads, exportLeadsToCSV } from '../utils/leadStorage';
 import { useLanguage } from '../i18n/LanguageContext';
+import { getOwnerContact } from '../utils/monetizationConfig';
+import { recordAffiliateAction } from '../utils/analyticsTracker';
 
 interface SponsorSlot {
   id: string;
@@ -31,6 +33,7 @@ interface SponsorCalculatorProps {
 export const SponsorCalculator: React.FC<SponsorCalculatorProps> = ({ onClose }) => {
   const { currentLang } = useLanguage();
   const isZh = currentLang === 'zh';
+  const ownerContact = getOwnerContact();
 
   const [selectedSlots, setSelectedSlots] = useState<string[]>(['hero_bar']);
   const [durationMonths, setDurationMonths] = useState<number>(3);
@@ -173,15 +176,20 @@ Tiered Savings: -${currencySymbol}${savedAmount.toLocaleString()} (${Math.round(
 Final Estimated Net: ${currencySymbol}${discountedTotal.toLocaleString()}
 Notes / Launch Timeline: ${message || 'Standard timeline, ready for media kit onboarding.'}
 --------------------------------------------------
-Official Inquiries: sponsor@aichronicle.com
+Official Inquiries: ${ownerContact.contactEmail} (WeChat: ${ownerContact.wechatId})
 Generated at: ${new Date().toLocaleString()}
 Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
   };
+
+  const sponsorMailtoUrl = `mailto:${ownerContact.contactEmail}?subject=${encodeURIComponent(
+    `【AI Chronicle 2026】商业赞助意向与排期咨询: ${brandName || '品牌商务'}`
+  )}&body=${encodeURIComponent(generateProposalText())}`;
 
   const handleCopyProposal = () => {
     const text = generateProposalText();
     navigator.clipboard.writeText(text);
     setIsCopied(true);
+    recordAffiliateAction('b2b_sponsor', `B2B Calculator RFP Copy (${brandName || 'Draft'})`, 'promo_copy');
     setTimeout(() => setIsCopied(false), 2500);
   };
 
@@ -198,6 +206,7 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
       message
     });
 
+    recordAffiliateAction('b2b_sponsor', `B2B Calculator Inquiry (${brandName || 'RFP'})`, 'click');
     setIsSubmitted(true);
   };
 
@@ -281,14 +290,23 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
               </div>
               <div className="flex justify-between">
                 <span className="text-stone-400">官方商务对接:</span>
-                <span className="text-white">sponsor@aichronicle.com</span>
+                <span className="text-white">{ownerContact.contactEmail}</span>
               </div>
             </div>
             <div className="flex flex-wrap justify-center gap-2.5 pt-2">
+              <a
+                href={sponsorMailtoUrl}
+                onClick={() => recordAffiliateAction('b2b_sponsor', 'B2B Calculator RFP (mailto)', 'click')}
+                className="liquid-glass-amber px-4 py-2 rounded-full text-xs font-mono font-bold text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-md hover:scale-105"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>{isZh ? '一键直接发信对接' : 'Send RFP Email Now'}</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
               <button
                 type="button"
                 onClick={handleCopyProposal}
-                className="liquid-glass-amber px-4 py-2 rounded-full text-xs font-mono text-amber-200 flex items-center space-x-1.5"
+                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-amber-200 flex items-center space-x-1.5 hover:text-white transition-all"
               >
                 <Copy className="w-3.5 h-3.5" />
                 <span>{isCopied ? texts.copiedRfpBtn : texts.copyRfpBtn}</span>
@@ -296,7 +314,7 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
               <button
                 type="button"
                 onClick={() => setIsSubmitted(false)}
-                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-stone-300"
+                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-stone-300 hover:text-white transition-all"
               >
                 {texts.recalcBtn}
               </button>

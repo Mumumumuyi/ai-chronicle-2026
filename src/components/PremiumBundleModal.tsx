@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Download, Check, Sparkles, FileText, Image, ShieldCheck, X, ArrowDownToLine, Zap, QrCode, Copy, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { saveLead } from '../utils/leadStorage';
+import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
 
 interface PremiumBundleModalProps {
   onClose: () => void;
@@ -98,8 +99,35 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
   ];
 
   const handleDownloadSample = () => {
-    const sampleContent = `# AI Chronicle Canonical Treatise (1943 — 2026 Sample Chapter)\n\nThank you for downloading the sample chapter!\nOnline full interactive portal: https://mumumumuyi.github.io/ai-chronicle-2026/\n\nOrder Ref: ${orderId}\nGenerated at: ${new Date().toISOString()}`;
-    triggerFileDownload('AI_Chronicle_Sample_Chapter.md', sampleContent);
+    const chapters = ARTICLE_CHAPTERS.slice(0, 2);
+    let md = `# ${ARTICLE_META.title} · 【免费研读样章】\n`;
+    md += `> ${ARTICLE_META.subtitle}\n\n`;
+    md += `**出版版本**: ${ARTICLE_META.version} | **作者**: ${ARTICLE_META.author} | **样章订单参考**: ${orderId}\n\n`;
+    md += `---\n\n## 导言与立论摘要\n\n${ARTICLE_META.abstract}\n\n---\n\n`;
+    
+    chapters.forEach(ch => {
+      md += `## ${ch.chapterNumber}: ${ch.title} (${ch.timeSpan})\n\n`;
+      if (ch.leadQuote) {
+        md += `> "${ch.leadQuote.text}"\n> —— *${ch.leadQuote.attribution}*\n\n`;
+      }
+      md += `${ch.introParagraph}\n\n`;
+      ch.sections.forEach(sec => {
+        md += `### ${sec.subtitle}\n\n`;
+        sec.content.forEach(p => {
+          md += `${p}\n\n`;
+        });
+        if (sec.highlightInsight) {
+          md += `> **💡 核心洞见**: ${sec.highlightInsight}\n\n`;
+        }
+        if (sec.archivalReference) {
+          md += `*文献出处*: \`${sec.archivalReference}\`\n\n`;
+        }
+      });
+      md += `---\n\n`;
+    });
+
+    md += `\n### 获取后续 5 大章节与 4K 矢量图谱\n访问完整通史交互门户: https://mumumumuyi.github.io/ai-chronicle-2026/\n`;
+    triggerFileDownload(`AI_Chronicle_Sample_Chapter_${orderId}.md`, md);
   };
 
   const handleCompleteCheckout = (e: React.FormEvent) => {
@@ -112,8 +140,125 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
     saveLead(buyerEmail, 'bundle_download', currentLang);
     setStep('delivered');
 
-    const fullBundleContent = `# 《人工智能演进全景通史》（1943 — 2026.09.13 典藏全量定本 / Full Bundle Archive）\n\n【专属凭据 / Credentials】\nOrder ID: ${orderId}\nLicensed Email: ${buyerEmail}\nLicense: Personal Perpetual Academic & Presentation License\n\nThank you for supporting independent AI Chronicle research!\nIncludes: 7 Canonical Epoch Chapters, Test-Time Compute Simulation Code, and 4K Assets.\nContact: sponsor@aichronicle.com`;
-    triggerFileDownload(`AI_Chronicle_2026_Full_Bundle_${orderId}.md`, fullBundleContent);
+    let md = `# ${ARTICLE_META.title}\n`;
+    md += `> ${ARTICLE_META.subtitle}\n\n`;
+    md += `================================================================================\n`;
+    md += `【官方典藏数字资产包认证凭据 / CERTIFICATE OF CANONICAL ARCHIVE】\n`;
+    md += `订单编号: ${orderId}\n`;
+    md += `授权邮箱: ${buyerEmail}\n`;
+    md += `定本版本: ${ARTICLE_META.version}\n`;
+    md += `出版日期: ${ARTICLE_META.publishedDate}\n`;
+    md += `字数规模: ${ARTICLE_META.wordCountTotal} (全量无删减学术长卷)\n`;
+    md += `授权协议: 个人研读、高校教学与学术引用永久许可 (Academic Perpetual License)\n`;
+    md += `在线站点: https://mumumumuyi.github.io/ai-chronicle-2026/\n`;
+    md += `================================================================================\n\n`;
+
+    md += `## 摘要与立论依据 (Abstract)\n\n${ARTICLE_META.abstract}\n\n---\n\n`;
+
+    ARTICLE_CHAPTERS.forEach(ch => {
+      md += `# ${ch.chapterNumber}: ${ch.title}\n`;
+      md += `**历史跨度**: ${ch.timeSpan}\n\n`;
+      if (ch.leadQuote) {
+        md += `> "${ch.leadQuote.text}"\n> —— *${ch.leadQuote.attribution}*\n\n`;
+      }
+      md += `${ch.introParagraph}\n\n`;
+      ch.sections.forEach(sec => {
+        md += `## ${sec.subtitle}\n\n`;
+        sec.content.forEach(p => {
+          md += `${p}\n\n`;
+        });
+        if (sec.highlightInsight) {
+          md += `> **💡 纪元洞见**: ${sec.highlightInsight}\n\n`;
+        }
+        if (sec.archivalReference) {
+          md += `*【经典档案文献】*: \`${sec.archivalReference}\`\n\n`;
+        }
+      });
+      md += `\n================================================================================\n\n`;
+    });
+
+    md += `# 附录一：LaTeX / BibTeX 标准学术文献引用图谱库\n\n`;
+    md += `\`\`\`bibtex
+@article{aichronicle2026,
+  title={The Spark, The Winter, and The Silicon Singularity: A Canonical Chronicle of Artificial Intelligence (1943--2026)},
+  author={Antigravity Chronicle Research Group},
+  journal={AI Chronicle Archive},
+  year={2026},
+  month={September},
+  url={https://mumumumuyi.github.io/ai-chronicle-2026/}
+}
+
+@article{turing1950,
+  title={Computing Machinery and Intelligence},
+  author={Turing, Alan M.},
+  journal={Mind},
+  volume={59},
+  number={236},
+  pages={433--460},
+  year={1950}
+}
+
+@article{mcculloch1943,
+  title={A Logical Calculus of the Ideas Immanent in Nervous Activity},
+  author={McCulloch, Warren S. and Pitts, Walter},
+  journal={Bulletin of Mathematical Biophysics},
+  volume={5},
+  pages={115--133},
+  year={1943}
+}
+
+@article{rumelhart1986,
+  title={Learning representations by back-propagating errors},
+  author={Rumelhart, David E. and Hinton, Geoffrey E. and Williams, Ronald J.},
+  journal={Nature},
+  volume={323},
+  pages={533--536},
+  year={1986}
+}
+
+@article{vaswani2017,
+  title={Attention is All You Need},
+  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\\L}ukasz and Polosukhin, Illia},
+  journal={Advances in Neural Information Processing Systems (NeurIPS)},
+  volume={30},
+  year={2017}
+}
+
+@article{brown2020,
+  title={Language Models are Few-Shot Learners},
+  author={Brown, Tom B. and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and others},
+  journal={Advances in Neural Information Processing Systems (NeurIPS)},
+  volume={33},
+  year={2020}
+}
+
+@techreport{openai2024o1,
+  title={Learning to Reason with LLMs: OpenAI o1 System Card},
+  author={OpenAI},
+  institution={OpenAI Research},
+  year={2024},
+  month={September}
+}
+
+@article{deepseek2025r1,
+  title={DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning},
+  author={DeepSeek-AI and Guo, Daya and Yang, Dejian and others},
+  journal={arXiv preprint arXiv:2501.12948},
+  year={2025}
+}
+\`\`\`\n\n`;
+
+    md += `# 附录二：测试时计算第二缩放定律（Test-Time Compute）核心数学公式\n\n`;
+    md += `在 2024-2026 年现代推理模型中，推理准确率由双重算力联合决定：\n\n`;
+    md += `$$P(N, C_{\\text{test}}) = 1 - \\exp\\left( -\\alpha \\cdot N^\\beta \\cdot C_{\\text{test}}^\\gamma \\right)$$\n\n`;
+    md += `其中：\n`;
+    md += `- $N$: 模型预训练参数规模 (Parameters)\n`;
+    md += `- $C_{\\text{test}}$: 测试时搜索思考 Token 数 (Test-Time Tokens / Flops)\n`;
+    md += `- $\\alpha, \\beta, \\gamma$: 验证域难度常数与树搜索效率指数\n\n`;
+    md += `当预训练模型参数由于高质量文本用尽而遭遇收益递减墙时，通过增加系统二多步反思算力，可使小模型超越 10 倍以上体量纯直觉大模型。\n\n`;
+    md += `---\n© 2026 AI Chronicle · 感谢您的支持，愿理性之火永照智性未来。\n`;
+
+    triggerFileDownload(`AI_Chronicle_2026_Full_Academic_Bundle_${orderId}.md`, md);
   };
 
   const triggerFileDownload = (filename: string, content: string) => {

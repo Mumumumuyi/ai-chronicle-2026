@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Coffee, Heart, QrCode, CreditCard, Sparkles, X, Check, Copy } from 'lucide-react';
+import { Coffee, Heart, QrCode, CreditCard, Sparkles, X, Check, Copy, Zap, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { getOwnerContact } from '../utils/monetizationConfig';
+import { recordAffiliateAction } from '../utils/analyticsTracker';
 
 interface SponsorCoffeeModalProps {
   onClose: () => void;
@@ -10,6 +12,7 @@ interface SponsorCoffeeModalProps {
 export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose }) => {
   const { currentLang } = useLanguage();
   const isZh = currentLang === 'zh';
+  const ownerContact = getOwnerContact();
   const [activeTab, setActiveTab] = useState<'wechat' | 'global'>(() => (isZh ? 'wechat' : 'global'));
   const [selectedAmount, setSelectedAmount] = useState<number>(30);
   const [copiedAccount, setCopiedAccount] = useState<boolean>(false);
@@ -32,8 +35,8 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
     tabWeChat: isZh ? '微信 / 支付宝' : 'WeChat / Alipay',
     tabGlobal: isZh ? '国际卡 / Stripe' : 'Cards / Stripe',
     qrNote: isZh 
-      ? '赞助成功后，请将订单号或备注截图发至商务邮箱以登入荣誉致谢榜' 
-      : 'Send transaction proof or handle to sponsor@aichronicle.com to be listed on the Wall.',
+      ? `赞助成功后，请将订单号或截图发至 ${ownerContact.contactEmail} 以登入荣誉致谢榜` 
+      : `Send transaction proof or handle to ${ownerContact.contactEmail} to be listed on the Wall.`,
     bmacTitle: 'Buy Me a Coffee',
     bmacSubtitle: isZh ? '支持国际信用卡、Apple Pay、Google Pay 或 PayPal 秒级打赏' : 'Support via Credit Card, Apple Pay, Google Pay, or PayPal in seconds.',
     bmacBtn: isZh ? '前往 Buy Me a Coffee 打赏 →' : 'Tip via Buy Me a Coffee →',
@@ -177,6 +180,22 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
                 </div>
               </div>
 
+              {ownerContact.afdianUrl && (
+                <div className="w-full max-w-sm mt-3.5">
+                  <a
+                    href={ownerContact.afdianUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => recordAffiliateAction('creator_tip', 'Afdian Tip', 'click')}
+                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-700/40 to-purple-600/30 hover:from-purple-600/50 hover:to-purple-500/40 border border-purple-500/40 text-purple-200 hover:text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-purple-950/40 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-purple-300" />
+                    <span>{isZh ? `通过爱发电在线赞助 ¥${selectedAmount} (支持微信/支付宝)` : `Tip via Afdian (WeChat/Alipay)`}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
+
               <div className="mt-3 sm:mt-4 text-[11px] font-mono text-stone-300 flex items-center space-x-1.5 text-center max-w-sm">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                 <span className="leading-snug">{texts.qrNote}</span>
@@ -228,9 +247,10 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
                 {texts.bmacSubtitle}
               </p>
               <a
-                href="https://buymeacoffee.com"
+                href={ownerContact.buyMeACoffeeUrl || "https://buymeacoffee.com"}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => recordAffiliateAction('creator_tip', 'BuyMeACoffee Tip', 'click')}
                 className="w-full py-2.5 rounded-xl liquid-glass-amber text-xs font-mono font-bold text-amber-200 hover:text-white flex items-center justify-center space-x-2 transition-all block text-center"
               >
                 <Coffee className="w-4 h-4" />
