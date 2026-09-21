@@ -172,12 +172,20 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
 
             {/* QR Code Presentation Slab */}
             <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl liquid-glass border border-amber-400/30 text-center flex flex-col items-center justify-center relative overflow-hidden">
-              <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-2xl bg-white p-2.5 shadow-2xl flex flex-col items-center justify-center border-4 border-amber-400/40 relative">
-                <div className="w-full h-full border-2 border-dashed border-stone-300 rounded-xl flex flex-col items-center justify-center bg-stone-50 p-2 text-stone-800">
-                  <Coffee className="w-9 h-9 text-amber-600 mb-1.5" />
-                  <span className="text-xs font-mono font-bold text-stone-900">赞助 ¥{selectedAmount} 咖啡</span>
-                  <span className="text-[10px] text-stone-500 mt-1">微信 / 支付宝 扫一扫</span>
-                </div>
+              <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-2xl bg-white p-2.5 shadow-2xl flex flex-col items-center justify-center border-4 border-amber-400/40 relative overflow-hidden">
+                {ownerContact.qrCodeUrl ? (
+                  <img
+                    src={ownerContact.qrCodeUrl}
+                    alt="微信/支付宝收款二维码"
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                ) : (
+                  <div className="w-full h-full border-2 border-dashed border-stone-300 rounded-xl flex flex-col items-center justify-center bg-stone-50 p-2 text-stone-800">
+                    <Coffee className="w-9 h-9 text-amber-600 mb-1.5" />
+                    <span className="text-xs font-mono font-bold text-stone-900">赞助 ¥{selectedAmount} 咖啡</span>
+                    <span className="text-[10px] text-stone-500 mt-1">微信 / 支付宝 扫一扫</span>
+                  </div>
+                )}
               </div>
 
               {ownerContact.afdianUrl && (

@@ -485,6 +485,29 @@ CREATE POLICY "Allow public read" ON visitor_logs FOR SELECT USING (true);`;
             </div>
 
             <div>
+              <label className="block text-stone-400 text-[11px] mb-1">
+                微信 / 支付宝收款二维码图片路径或链接 (可选)
+              </label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  value={contact.qrCodeUrl || ''}
+                  onChange={(e) => setContact({ ...contact, qrCodeUrl: e.target.value })}
+                  placeholder="例如: /sponsor-qr.png 或 https://img.domain.com/my-qr.png"
+                  className="flex-1 bg-black/50 border border-stone-800 focus:border-amber-500/60 rounded-xl px-3 py-2 text-stone-200 focus:outline-none text-xs font-mono"
+                />
+                {contact.qrCodeUrl && (
+                  <div className="w-9 h-9 rounded-lg bg-white p-0.5 border border-amber-400/40 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                    <img src={contact.qrCodeUrl} alt="预览" className="w-full h-full object-contain" />
+                  </div>
+                )}
+              </div>
+              <p className="text-[10px] text-stone-500 mt-1">
+                提示：将二维码图片存入项目 public/ 目录（如 public/sponsor-qr.png），此处填写 /sponsor-qr.png 即可自动展示；留空则显示优雅的通用扫码插画。
+              </p>
+            </div>
+
+            <div>
               <label className="block text-stone-400 text-[11px] mb-1">商务结算说明 / 声明提示</label>
               <textarea
                 value={contact.customNoticeZh || ''}

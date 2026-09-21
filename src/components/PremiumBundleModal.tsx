@@ -461,10 +461,20 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
 
             {/* QR Code Container */}
             <div className="p-4 sm:p-5 rounded-2xl liquid-glass border border-amber-400/30 flex flex-col items-center justify-center text-center">
-              <div className="w-36 h-36 sm:w-40 sm:h-40 rounded-xl bg-white p-2 shadow-xl flex flex-col items-center justify-center border-2 border-amber-400/40 mb-2.5">
-                <QrCode className="w-16 h-16 sm:w-20 sm:h-20 text-stone-900" />
-                <span className="text-[10px] font-mono font-bold text-stone-800 mt-1">{texts.qrScanTip}</span>
-                <span className="text-[9px] font-mono text-amber-700">{texts.qrRemarkTip}</span>
+              <div className="w-36 h-36 sm:w-40 sm:h-40 rounded-xl bg-white p-2 shadow-xl flex flex-col items-center justify-center border-2 border-amber-400/40 mb-2.5 overflow-hidden">
+                {ownerContact.qrCodeUrl ? (
+                  <img
+                    src={ownerContact.qrCodeUrl}
+                    alt="收款二维码"
+                    className="w-full h-full object-contain rounded-lg"
+                  />
+                ) : (
+                  <>
+                    <QrCode className="w-16 h-16 sm:w-20 sm:h-20 text-stone-900" />
+                    <span className="text-[10px] font-mono font-bold text-stone-800 mt-1">{texts.qrScanTip}</span>
+                    <span className="text-[9px] font-mono text-amber-700">{texts.qrRemarkTip}</span>
+                  </>
+                )}
               </div>
               <p className="text-[11px] text-stone-300 font-mono leading-snug">
                 {texts.qrSubNote}

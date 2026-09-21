@@ -30,6 +30,7 @@ export interface OwnerBusinessContact {
   sponsorTier2PriceZh: string;
   sponsorTier2PriceEn: string;
   customNoticeZh?: string;
+  qrCodeUrl?: string;         // Custom QR code image path or URL
 }
 
 export interface CloudSyncConfig {
@@ -201,6 +202,7 @@ export const DEFAULT_OWNER_CONTACT: OwnerBusinessContact = {
   telegramHandle: 'aichronicle_owner',
   afdianUrl: 'https://afdian.com',
   buyMeACoffeeUrl: 'https://buymeacoffee.com',
+  qrCodeUrl: '',
   sponsorTier1PriceZh: '¥699 / 月 或 $99 USD',
   sponsorTier1PriceEn: '$99 / mo or ¥699 CNY',
   sponsorTier2PriceZh: '¥4,999 / 季 (独家冠名)',
