@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Download, Zap, Coffee } from 'lucide-react';
+import { DollarSign, Download, Coffee } from 'lucide-react';
 import { SponsorCoffeeModal } from './SponsorCoffeeModal';
 import { PremiumBundleModal } from './PremiumBundleModal';
 import { SponsorCalculator } from './SponsorCalculator';
@@ -13,8 +13,8 @@ export const MonetizationBanner: React.FC = () => {
 
   const isZh = currentLang === 'zh';
 
-  const badgeText = isZh 
-    ? '全球 AI 极客、算力品牌与商业合作通道' 
+  const badgeText = isZh
+    ? '全球 AI 极客、算力品牌与商业合作通道'
     : currentLang === 'es'
     ? 'Canal Global de Patrocinio y Cómputo IA'
     : currentLang === 'de'
@@ -33,35 +33,29 @@ export const MonetizationBanner: React.FC = () => {
     ? 'Emplacements de Marque · Édition Hors Ligne Gratuite · Soutien à la Recherche Indépendante'
     : 'Featured Brand Placements · Free Offline Edition · Independent Research Support';
 
-  const tipBtnText = isZh ? '赞助打赏 ☕' : currentLang === 'es' ? 'Apoyar ☕' : currentLang === 'de' ? 'Spenden ☕' : currentLang === 'fr' ? 'Soutenir ☕' : 'Tip Coffee ☕';
+  const tipBtnText = isZh ? '赞助打赏' : currentLang === 'es' ? 'Apoyar' : currentLang === 'de' ? 'Spenden' : currentLang === 'fr' ? 'Soutenir' : 'Tip Coffee';
   const bundleBtnText = isZh ? '免费离线长卷' : currentLang === 'es' ? 'Edición Gratuita' : currentLang === 'de' ? 'Gratis-Paket' : currentLang === 'fr' ? 'Pack Gratuit' : 'Free Offline Pack';
   const sponsorBtnText = isZh ? '商业入驻 / 智能测算' : currentLang === 'es' ? 'Patrocinio y Tarifas' : currentLang === 'de' ? 'B2B-Präsenz & Preise' : currentLang === 'fr' ? 'Partenariat B2B' : 'B2B Placement & Pricing';
 
   return (
     <>
-      {/* Sleek Liquid Glass Commercial & Ad Strip */}
-      <div className="liquid-glass rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-amber-400/30 my-6 sm:my-8 shadow-xl relative overflow-hidden glass-sheen">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 sm:gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-stone-950 font-bold shadow-md shadow-amber-500/30 flex-shrink-0">
-              <Zap className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-1.5 text-[10px] sm:text-xs font-mono">
-                <span className="text-amber-300 font-bold">MONETIZATION & SPONSOR</span>
-                <span className="text-stone-500 hidden sm:inline">·</span>
-                <span className="text-stone-400 truncate">{badgeText}</span>
-              </div>
-              <h4 className="text-xs sm:text-base font-serif font-semibold text-white mt-0.5 leading-snug">
-                {titleText}
-              </h4>
-            </div>
+      {/* Editorial sponsor strip — hairline rule above the footer */}
+      <div className="border-t border-[#292524] bg-ob px-5 sm:px-10 lg:px-16 py-10">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="min-w-0">
+            <p className="eyebrow on-dark mb-3">
+              <i />
+              {badgeText}
+            </p>
+            <h4 className="text-base sm:text-xl font-serif font-medium text-pearl leading-snug">
+              {titleText}
+            </h4>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto pt-1 lg:pt-0">
+          <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto flex-shrink-0">
             <button
               onClick={() => setShowCoffeeModal(true)}
-              className="liquid-glass-amber flex-1 sm:flex-initial px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-mono font-medium text-amber-200 hover:text-white flex items-center justify-center space-x-1.5 transition-all shadow-sm whitespace-nowrap"
+              className="btn-gold !py-2.5 !px-5 text-xs flex-1 sm:flex-initial justify-center"
             >
               <Coffee className="w-3.5 h-3.5" />
               <span>{tipBtnText}</span>
@@ -69,17 +63,17 @@ export const MonetizationBanner: React.FC = () => {
 
             <button
               onClick={() => setShowBundleModal(true)}
-              className="liquid-glass-pill flex-1 sm:flex-initial px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-mono text-stone-200 hover:text-white flex items-center justify-center space-x-1.5 transition-all border border-amber-400/20 whitespace-nowrap"
+              className="btn-ghost flex-1 sm:flex-initial justify-center"
             >
-              <Download className="w-3.5 h-3.5 text-amber-400" />
+              <Download className="w-3.5 h-3.5" />
               <span>{bundleBtnText}</span>
             </button>
 
             <button
               onClick={() => setShowSponsorModal(true)}
-              className="liquid-glass-pill w-full sm:w-auto px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center justify-center space-x-1.5 transition-all whitespace-nowrap"
+              className="btn-ghost w-full sm:w-auto justify-center"
             >
-              <DollarSign className="w-3.5 h-3.5 text-amber-400" />
+              <DollarSign className="w-3.5 h-3.5" />
               <span>{sponsorBtnText}</span>
             </button>
           </div>
@@ -96,11 +90,10 @@ export const MonetizationBanner: React.FC = () => {
         <SponsorCoffeeModal onClose={() => setShowCoffeeModal(false)} />
       )}
 
-      {/* 4K Bundle / Digital Assets Modal */}
+      {/* Offline Bundle Modal */}
       {showBundleModal && (
         <PremiumBundleModal onClose={() => setShowBundleModal(false)} />
       )}
     </>
   );
 };
-

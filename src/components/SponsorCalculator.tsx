@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Sparkles, Calculator, Check, Copy, Send, Download, Building2, CheckCircle2, ShieldAlert, X, Mail, ArrowUpRight } from 'lucide-react';
+import { Sparkles, Check, Copy, Send, Download, Building2, CheckCircle2, ShieldAlert, X, Mail, ArrowUpRight } from 'lucide-react';
 import { saveLead, getLeads, exportLeadsToCSV } from '../utils/leadStorage';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getOwnerContact } from '../utils/monetizationConfig';
@@ -215,34 +215,34 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-stone-950/90 backdrop-blur-md animate-in fade-in duration-200 no-print"
+    <div
+      className="modal-backdrop anim-fade no-print"
       onClick={onClose}
     >
-      <div 
-        className="relative w-full max-w-4xl max-h-[88vh] overflow-y-auto liquid-glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-stone-100 shadow-2xl border border-amber-400/40 glass-sheen"
+      <div
+        className="modal-panel max-w-4xl max-h-[88vh] overflow-y-auto p-5 sm:p-7"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Responsive Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-4 border-b border-white/10 gap-3">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between pb-5 mb-5 border-b border-[#292524] gap-4">
           <div>
-            <div className="flex items-center space-x-2 text-[11px] sm:text-xs font-mono text-amber-300">
-              <Calculator className="w-3.5 h-3.5" />
-              <span>{texts.headerBadge}</span>
-            </div>
-            <h2 className="text-lg sm:text-2xl font-serif font-bold text-white mt-0.5">
+            <p className="eyebrow on-dark mb-2">
+              <i />
+              {texts.headerBadge}
+            </p>
+            <h2 className="text-lg sm:text-2xl font-serif font-medium text-pearl">
               {texts.headerTitle}
             </h2>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-end space-x-2">
-            {/* Currency Pill */}
-            <div className="flex rounded-full p-0.5 bg-black/40 border border-white/10 text-xs font-mono">
+          <div className="flex items-center justify-between sm:justify-end gap-3">
+            {/* Currency Toggle */}
+            <div className="flex gap-px bg-[#292524] border border-[#292524] mono">
               <button
                 type="button"
                 onClick={() => setCurrency('CNY')}
-                className={`px-3 py-1 rounded-full transition-all ${
-                  currency === 'CNY' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-200'
+                className={`px-3 py-1.5 transition-colors ${
+                  currency === 'CNY' ? 'bg-gold text-ob' : 'bg-ob text-[#78716C] hover:text-pearl'
                 }`}
               >
                 CNY (¥)
@@ -250,8 +250,8 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
               <button
                 type="button"
                 onClick={() => setCurrency('USD')}
-                className={`px-3 py-1 rounded-full transition-all ${
-                  currency === 'USD' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400 hover:text-stone-200'
+                className={`px-3 py-1.5 transition-colors ${
+                  currency === 'USD' ? 'bg-gold text-ob' : 'bg-ob text-[#78716C] hover:text-pearl'
                 }`}
               >
                 USD ($)
@@ -261,7 +261,7 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white flex-shrink-0"
+              className="w-8 h-8 border border-[#44403C] flex items-center justify-center text-[#78716C] hover:text-gold2 hover:border-gold transition-colors flex-shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
@@ -269,35 +269,35 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
         </div>
 
         {isSubmitted ? (
-          <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-4 animate-in zoom-in-95">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center">
-              <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10" />
+          <div className="panel-dark-2 border-l-2 !border-l-gold p-6 sm:p-8 text-center space-y-4 anim-fade">
+            <div className="w-14 h-14 border border-gold text-gold mx-auto flex items-center justify-center">
+              <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-white">
+            <h3 className="text-lg sm:text-xl font-serif font-medium text-pearl">
               {texts.successTitle}
             </h3>
-            <p className="text-xs sm:text-sm text-stone-300 max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#A8A29E] max-w-lg mx-auto leading-relaxed">
               {texts.successDesc(brandName, contactInfo)}
             </p>
-            <div className="p-3.5 sm:p-4 rounded-2xl liquid-glass border border-white/10 max-w-md mx-auto text-left font-mono text-xs space-y-1.5">
+            <div className="p-4 border border-[#292524] bg-ob max-w-md mx-auto text-left font-mono text-xs space-y-2">
               <div className="flex justify-between">
-                <span className="text-stone-400">投放排期:</span>
-                <span className="text-amber-300">{durationMonths} 个月</span>
+                <span className="text-[#78716C]">{isZh ? '投放排期:' : 'Duration:'}</span>
+                <span className="text-gold2">{durationMonths} {isZh ? '个月' : 'Mo'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-stone-400">测算预算:</span>
-                <span className="text-amber-300 font-bold">{currency === 'CNY' ? '¥' : '$'}{discountedTotal.toLocaleString()}</span>
+                <span className="text-[#78716C]">{isZh ? '测算预算:' : 'Estimate:'}</span>
+                <span className="text-gold font-semibold">{currency === 'CNY' ? '¥' : '$'}{discountedTotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-stone-400">官方商务对接:</span>
-                <span className="text-white">{ownerContact.contactEmail}</span>
+                <span className="text-[#78716C]">{isZh ? '官方商务对接:' : 'Contact:'}</span>
+                <span className="text-pearl">{ownerContact.contactEmail}</span>
               </div>
             </div>
-            <div className="flex flex-wrap justify-center gap-2.5 pt-2">
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
               <a
                 href={sponsorMailtoUrl}
                 onClick={() => recordAffiliateAction('b2b_sponsor', 'B2B Calculator RFP (mailto)', 'click')}
-                className="liquid-glass-amber px-4 py-2 rounded-full text-xs font-mono font-bold text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-md hover:scale-105"
+                className="btn-gold !py-2.5 !px-5 text-xs"
               >
                 <Mail className="w-3.5 h-3.5" />
                 <span>{isZh ? '一键直接发信对接' : 'Send RFP Email Now'}</span>
@@ -306,7 +306,7 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
               <button
                 type="button"
                 onClick={handleCopyProposal}
-                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-amber-200 flex items-center space-x-1.5 hover:text-white transition-all"
+                className="btn-ghost"
               >
                 <Copy className="w-3.5 h-3.5" />
                 <span>{isCopied ? texts.copiedRfpBtn : texts.copyRfpBtn}</span>
@@ -314,7 +314,7 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
               <button
                 type="button"
                 onClick={() => setIsSubmitted(false)}
-                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-stone-300 hover:text-white transition-all"
+                className="btn-ghost"
               >
                 {texts.recalcBtn}
               </button>
@@ -326,11 +326,11 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
               {/* Step 1: Select Placements */}
               <div>
-                <label className="text-xs font-mono text-amber-300 flex items-center justify-between mb-2">
+                <label className="mono text-gold flex items-center justify-between mb-3">
                   <span>{texts.step1Label}</span>
-                  <span className="text-stone-400 text-[11px]">{texts.step1SelectedCount}</span>
+                  <span className="text-[#78716C]">{texts.step1SelectedCount}</span>
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-px bg-[#292524] border border-[#292524]">
                   {slotData.map((slot) => {
                     const isSelected = selectedSlots.includes(slot.id);
                     const slotObj = SPONSOR_SLOTS.find(s => s.id === slot.id)!;
@@ -339,34 +339,33 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
                       <div
                         key={slot.id}
                         onClick={() => toggleSlot(slot.id)}
-                        className={`p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all border ${
-                          isSelected
-                            ? 'liquid-glass-amber border-amber-400/60 shadow-md shadow-amber-500/10'
-                            : 'liquid-glass border-white/10 hover:border-white/20'
+                        className={`p-3.5 sm:p-4 cursor-pointer transition-colors relative ${
+                          isSelected ? 'bg-ob2' : 'bg-ob hover:bg-ob2'
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex items-start space-x-2.5">
-                            <div className={`w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 border transition-colors ${
-                              isSelected ? 'bg-amber-400 border-amber-400 text-stone-950' : 'border-stone-500 bg-black/40'
+                        {isSelected && <span className="absolute top-0 left-0 bottom-0 w-0.5 bg-gold" />}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <div className={`w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 border transition-colors ${
+                              isSelected ? 'bg-gold border-gold text-ob' : 'border-[#57534E] bg-black/40'
                             }`}>
                               {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                             </div>
                             <div>
-                              <div className="text-xs sm:text-sm font-bold text-white leading-snug">
+                              <div className="text-xs sm:text-sm font-serif font-medium text-pearl leading-snug">
                                 {slot.name}
                               </div>
-                              <p className="text-[11px] text-stone-300 mt-1 leading-relaxed">{slot.desc}</p>
-                              <div className="flex flex-wrap gap-1 mt-2">
+                              <p className="text-[11px] text-[#A8A29E] mt-1.5 leading-relaxed">{slot.desc}</p>
+                              <div className="flex flex-wrap gap-1.5 mt-2.5">
                                 {slot.perks.map((perk, i) => (
-                                  <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-amber-200/90 font-mono">
+                                  <span key={i} className="mono px-2 py-0.5 border border-[#44403C] text-gold2/80">
                                     ✓ {perk}
                                   </span>
                                 ))}
                               </div>
                             </div>
                           </div>
-                          <span className="text-xs font-mono font-bold text-amber-300 flex-shrink-0">
+                          <span className="mono text-gold flex-shrink-0">
                             {priceStr}
                           </span>
                         </div>
@@ -378,10 +377,10 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
 
               {/* Step 2: Duration & Discount Tier */}
               <div>
-                <label className="text-xs font-mono text-amber-300 block mb-2">
+                <label className="mono text-gold block mb-3">
                   {texts.step2Label}
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#292524] border border-[#292524] font-mono text-xs">
                   {durationLabels.map((tier) => {
                     const isSelected = durationMonths === tier.months;
                     const tierConfig = DURATION_TIERS.find(t => t.months === tier.months)!;
@@ -390,14 +389,13 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
                         key={tier.months}
                         type="button"
                         onClick={() => setDurationMonths(tier.months)}
-                        className={`p-2.5 sm:p-3 rounded-2xl text-center transition-all border ${
-                          isSelected
-                            ? 'liquid-glass-amber border-amber-400/70 text-amber-100 font-bold shadow-md shadow-amber-500/20'
-                            : 'liquid-glass border-white/10 text-stone-300 hover:text-white'
+                        className={`p-3 text-center transition-colors relative ${
+                          isSelected ? 'bg-ob2 text-gold2' : 'bg-ob text-[#A8A29E] hover:bg-ob2'
                         }`}
                       >
-                        <div className="text-xs sm:text-sm font-bold">{tier.label}</div>
-                        <div className={`text-[10px] mt-0.5 ${tierConfig.discount > 0 ? 'text-amber-400 font-bold' : 'text-stone-400'}`}>
+                        {isSelected && <span className="absolute top-0 left-0 right-0 h-px bg-gold" />}
+                        <div className="text-xs sm:text-sm font-semibold">{tier.label}</div>
+                        <div className={`text-[10px] mt-1 ${tierConfig.discount > 0 ? 'text-gold' : 'text-[#57534E]'}`}>
                           {tier.sub}
                         </div>
                       </button>
@@ -408,43 +406,43 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
             </div>
 
             {/* Right: Live Quote, RFP Generator & Lead Capture */}
-            <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-5">
               {/* Quote Card */}
-              <div className="liquid-glass rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-amber-400/30 space-y-3 sm:space-y-4">
-                <div className="flex items-center justify-between pb-2.5 border-b border-white/10 text-xs font-mono">
-                  <span className="text-stone-400">{texts.quoteTitle}</span>
-                  <span className="text-amber-400 flex items-center">
+              <div className="panel-dark-2 p-5 space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#292524] mono">
+                  <span className="text-[#78716C]">{texts.quoteTitle}</span>
+                  <span className="text-gold flex items-center">
                     <Sparkles className="w-3 h-3 mr-1" />
                     {texts.channelActive}
                   </span>
                 </div>
 
-                <div className="space-y-1.5 font-mono text-xs">
-                  <div className="flex justify-between text-stone-300">
+                <div className="space-y-2 font-mono text-xs">
+                  <div className="flex justify-between text-[#A8A29E]">
                     <span>{texts.monthlyBase}</span>
                     <span>{currency === 'CNY' ? '¥' : '$'}{rawTotalMonthly.toLocaleString()}{texts.perMonthUnit}</span>
                   </div>
-                  <div className="flex justify-between text-stone-300">
+                  <div className="flex justify-between text-[#A8A29E]">
                     <span>{texts.originalPrice}</span>
-                    <span className="line-through text-stone-500">
+                    <span className="line-through text-[#57534E]">
                       {currency === 'CNY' ? '¥' : '$'}{rawTotalAllDuration.toLocaleString()}
                     </span>
                   </div>
                   {currentTier.discount > 0 && (
-                    <div className="flex justify-between text-emerald-400 font-semibold">
+                    <div className="flex justify-between text-gold2">
                       <span>{texts.discountLabel} ({Math.round(currentTier.discount * 100)}% OFF):</span>
                       <span>-{currency === 'CNY' ? '¥' : '$'}{savedAmount.toLocaleString()}</span>
                     </div>
                   )}
 
-                  <div className="pt-2.5 border-t border-white/10 flex items-end justify-between">
+                  <div className="pt-3 border-t border-[#292524] flex items-end justify-between">
                     <div>
-                      <div className="text-[10px] text-stone-400">{texts.finalTotal}</div>
-                      <div className="text-2xl sm:text-3xl font-serif font-bold text-amber-300">
+                      <div className="mono text-[#78716C] mb-1">{texts.finalTotal}</div>
+                      <div className="text-2xl sm:text-3xl font-serif font-medium text-gold">
                         {currency === 'CNY' ? '¥' : '$'}{discountedTotal.toLocaleString()}
                       </div>
                     </div>
-                    <span className="text-[10px] text-stone-400 font-mono">
+                    <span className="mono text-[#78716C]">
                       {texts.avgPerMonth} {currency === 'CNY' ? '¥' : '$'}{Math.round(discountedTotal / durationMonths).toLocaleString()}{texts.perMonthUnit}
                     </span>
                   </div>
@@ -452,48 +450,42 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
               </div>
 
               {/* Lead Capture Form */}
-              <form onSubmit={handleSubmitInquiry} className="liquid-glass rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-white/10 space-y-3">
-                <div className="text-xs font-mono text-amber-300 font-bold flex items-center space-x-1.5">
+              <form onSubmit={handleSubmitInquiry} className="border border-[#292524] bg-ob p-5 space-y-3">
+                <div className="mono text-gold flex items-center gap-1.5 mb-1">
                   <Building2 className="w-3.5 h-3.5" />
                   <span>{texts.formTitle}</span>
                 </div>
 
-                <div>
-                  <input
-                    type="text"
-                    required
-                    placeholder={texts.brandPlaceholder}
-                    value={brandName}
-                    onChange={(e) => setBrandName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-stone-100 text-sm sm:text-xs font-mono focus:outline-none focus:border-amber-400"
-                  />
-                </div>
+                <input
+                  type="text"
+                  required
+                  placeholder={texts.brandPlaceholder}
+                  value={brandName}
+                  onChange={(e) => setBrandName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-black/40 border border-[#292524] text-pearl font-mono text-sm sm:text-xs focus:outline-none focus:border-gold transition-colors"
+                />
 
-                <div>
-                  <input
-                    type="text"
-                    required
-                    placeholder={texts.contactPlaceholder}
-                    value={contactInfo}
-                    onChange={(e) => setContactInfo(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-stone-100 text-sm sm:text-xs font-mono focus:outline-none focus:border-amber-400"
-                  />
-                </div>
+                <input
+                  type="text"
+                  required
+                  placeholder={texts.contactPlaceholder}
+                  value={contactInfo}
+                  onChange={(e) => setContactInfo(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-black/40 border border-[#292524] text-pearl font-mono text-sm sm:text-xs focus:outline-none focus:border-gold transition-colors"
+                />
 
-                <div>
-                  <input
-                    type="text"
-                    placeholder={texts.messagePlaceholder}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-stone-100 text-sm sm:text-xs font-mono focus:outline-none focus:border-amber-400"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder={texts.messagePlaceholder}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-black/40 border border-[#292524] text-pearl font-mono text-sm sm:text-xs focus:outline-none focus:border-gold transition-colors"
+                />
 
-                <div className="flex items-center space-x-2 pt-1">
+                <div className="flex items-center gap-2.5 pt-1">
                   <button
                     type="submit"
-                    className="flex-1 py-3 rounded-xl liquid-glass-amber text-xs font-mono font-bold text-amber-200 hover:text-white transition-all flex items-center justify-center space-x-1.5 shadow-md"
+                    className="btn-gold flex-1 justify-center !py-2.5 !text-xs"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>{texts.submitBtn}</span>
@@ -502,7 +494,7 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
                   <button
                     type="button"
                     onClick={handleCopyProposal}
-                    className="px-3.5 py-3 rounded-xl liquid-glass-pill text-xs font-mono text-stone-300 hover:text-white transition-all flex-shrink-0"
+                    className="btn-ghost !py-2.5 !px-3.5 flex-shrink-0"
                     title={texts.copyBtnTitle}
                   >
                     <Copy className="w-3.5 h-3.5" />
@@ -510,7 +502,7 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
                 </div>
 
                 {isCopied && (
-                  <div className="text-[11px] font-mono text-emerald-400 text-center animate-in fade-in">
+                  <div className="mono text-gold text-center anim-fade">
                     {texts.copySuccess}
                   </div>
                 )}
@@ -521,33 +513,33 @@ Portal: https://mumumumuyi.github.io/ai-chronicle-2026/`;
                 <button
                   type="button"
                   onClick={() => setShowAdminLeads(!showAdminLeads)}
-                  className="text-[10px] font-mono text-stone-400 hover:text-amber-300 flex items-center space-x-1 transition-colors"
+                  className="mono text-[#57534E] hover:text-gold flex items-center gap-1 transition-colors"
                 >
-                  <ShieldAlert className="w-3 h-3 text-amber-400" />
+                  <ShieldAlert className="w-3 h-3 text-gold" />
                   <span>{texts.ownerPanel}</span>
                 </button>
 
                 {showAdminLeads && (
-                  <div className="mt-2 p-3 rounded-2xl bg-black/60 border border-white/10 text-xs font-mono space-y-2">
+                  <div className="mt-3 p-4 bg-black/60 border border-[#292524] font-mono text-xs space-y-3">
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-stone-300">本地线索: <b className="text-amber-300">{leads.length}</b></span>
+                      <span className="text-[#A8A29E]">本地线索: <b className="text-gold">{leads.length}</b></span>
                       <button
                         type="button"
                         onClick={exportLeadsToCSV}
-                        className="liquid-glass-amber px-2.5 py-1 rounded-lg text-[10px] text-amber-200 hover:text-white flex items-center space-x-1"
+                        className="btn-ghost !py-1.5 !px-2.5 !text-[10px]"
                       >
                         <Download className="w-3 h-3" />
                         <span>{texts.exportCsv}</span>
                       </button>
                     </div>
-                    <div className="max-h-24 overflow-y-auto space-y-1 text-[10px] text-stone-400 divide-y divide-white/5">
+                    <div className="max-h-24 overflow-y-auto space-y-1 text-[10px] text-[#78716C] divide-y divide-[#292524]">
                       {leads.length === 0 ? (
-                        <div className="py-2 text-stone-500 text-center">{texts.noLeads}</div>
+                        <div className="py-2 text-[#57534E] text-center">{texts.noLeads}</div>
                       ) : (
                         leads.map((l, i) => (
-                          <div key={i} className="pt-1 flex justify-between">
-                            <span className="text-stone-200 truncate max-w-[180px]">{l.email}</span>
-                            <span className="text-amber-400/80">[{l.source}]</span>
+                          <div key={i} className="pt-1.5 flex justify-between">
+                            <span className="text-[#D6D3D1] truncate max-w-[180px]">{l.email}</span>
+                            <span className="text-gold/80">[{l.source}]</span>
                           </div>
                         ))
                       )}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Coffee, Heart, QrCode, CreditCard, X, Zap, ArrowUpRight } from 'lucide-react';
+import { Coffee, QrCode, CreditCard, X, Zap, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getOwnerContact } from '../utils/monetizationConfig';
 import { recordAffiliateAction } from '../utils/analyticsTracker';
@@ -27,8 +27,8 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
   const texts = {
     badge: isZh ? '创作者支持与赞助打赏' : 'SUPPORT & SPONSORSHIP',
     subBadge: isZh ? '爱发电 · 支持微信 / 支付宝' : 'Support the author',
-    title: isZh 
-      ? '支持《AI 全景通史》独立研创' 
+    title: isZh
+      ? '支持《AI 全景通史》独立研创'
       : currentLang === 'es'
       ? 'Apoyar la Investigación Independiente'
       : currentLang === 'de'
@@ -62,49 +62,47 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-stone-950/90 backdrop-blur-md animate-in fade-in duration-200 no-print"
+    <div
+      className="modal-backdrop anim-fade no-print"
       onClick={onClose}
     >
-      <div 
-        className="relative w-full max-w-lg max-h-[88vh] overflow-y-auto liquid-glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-stone-100 shadow-2xl border border-amber-400/40 glass-sheen"
+      <div
+        className="modal-panel max-w-lg max-h-[88vh] overflow-y-auto p-5 sm:p-7"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
+          className="absolute top-4 right-4 w-8 h-8 border border-[#44403C] flex items-center justify-center text-[#78716C] hover:text-gold2 hover:border-gold transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
-        {/* Top Header Badge */}
-        <div className="flex items-center space-x-2 text-[11px] sm:text-xs font-mono text-amber-300 mb-2 pr-8">
-          <Heart className="w-3.5 h-3.5 fill-amber-400 text-amber-400 animate-pulse flex-shrink-0" />
-          <span className="tracking-wider font-semibold">{texts.badge}</span>
-          <span className="text-stone-500">·</span>
-          <span className="text-stone-400 text-[10px] sm:text-[11px] truncate">{texts.subBadge}</span>
-        </div>
+        {/* Header */}
+        <p className="eyebrow on-dark mb-3 pr-10">
+          <i />
+          {texts.badge} · {texts.subBadge}
+        </p>
 
-        <h3 className="text-xl sm:text-2xl font-serif font-bold text-white mb-2 pr-8">
+        <h3 className="text-xl sm:text-2xl font-serif font-medium text-pearl mb-2 pr-8">
           {texts.title}
         </h3>
-        <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed mb-5">
+        <p className="text-xs sm:text-sm text-[#A8A29E] leading-relaxed mb-6">
           {texts.desc}
         </p>
 
         {/* Channel Tabs (only when multiple channels configured) */}
         {hasWechatChannel && hasGlobalChannel && (
-        <div className="flex items-center space-x-1.5 p-1 liquid-glass rounded-2xl mb-5">
+        <div className="flex items-center gap-px bg-[#292524] border border-[#292524] mb-6">
           <button
             type="button"
             onClick={() => {
               setActiveTab('wechat');
               setSelectedAmount(29.9);
             }}
-            className={`flex-1 py-2 px-2 rounded-xl text-xs font-mono font-medium transition-all flex items-center justify-center space-x-1.5 ${
+            className={`flex-1 py-2.5 px-2 mono transition-colors flex items-center justify-center gap-1.5 ${
               activeTab === 'wechat'
-                ? 'liquid-glass-amber text-amber-200 font-semibold shadow-sm'
-                : 'text-stone-400 hover:text-white'
+                ? 'bg-ob2 text-gold'
+                : 'bg-ob text-[#78716C] hover:text-pearl'
             }`}
           >
             <QrCode className="w-3.5 h-3.5 flex-shrink-0" />
@@ -117,10 +115,10 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
               setActiveTab('global');
               setSelectedAmount(15);
             }}
-            className={`flex-1 py-2 px-2 rounded-xl text-xs font-mono font-medium transition-all flex items-center justify-center space-x-1.5 ${
+            className={`flex-1 py-2.5 px-2 mono transition-colors flex items-center justify-center gap-1.5 ${
               activeTab === 'global'
-                ? 'liquid-glass-amber text-amber-200 font-semibold shadow-sm'
-                : 'text-stone-400 hover:text-white'
+                ? 'bg-ob2 text-gold'
+                : 'bg-ob text-[#78716C] hover:text-pearl'
             }`}
           >
             <CreditCard className="w-3.5 h-3.5 flex-shrink-0" />
@@ -133,7 +131,7 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
         {hasWechatChannel && effectiveTab === 'wechat' && (
           <div className="space-y-4 sm:space-y-5">
             {/* Amount Selection Grid */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-px bg-[#292524] border border-[#292524]">
               {amountsCNY.map((item) => {
                 const isSelected = selectedAmount === item.value;
                 return (
@@ -141,21 +139,17 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
                     key={item.value}
                     type="button"
                     onClick={() => setSelectedAmount(item.value)}
-                    className={`p-2.5 sm:p-3 rounded-2xl text-left transition-all relative border ${
+                    className={`p-3 text-left transition-colors relative ${
                       isSelected
-                        ? 'liquid-glass-amber border-amber-400/60 bg-amber-500/15 text-white shadow-md'
-                        : 'liquid-glass border-white/10 text-stone-300 hover:border-white/20'
+                        ? 'bg-ob2 text-pearl'
+                        : 'bg-ob text-[#A8A29E] hover:bg-ob2'
                     }`}
                   >
-                    {item.popular && (
-                      <span className="absolute top-2 right-2 px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-400 text-stone-950 font-bold">
-                        HOT
-                      </span>
-                    )}
-                    <div className="text-xs sm:text-sm font-bold text-amber-300 font-mono mb-0.5">
+                    {isSelected && <span className="absolute top-0 left-0 right-0 h-px bg-gold" />}
+                    <div className="text-xs sm:text-sm font-semibold text-gold2 font-mono mb-1">
                       {item.label}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-stone-400 leading-tight">
+                    <div className="text-[10px] sm:text-[11px] text-[#78716C] leading-tight">
                       {item.desc}
                     </div>
                   </button>
@@ -165,40 +159,38 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
 
             {/* QR Code Presentation Slab (only when a real QR image is configured) */}
             {ownerContact.qrCodeUrl && (
-              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl liquid-glass border border-amber-400/30 text-center flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-2xl bg-white p-2.5 shadow-2xl flex flex-col items-center justify-center border-4 border-amber-400/40 relative overflow-hidden">
+              <div className="panel-dark-2 p-4 sm:p-6 text-center flex flex-col items-center justify-center">
+                <div className="w-44 h-44 sm:w-48 sm:h-48 bg-white p-2.5 flex flex-col items-center justify-center border border-[rgba(201,168,106,0.4)] overflow-hidden">
                   <img
                     src={ownerContact.qrCodeUrl}
-                    alt="微信/支付宝收款二维码"
-                    className="w-full h-full object-contain rounded-xl"
+                    alt={isZh ? '微信/支付宝收款二维码' : 'WeChat/Alipay QR code'}
+                    className="w-full h-full object-contain"
                   />
                 </div>
               </div>
             )}
 
             {ownerContact.afdianUrl && (
-              <div className="w-full max-w-sm mx-auto">
-                <a
-                  href={ownerContact.afdianUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => recordAffiliateAction('creator_tip', 'Afdian Tip', 'click')}
-                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-700/40 to-purple-600/30 hover:from-purple-600/50 hover:to-purple-500/40 border border-purple-500/40 text-purple-200 hover:text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-purple-950/40 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <Zap className="w-3.5 h-3.5 text-purple-300" />
-                  <span>{isZh ? `通过爱发电在线赞助 ¥${selectedAmount} (支持微信/支付宝)` : `Tip via Afdian (WeChat/Alipay)`}</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
+              <a
+                href={ownerContact.afdianUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => recordAffiliateAction('creator_tip', 'Afdian Tip', 'click')}
+                className="btn-gold w-full justify-center !text-xs"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>{isZh ? `通过爱发电在线赞助 ¥${selectedAmount} (支持微信/支付宝)` : `Tip via Afdian (WeChat/Alipay)`}</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
             )}
           </div>
         )}
 
         {/* Tab 2: Global Payment Channels */}
         {hasGlobalChannel && effectiveTab === 'global' && (
-          <div className="space-y-3.5 sm:space-y-4">
+          <div className="space-y-4">
             {/* Amount Selection Grid (USD) */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-px bg-[#292524] border border-[#292524]">
               {amountsUSD.map((item) => {
                 const isSelected = selectedAmount === item.value;
                 return (
@@ -206,21 +198,17 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
                     key={item.value}
                     type="button"
                     onClick={() => setSelectedAmount(item.value)}
-                    className={`p-2.5 sm:p-3 rounded-2xl text-left transition-all relative border ${
+                    className={`p-3 text-left transition-colors relative ${
                       isSelected
-                        ? 'liquid-glass-amber border-amber-400/60 bg-amber-500/15 text-white shadow-md'
-                        : 'liquid-glass border-white/10 text-stone-300 hover:border-white/20'
+                        ? 'bg-ob2 text-pearl'
+                        : 'bg-ob text-[#A8A29E] hover:bg-ob2'
                     }`}
                   >
-                    {item.popular && (
-                      <span className="absolute top-2 right-2 px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-400 text-stone-950 font-bold">
-                        HOT
-                      </span>
-                    )}
-                    <div className="text-xs sm:text-sm font-bold text-amber-300 font-mono mb-0.5">
+                    {isSelected && <span className="absolute top-0 left-0 right-0 h-px bg-gold" />}
+                    <div className="text-xs sm:text-sm font-semibold text-gold2 font-mono mb-1">
                       {item.label}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-stone-400 leading-tight">
+                    <div className="text-[10px] sm:text-[11px] text-[#78716C] leading-tight">
                       {item.desc}
                     </div>
                   </button>
@@ -228,12 +216,12 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
               })}
             </div>
 
-            <div className="p-4 sm:p-5 rounded-2xl liquid-glass border border-white/10 space-y-2.5">
+            <div className="panel-dark-2 p-4 sm:p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-serif font-bold text-white text-sm">{texts.bmacTitle}</span>
-                <span className="text-xs font-mono text-amber-300">${selectedAmount} USD</span>
+                <span className="font-serif font-medium text-pearl text-sm">{texts.bmacTitle}</span>
+                <span className="mono text-gold">${selectedAmount} USD</span>
               </div>
-              <p className="text-xs text-stone-300 leading-relaxed">
+              <p className="text-xs text-[#A8A29E] leading-relaxed">
                 {texts.bmacSubtitle}
               </p>
               <a
@@ -241,21 +229,20 @@ export const SponsorCoffeeModal: React.FC<SponsorCoffeeModalProps> = ({ onClose 
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => recordAffiliateAction('creator_tip', 'BuyMeACoffee Tip', 'click')}
-                className="w-full py-2.5 rounded-xl liquid-glass-amber text-xs font-mono font-bold text-amber-200 hover:text-white flex items-center justify-center space-x-2 transition-all block text-center"
+                className="btn-gold w-full justify-center !text-xs"
               >
                 <Coffee className="w-4 h-4" />
                 <span>{texts.bmacBtn}</span>
               </a>
             </div>
-
           </div>
         )}
 
         {/* Honest empty state when no payment channel is configured */}
         {!hasAnyChannel && (
-          <div className="p-5 rounded-2xl liquid-glass border border-white/10 text-center">
-            <Coffee className="w-8 h-8 mx-auto text-amber-400/60 mb-2" />
-            <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
+          <div className="panel-dark-2 p-6 text-center">
+            <Coffee className="w-8 h-8 mx-auto text-gold mb-3" />
+            <p className="text-xs sm:text-sm text-[#A8A29E] leading-relaxed">
               {texts.channelNotice}
             </p>
           </div>

@@ -260,18 +260,18 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-stone-950/90 backdrop-blur-md animate-in fade-in duration-200 no-print"
+    <div
+      className="modal-backdrop anim-fade no-print"
       onClick={onClose}
     >
-      <div 
+      <div
         ref={modalRef}
-        className="relative w-full max-w-xl max-h-[88vh] overflow-y-auto liquid-glass-strong rounded-2xl sm:rounded-3xl p-4 sm:p-7 text-stone-100 shadow-2xl border border-amber-400/40 glass-sheen"
+        className="modal-panel max-w-xl max-h-[88vh] overflow-y-auto p-5 sm:p-7"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
+          className="absolute top-4 right-4 w-8 h-8 border border-[#44403C] flex items-center justify-center text-[#78716C] hover:text-gold2 hover:border-gold transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
@@ -281,7 +281,7 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
           <button
             type="button"
             onClick={() => setStep('details')}
-            className="flex items-center space-x-1.5 text-xs font-mono text-stone-400 hover:text-amber-300 transition-colors mb-2.5"
+            className="flex items-center gap-1.5 mono text-[#78716C] hover:text-gold2 transition-colors mb-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>{texts.backBtn}</span>
@@ -289,14 +289,12 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
         )}
 
         {/* Top Header Badge */}
-        <div className="flex items-center space-x-2 text-[11px] sm:text-xs font-mono text-amber-300 mb-2 pr-8">
-          <Download className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-          <span className="tracking-wider font-semibold">{texts.badge}</span>
-          <span className="text-stone-500">·</span>
-          <span className="text-stone-400 text-[10px] sm:text-[11px] truncate">{texts.subBadge}</span>
-        </div>
+        <p className="eyebrow on-dark mb-3 pr-8">
+          <i />
+          {texts.badge} · {texts.subBadge}
+        </p>
 
-        <h3 className="text-xl sm:text-2xl font-serif font-bold text-white mb-2 pr-8">
+        <h3 className="text-xl sm:text-2xl font-serif font-medium text-pearl mb-2 pr-8">
           {step === 'checkout'
             ? texts.titleCheckout
             : step === 'delivered'
@@ -304,7 +302,7 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
             : texts.titleDetails}
         </h3>
 
-        <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed mb-5">
+        <p className="text-xs sm:text-sm text-[#A8A29E] leading-relaxed mb-6">
           {step === 'checkout'
             ? texts.descCheckout
             : step === 'delivered'
@@ -315,27 +313,27 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
         {/* STEP 1: Details View */}
         {step === 'details' && (
           <>
-            <div className="space-y-2.5 mb-5">
+            <div className="space-y-px bg-[#292524] border border-[#292524] mb-6">
               {bundleItems.map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div 
+                  <div
                     key={idx}
-                    className="p-3 sm:p-3.5 rounded-2xl liquid-glass border border-white/10 flex items-start space-x-3"
+                    className="bg-ob p-4 flex items-start gap-3"
                   >
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-300 flex-shrink-0 mt-0.5">
+                    <div className="w-8 h-8 border border-[rgba(201,168,106,0.4)] flex items-center justify-center text-gold flex-shrink-0 mt-0.5">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="text-xs sm:text-sm font-serif font-bold text-white leading-snug">
+                        <h4 className="text-xs sm:text-sm font-serif font-medium text-pearl leading-snug">
                           {item.title}
                         </h4>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-amber-300 border border-white/10 flex-shrink-0">
+                        <span className="mono px-2 py-0.5 border border-[#44403C] text-gold2 flex-shrink-0">
                           {item.format}
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
+                      <p className="text-[11px] text-[#78716C] mt-1 leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
@@ -345,30 +343,30 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
             </div>
 
             {/* Price & Checkout Trigger Box */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/[0.08] border border-amber-400/30 space-y-3.5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="panel-dark-2 border-l-2 !border-l-gold p-4 sm:p-5 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="text-xs font-mono text-amber-300 font-bold">{texts.priceBadge}</div>
-                  <div className="flex items-baseline space-x-2 mt-0.5">
-                    <span className="text-2xl font-mono font-bold text-emerald-300">{isZh ? '免费' : 'Free'}</span>
-                    <span className="text-xs text-stone-400">{texts.priceLine}</span>
+                  <div className="mono text-gold">{texts.priceBadge}</div>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-2xl font-display font-semibold text-gold2">{isZh ? '免费' : 'Free'}</span>
+                    <span className="mono text-[#78716C]">{texts.priceLine}</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={handleDownloadSample}
-                    className="liquid-glass-pill px-4 py-2.5 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center justify-center space-x-1.5 transition-all"
+                    className="btn-ghost justify-center"
                   >
-                    <ArrowDownToLine className="w-3.5 h-3.5 text-amber-400" />
+                    <ArrowDownToLine className="w-3.5 h-3.5" />
                     <span>{texts.sampleBtn}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setStep('checkout')}
-                    className="liquid-glass-amber px-5 py-2.5 rounded-full text-xs font-mono font-bold text-amber-200 hover:text-white flex items-center justify-center space-x-1.5 transition-all shadow-md"
+                    className="btn-gold !py-2.5 !px-5 text-xs justify-center"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>{texts.checkoutBtn}</span>
@@ -376,8 +374,8 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1.5 text-[11px] font-mono text-stone-400">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+              <div className="flex items-center gap-1.5 mono text-[#78716C]">
+                <ShieldCheck className="w-3.5 h-3.5 text-gold flex-shrink-0" />
                 <span className="leading-snug">{texts.licenseNote}</span>
               </div>
             </div>
@@ -386,26 +384,26 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
 
         {/* STEP 2: Checkout & Verification View */}
         {step === 'checkout' && (
-          <form onSubmit={handleCompleteCheckout} className="space-y-4 sm:space-y-5 animate-in fade-in duration-150">
+          <form onSubmit={handleCompleteCheckout} className="space-y-4 sm:space-y-5 anim-fade">
             {/* Order Tag & Price Info */}
-            <div className="p-3 sm:p-3.5 rounded-2xl liquid-glass border border-white/10 flex items-center justify-between font-mono text-xs">
-              <div className="flex items-center space-x-2">
-                <span className="text-stone-400">{texts.orderIdLabel}</span>
-                <span className="text-amber-300 font-bold">{orderId}</span>
+            <div className="panel-dark-2 p-4 flex items-center justify-between font-mono text-xs">
+              <div className="flex items-center gap-2">
+                <span className="mono text-[#78716C]">{texts.orderIdLabel}</span>
+                <span className="text-gold font-semibold">{orderId}</span>
                 <button
                   type="button"
                   onClick={handleCopyOrder}
-                  className="text-stone-400 hover:text-white p-0.5"
+                  className="text-[#78716C] hover:text-gold2 p-0.5 transition-colors"
                   title="Copy Order ID"
                 >
-                  {copiedOrder ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  {copiedOrder ? <Check className="w-3 h-3 text-gold" /> : <Copy className="w-3 h-3" />}
                 </button>
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 rounded-2xl liquid-glass-amber text-xs font-mono font-bold text-amber-200 hover:text-white transition-all shadow-lg flex items-center justify-center space-x-2"
+              className="btn-gold w-full justify-center !text-xs"
             >
               <Download className="w-4 h-4" />
               <span>{texts.downloadNowBtn}</span>
@@ -415,33 +413,33 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
 
         {/* STEP 3: Delivered View */}
         {step === 'delivered' && (
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-4 animate-in fade-in duration-200">
-            <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 flex items-center justify-center mx-auto">
+          <div className="panel-dark-2 border-l-2 !border-l-gold p-5 sm:p-7 text-center space-y-4 anim-fade">
+            <div className="w-12 h-12 border border-gold text-gold flex items-center justify-center mx-auto">
               <Check className="w-6 h-6" />
             </div>
 
-            <h4 className="text-base sm:text-lg font-serif font-bold text-white">
+            <h4 className="text-base sm:text-lg font-serif font-medium text-pearl">
               {texts.deliveredHeading}
             </h4>
 
-            <p className="text-xs text-stone-300 font-mono leading-relaxed max-w-md mx-auto">
+            <p className="mono text-[#A8A29E] leading-relaxed max-w-md mx-auto">
               {texts.deliveredSummary(orderId)}
               <br />
-              <code className="text-white text-[11px]">AI_Chronicle_2026_Full_Academic_Bundle_{orderId}.md</code>
+              <code className="text-gold2 text-[11px] break-all">AI_Chronicle_2026_Full_Academic_Bundle_{orderId}.md</code>
             </p>
 
-            <div className="pt-2 flex justify-center space-x-3">
+            <div className="pt-2 flex flex-wrap justify-center gap-3">
               <button
                 type="button"
                 onClick={() => setStep('details')}
-                className="liquid-glass-pill px-4 py-2 rounded-full text-xs font-mono text-stone-300 hover:text-white"
+                className="btn-ghost"
               >
                 {texts.returnBtn}
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="liquid-glass-amber px-5 py-2 rounded-full text-xs font-mono text-amber-200 hover:text-white"
+                className="btn-gold !py-2.5 !px-5 text-xs"
               >
                 {texts.finishBtn}
               </button>

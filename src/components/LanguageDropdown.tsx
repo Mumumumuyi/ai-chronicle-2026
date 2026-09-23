@@ -23,43 +23,46 @@ export const LanguageDropdown: React.FC = () => {
   return (
     <div className="relative flex-shrink-0" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="liquid-glass rounded-full px-2.5 sm:px-3 py-1.5 flex items-center space-x-1.5 text-xs font-mono text-stone-200 hover:text-white hover:bg-white/10 transition-all border border-amber-400/25 whitespace-nowrap flex-shrink-0 select-none"
+        className="px-2.5 py-1.5 flex items-center gap-1.5 font-mono text-[11px] tracking-widest uppercase text-[#A8A29E] hover:text-gold2 transition-colors border border-transparent hover:border-[#44403C] whitespace-nowrap select-none"
         title="Switch Language / 切换语言"
+        aria-expanded={isOpen}
       >
-        <span className="text-sm flex-shrink-0">{currentOption.flag}</span>
-        <span className="font-semibold whitespace-nowrap">{currentOption.code.toUpperCase()}</span>
-        <ChevronDown className="w-3 h-3 text-stone-400 flex-shrink-0" />
+        <span className="text-sm leading-none flex-shrink-0">{currentOption.flag}</span>
+        <span>{currentOption.code.toUpperCase()}</span>
+        <ChevronDown className={`w-3 h-3 text-[#78716C] flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-44 liquid-glass-strong rounded-2xl p-1.5 shadow-2xl border border-amber-400/40 z-50 animate-in fade-in duration-150 backdrop-blur-xl glass-sheen">
-          <div className="px-3 py-1.5 text-[10px] font-mono text-amber-300 uppercase tracking-wider border-b border-white/10 mb-1 flex items-center space-x-1">
+        <div className="absolute right-0 top-full mt-2 w-48 bg-ob2 border border-[#44403C] rounded-md p-1.5 z-50 anim-fade shadow-[0_16px_40px_rgba(0,0,0,0.5)]">
+          <div className="px-3 py-2 text-[10px] font-mono text-gold uppercase tracking-[0.2em] border-b border-[#292524] mb-1 flex items-center gap-1.5">
             <Globe className="w-3 h-3" />
             <span>Select Language</span>
           </div>
 
-          <div className="space-y-0.5">
+          <div>
             {languages.map((lang) => {
               const isSelected = currentLang === lang.code;
               return (
                 <button
                   key={lang.code}
+                  type="button"
                   onClick={() => {
                     setLang(lang.code as SupportedLanguage);
                     setIsOpen(false);
                   }}
-                  className={`w-full px-2.5 py-1.5 rounded-xl text-xs flex items-center justify-between transition-colors ${
+                  className={`w-full px-3 py-2 text-xs flex items-center justify-between transition-colors border-l-2 ${
                     isSelected
-                      ? 'liquid-glass-amber text-amber-200 font-semibold'
-                      : 'text-stone-300 hover:text-white hover:bg-white/5'
+                      ? 'border-gold text-gold2 bg-[rgba(201,168,106,0.08)]'
+                      : 'border-transparent text-[#A8A29E] hover:text-pearl hover:bg-[rgba(244,241,234,0.04)]'
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2.5">
                     <span className="text-sm">{lang.flag}</span>
-                    <span className="font-medium">{lang.nativeName}</span>
+                    <span>{lang.nativeName}</span>
                   </div>
-                  {isSelected && <Check className="w-3.5 h-3.5 text-amber-300" />}
+                  {isSelected && <Check className="w-3.5 h-3.5 text-gold" />}
                 </button>
               );
             })}

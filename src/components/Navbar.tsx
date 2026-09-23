@@ -1,178 +1,194 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Sparkles, BookOpen, Layers, Zap, VolumeX } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Clock, BookOpen, BrainCircuit, Network, X } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LanguageDropdown } from './LanguageDropdown';
-import { soundFX } from '../utils/audioEffects';
 import { hrefForTab } from '../utils/routes';
 
-export type ActiveTab = 'stage' | 'lab' | 'reader' | 'ecosystem';
+export type ActiveTab = 'stage' | 'reader' | 'lab' | 'ecosystem';
 
 interface NavbarProps {
   activeTab: ActiveTab;
   onTabChange: (tab: ActiveTab) => void;
-  activeEpochIndex: number;
-  onSelectEpoch: (index: number) => void;
   onSecretTrigger?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  activeTab,
-  onTabChange,
-  onSecretTrigger,
-}) => {
-  const { t } = useLanguage();
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(soundFX.getEnabled());
-  const clickCountRef = useRef<number>(0);
-  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onSecretTrigger }) => {
+  const { t, currentLang } = useLanguage();
+  const isZh = currentLang === 'zh';
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    setSoundEnabled(soundFX.getEnabled());
-  }, []);
-
-  const handleToggleSound = () => {
-    const newState = soundFX.toggle();
-    setSoundEnabled(newState);
+  // Secret admin trigger: triple-click the brand within 1.4s.
+  // A single click navigates home like a normal link.
+  const clickTimesRef = useRef<number[]>([]);
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    const now = Date.now();
+    clickTimesRef.current = clickTimesRef.current.filter(t => now - t < 1400);
+    clickTimesRef.current.push(now);
+    e.preventDefault();
+    if (clickTimesRef.current.length >= 3) {
+      clickTimesRef.current = [];
+      onSecretTrigger?.();
+      return;
+    }
+    setIsMobileMenuOpen(false);
+    onTabChange('stage');
   };
 
-  const handleTabClick = (tab: ActiveTab) => {
-    soundFX.playClick(680);
+  const navItems: { id: ActiveTab; label: string; icon: React.FC<{ className?: string }> }[] = [
+    { id: 'stage', label: t.navStage, icon: Clock },
+    { id: 'lab', label: t.navLab, icon: BrainCircuit },
+    { id: 'reader', label: t.navReader, icon: BookOpen },
+    { id: 'ecosystem', label: t.navEcosystem, icon: Network },
+  ];
+
+  const goTab = (tab: ActiveTab) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Real href stays for crawlers/new-tab; plain left clicks route client-side.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
     onTabChange(tab);
   };
 
-  // Nav items are real links so crawlers can reach every route, but a plain
-  // left click stays a client-side transition. Modified clicks and middle
-  // clicks fall through to the browser's own open-in-new-tab behaviour.
-  const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, tab: ActiveTab) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    e.preventDefault();
-    handleTabClick(tab);
-  };
-
-  const handleLogoClick = () => {
-    onTabChange('stage');
-
-    // Secret stealth trigger: 3 clicks within 1200ms
-    clickCountRef.current += 1;
-    if (clickCountRef.current >= 3) {
-      if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-      clickCountRef.current = 0;
-      if (onSecretTrigger) onSecretTrigger();
-      return;
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
     }
-
-    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-    clickTimerRef.current = setTimeout(() => {
-      clickCountRef.current = 0;
-    }, 1200);
-  };
-
-  const navItems = [
-    { id: 'stage' as const, label: t.navStage, icon: Layers },
-    { id: 'lab' as const, label: t.navLab, icon: Zap },
-    { id: 'reader' as const, label: t.navReader, icon: BookOpen },
-    { id: 'ecosystem' as const, label: t.navEcosystem, icon: Sparkles },
-  ];
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobileMenuOpen]);
 
   return (
-    <header className="fixed top-3 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 md:px-8 pointer-events-none flex justify-center no-print">
-      <div className="w-full max-w-6xl pointer-events-auto flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left: Brand Logo Pill */}
-        <div 
-          onClick={handleLogoClick}
-          className="liquid-glass rounded-full px-3.5 sm:px-4 py-2 flex items-center space-x-2 sm:space-x-2.5 cursor-pointer hover:bg-white/10 transition-all select-none group flex-shrink-0 border border-white/10"
-          title="AI Chronicle"
-        >
-          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-stone-950 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform flex-shrink-0">
-            <Sparkles className="w-3.5 h-3.5 fill-current" />
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="font-serif text-xs sm:text-sm font-semibold tracking-wide text-stone-100 group-hover:text-amber-300 transition-colors whitespace-nowrap">
-              {t.brandTitle}
+    <>
+      {/* Fixed editorial chrome — obsidian hairline bar */}
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[rgba(12,10,9,0.86)] backdrop-blur-md border-b border-[rgba(201,168,106,0.16)]">
+        <div className="flex items-center justify-between h-14 px-4 sm:px-8 lg:px-16">
+          {/* Brand — triple-click opens admin checkpoint */}
+          <a
+            href={hrefForTab('stage')}
+            onClick={handleLogoClick}
+            className="flex items-baseline gap-3 group flex-shrink-0 select-none"
+          >
+            <span className="font-display font-semibold text-xl tracking-tight text-pearl group-hover:text-gold2 transition-colors">
+              AI<span className="text-gold">.</span>
             </span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/25 whitespace-nowrap hidden lg:inline">
+            <span className="hidden sm:block mono text-[#78716C] group-hover:text-stone-300 transition-colors">
               {t.brandSubtitle}
             </span>
+          </a>
+
+          {/* Desktop nav — mono, hairline, gold current indicator */}
+          <nav className="hidden md:flex items-center gap-8" aria-label="Primary">
+            {navItems.map((item) => {
+              const isActive = activeTab === item.id;
+              return (
+                <a
+                  key={item.id}
+                  href={hrefForTab(item.id)}
+                  onClick={goTab(item.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`relative mono py-1.5 transition-colors duration-300 ${
+                    isActive ? 'text-gold' : 'text-[#A8A29E] hover:text-pearl'
+                  }`}
+                >
+                  {item.label}
+                  <span
+                    className={`absolute left-0 -bottom-[3px] h-px bg-gold transition-transform duration-500 origin-left w-full ${
+                      isActive ? 'scale-x-100' : 'scale-x-0'
+                    }`}
+                    aria-hidden="true"
+                  />
+                </a>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-3 sm:gap-5">
+            <LanguageDropdown />
+            {/* Hamburger — mobile only (desktop shows nav links above) */}
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-expanded={isMobileMenuOpen}
+              aria-label={isZh ? '菜单' : 'Menu'}
+              className="md:hidden flex flex-col justify-center gap-[6px] p-2 text-pearl"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <>
+                  <i className="block w-6 h-px bg-pearl" />
+                  <i className="block w-6 h-px bg-pearl" />
+                </>
+              )}
+            </button>
           </div>
         </div>
+      </header>
 
-        {/* Center/Right: Desktop Primary Navigation Pill (md screens and up) */}
-        <nav className="hidden md:flex liquid-glass rounded-full p-1 items-center gap-1 flex-shrink-0 shadow-lg border border-white/10">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <a
-                key={item.id}
-                href={hrefForTab(item.id)}
-                onClick={(e) => handleNavLinkClick(e, item.id)}
-                aria-current={isActive ? 'page' : undefined}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 select-none cursor-pointer ${
-                  isActive
-                    ? 'liquid-glass-amber text-amber-200 font-semibold shadow-sm border border-amber-400/40'
-                    : 'text-stone-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${item.id === 'ecosystem' ? 'text-amber-400' : ''}`} />
-                <span className="whitespace-nowrap">{item.label}</span>
-              </a>
-            );
-          })}
-        </nav>
-
-        {/* Right: Sound FX & Global Language Switcher */}
-        <div className="flex items-center space-x-2 flex-shrink-0">
-          {/* Interactive Sound FX Toggle Pill */}
-          <button
-            onClick={handleToggleSound}
-            className="liquid-glass rounded-full px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center space-x-1.5 cursor-pointer hover:bg-white/10 transition-all border border-white/10 text-xs font-mono select-none"
-            title={soundEnabled ? '声效已开启 (点击静音)' : '声效已静音 (点击开启沉浸声效)'}
-            aria-label="Sound Effects Toggle"
-          >
-            {soundEnabled ? (
-              <div className="flex items-end space-x-0.5 h-3 px-0.5">
-                <span className="w-0.5 bg-amber-400 rounded-full animate-sound-1" />
-                <span className="w-0.5 bg-amber-400 rounded-full animate-sound-2" />
-                <span className="w-0.5 bg-amber-400 rounded-full animate-sound-3" />
-              </div>
-            ) : (
-              <VolumeX className="w-3.5 h-3.5 text-stone-400" />
-            )}
-            <span className="hidden sm:inline text-[11px] text-stone-300">
-              {soundEnabled ? 'FX' : 'Mute'}
-            </span>
-          </button>
-
-          <LanguageDropdown />
+      {/* Mobile menu sheet — obsidian editorial list */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-30 md:hidden anim-fade">
+          <div
+            className="absolute inset-0 bg-ob/95 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <nav className="absolute top-14 left-0 right-0 border-b border-[#292524] bg-ob2 px-6 py-4" aria-label="Mobile">
+            {navItems.map((item, i) => {
+              const isActive = activeTab === item.id;
+              return (
+                <a
+                  key={item.id}
+                  href={hrefForTab(item.id)}
+                  onClick={goTab(item.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`flex items-baseline gap-4 py-4 border-b border-[#292524] last:border-b-0 transition-colors ${
+                    isActive ? 'text-gold' : 'text-pearl hover:text-gold2'
+                  }`}
+                >
+                  <span className="mono text-[#57534E]">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-serif text-2xl">{item.label}</span>
+                </a>
+              );
+            })}
+          </nav>
         </div>
-      </div>
+      )}
 
-      {/* ======================================================== */}
-      {/* NATIVE MOBILE FLOATING BOTTOM DOCK (< md screens)         */}
-      {/* ======================================================== */}
-      <div className="fixed bottom-4 left-4 right-4 z-40 pointer-events-auto md:hidden flex justify-center no-print">
-        <nav className="w-full max-w-sm liquid-glass-strong rounded-full p-1.5 shadow-2xl border border-amber-400/30 flex items-center justify-around backdrop-blur-2xl glass-sheen">
+      {/* Mobile bottom dock — obsidian hairline, gold active tick */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-[#292524] bg-[rgba(12,10,9,0.92)] backdrop-blur-md"
+        aria-label="Dock"
+      >
+        <div className="grid grid-cols-4">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = activeTab === item.id;
+            const Icon = item.icon;
             return (
               <a
                 key={item.id}
                 href={hrefForTab(item.id)}
-                onClick={(e) => handleNavLinkClick(e, item.id)}
+                onClick={goTab(item.id)}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex-1 py-1.5 px-2 rounded-full text-[10px] font-medium transition-all flex flex-col items-center justify-center gap-0.5 select-none cursor-pointer ${
-                  isActive
-                    ? 'liquid-glass-amber text-amber-200 font-bold shadow-md'
-                    : 'text-stone-400 hover:text-stone-200'
+                className={`relative flex flex-col items-center justify-center py-2.5 gap-1 transition-colors duration-300 ${
+                  isActive ? 'text-gold' : 'text-[#78716C] hover:text-pearl'
                 }`}
               >
-                <Icon className={`w-4 h-4 flex-shrink-0 ${item.id === 'ecosystem' ? 'text-amber-400' : ''}`} />
-                <span className="truncate whitespace-nowrap text-[10px]">{item.label}</span>
+                <span
+                  className={`absolute top-0 left-1/2 -translate-x-1/2 w-8 h-px bg-gold transition-transform duration-300 ${
+                    isActive ? 'scale-x-100' : 'scale-x-0'
+                  }`}
+                  aria-hidden="true"
+                />
+                <Icon className="w-[18px] h-[18px]" />
+                <span className="text-[9px] font-mono tracking-widest uppercase">{item.label}</span>
               </a>
             );
           })}
-        </nav>
-      </div>
-    </header>
+        </div>
+      </nav>
+    </>
   );
 };
+

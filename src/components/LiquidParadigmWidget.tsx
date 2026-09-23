@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Zap, RotateCcw, Sparkles, GitBranch, Activity, Server, Cpu, ArrowUpRight, Copy, Check, Tag } from 'lucide-react';
+import { RotateCcw, GitBranch, Activity, Server, Cpu, ArrowUpRight, Copy, Check, Tag } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
-import { soundFX } from '../utils/audioEffects';
 import { getMonetizationPartners, MonetizationPartner } from '../utils/monetizationConfig';
 import { recordAffiliateAction } from '../utils/analyticsTracker';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export const LiquidParadigmWidget: React.FC = () => {
   const { currentLang } = useLanguage();
@@ -12,6 +12,7 @@ export const LiquidParadigmWidget: React.FC = () => {
   const [modelSize, setModelSize] = useState<number>(70);
   const [partners, setPartners] = useState<MonetizationPartner[]>([]);
   const [copiedPartnerId, setCopiedPartnerId] = useState<string | null>(null);
+  const revealRef = useScrollReveal<HTMLDivElement>([currentLang]);
 
   const isZh = currentLang === 'zh';
 
@@ -58,12 +59,10 @@ export const LiquidParadigmWidget: React.FC = () => {
   };
 
   const handlePartnerClick = (partner: { id: string; name: string; affiliateUrl?: string; officialFallbackUrl?: string }) => {
-    soundFX.playClick(900);
     recordAffiliateAction(partner.id, partner.name, 'click');
   };
 
   const handleCopyPromo = (code: string, partner: { id: string; name: string }) => {
-    soundFX.playClick(1000);
     navigator.clipboard.writeText(code);
     setCopiedPartnerId(partner.id);
     recordAffiliateAction(partner.id, partner.name, 'promo_copy');
@@ -136,43 +135,6 @@ export const LiquidParadigmWidget: React.FC = () => {
     };
   }, [modelSize, thinkingTokens]);
 
-  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-    e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-  };
-
-  const handleSelectParadigm = (id: 'symbolism' | 'connectionism' | 'agentic2026') => {
-    soundFX.playClick(720);
-    setActiveParadigm(id);
-  };
-
-  const handleTokenChange = (val: number) => {
-    setThinkingTokens(val);
-    soundFX.playSliderTick(val / 16384);
-  };
-
-  const handleModelChange = (val: number) => {
-    setModelSize(val);
-    soundFX.playSliderTick(val / 405);
-  };
-
-  const handlePresetTokens = (val: number) => {
-    soundFX.playClick(800);
-    setThinkingTokens(val);
-  };
-
-  const handlePresetModel = (val: number) => {
-    soundFX.playClick(800);
-    setModelSize(val);
-  };
-
-  const handleReset = () => {
-    soundFX.playClick(500);
-    setModelSize(70);
-    setThinkingTokens(4096);
-  };
-
   const paradigmCards = isZh ? [
     {
       id: 'symbolism' as const,
@@ -226,81 +188,77 @@ export const LiquidParadigmWidget: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-24 space-y-12 animate-tab-enter">
+    <div ref={revealRef} className="bg-ob max-w-6xl mx-auto px-5 sm:px-8 pt-24 sm:pt-28 pb-24 space-y-14">
       {/* Section Header */}
-      <div className="text-center max-w-2xl mx-auto space-y-2">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full liquid-glass-pill text-xs font-mono text-amber-300">
-          <Zap className="w-3.5 h-3.5 text-amber-400" />
-          <span>PARADIGM & SCALING MATRIX</span>
-        </div>
-        <h2 className="text-3xl sm:text-4xl font-serif text-white tracking-tight">
-          {isZh ? '范式演变与测试时计算实验室' : 'The Dual Scaling Law Laboratory'}
+      <div className="rv max-w-2xl space-y-4">
+        <p className="eyebrow on-dark">
+          <i />
+          {isZh ? '范式演变与测试时计算实验室' : 'Paradigm & Scaling Matrix'}
+        </p>
+        <h2 className="text-3xl sm:text-5xl font-serif font-medium text-pearl tracking-[-0.01em] leading-[1.15]">
+          {isZh ? '缩放定律实验室' : 'The Dual Scaling Law Laboratory'}
         </h2>
-        <p className="text-xs sm:text-sm text-stone-300/80 font-light">
-          {isZh 
+        <p className="text-sm text-[#A8A29E] leading-[1.9]">
+          {isZh
             ? '从符号逻辑的规则孤岛，到 2024-2026 年慢思考强化学习（Test-Time Compute）第二缩放定律的优雅跃迁。'
             : 'From isolated symbolic rules to the empirical second scaling law of test-time inference compute (2024-2026).'}
         </p>
       </div>
 
-      {/* Part 1: Interactive Fluid Paradigm Cards with Spotlight */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* Part 1: Paradigm Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#292524] border border-[#292524]">
         {paradigmCards.map((card) => {
           const isSelected = activeParadigm === card.id;
           return (
-            <div
+            <button
               key={card.id}
-              onClick={() => handleSelectParadigm(card.id)}
-              onMouseMove={handleCardMouseMove}
-              className={`spotlight-card p-6 rounded-3xl cursor-pointer transition-all duration-300 relative glass-sheen ${
-                isSelected
-                  ? 'liquid-glass-amber scale-[1.02] shadow-2xl border border-amber-300/40'
-                  : 'liquid-glass hover:bg-white/[0.06] border border-white/10'
+              type="button"
+              onClick={() => setActiveParadigm(card.id)}
+              className={`rv text-left p-6 transition-colors duration-300 ${
+                isSelected ? 'bg-ob2' : 'bg-ob hover:bg-ob2'
               }`}
             >
-              <div className="flex items-center justify-between text-xs font-mono mb-2 relative z-10">
-                <span className={isSelected ? 'text-amber-300 font-bold' : 'text-stone-400'}>
+              <div className="flex items-center justify-between mono mb-3">
+                <span className={isSelected ? 'text-gold' : 'text-[#78716C]'}>
                   {card.name}
                 </span>
-                {isSelected && (
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                )}
+                <span className={`w-2 h-2 border transition-colors ${isSelected ? 'bg-gold border-gold' : 'border-[#44403C]'}`} />
               </div>
 
-              <h3 className="text-lg font-serif font-semibold text-white mb-2 relative z-10">
+              <h3 className="text-lg font-serif font-medium text-pearl mb-3">
                 {card.title}
               </h3>
 
-              <p className="text-xs font-serif italic text-stone-300/90 mb-4 leading-relaxed relative z-10">
+              <p className="text-xs font-serif text-[#A8A29E] mb-4 leading-relaxed">
                 {card.quote}
               </p>
 
-              <div className="space-y-1.5 pt-3 border-t border-white/10 text-[11px] font-mono text-stone-400 relative z-10">
-                <div className="text-stone-300 truncate">{card.feat}</div>
-                <div className="text-amber-200/80 truncate">{card.flaw}</div>
+              <div className="space-y-1.5 pt-3 border-t border-[#292524] mono text-[#78716C]">
+                <div className="text-[#D6D3D1]">{card.feat}</div>
+                <div className="text-gold2/80">{card.flaw}</div>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
 
-      {/* Part 2: Liquid Glass Test-Time Scaling Slider Widget */}
-      <div className="liquid-glass-strong rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-white/10 gap-2">
+      {/* Part 2: Test-Time Scaling Simulator */}
+      <div className="rv panel-dark p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 mb-7 border-b border-[#292524] gap-3">
           <div>
-            <div className="flex items-center space-x-2 text-white font-serif text-lg font-semibold">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>{isZh ? '测试时计算（Test-Time Compute）第二缩放定律推演仪' : 'Test-Time Compute (System 2) Scaling Simulator'}</span>
-            </div>
-            <p className="text-xs font-mono text-stone-400 mt-0.5">
-              {isZh 
+            <p className="eyebrow on-dark mb-2">
+              <i />
+              {isZh ? '测试时计算（Test-Time Compute）第二缩放定律推演仪' : 'Test-Time Compute (System 2) Scaling Simulator'}
+            </p>
+            <p className="mono text-[#78716C]">
+              {isZh
                 ? '验证：给模型更多思考 Token 与树搜索分支，在复杂难题上性能平滑飞跃'
                 : 'Scaling Law: Allocating more search tokens yields exponential gains on complex reasoning benchmarks'}
             </p>
           </div>
           <button
-            onClick={handleReset}
-            className="liquid-glass-pill px-3 py-1 rounded-full text-xs font-mono text-stone-400 hover:text-white flex items-center space-x-1 self-start sm:self-auto hover:scale-105 active:scale-95 transition-all"
+            onClick={() => { setModelSize(70); setThinkingTokens(4096); }}
+            className="btn-ghost self-start sm:self-auto"
           >
             <RotateCcw className="w-3 h-3" />
             <span>{isZh ? '重置' : 'Reset'}</span>
@@ -309,14 +267,14 @@ export const LiquidParadigmWidget: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Slider Controls */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-7">
             {/* Thinking Tokens Slider */}
             <div>
-              <div className="flex justify-between text-xs font-mono mb-2">
-                <span className="text-stone-300 font-medium">
+              <div className="flex justify-between mono mb-3">
+                <span className="text-[#A8A29E]">
                   {isZh ? '思考 Token 预算 (Thinking Tokens):' : 'Thinking Tokens Budget:'}
                 </span>
-                <span className="text-amber-300 font-bold text-sm font-mono">
+                <span className="text-gold font-mono text-sm">
                   {thinkingTokens.toLocaleString()} Tokens
                 </span>
               </div>
@@ -326,11 +284,11 @@ export const LiquidParadigmWidget: React.FC = () => {
                 max="16384"
                 step="256"
                 value={thinkingTokens}
-                onChange={(e) => handleTokenChange(Number(e.target.value))}
-                className="w-full accent-amber-400 cursor-pointer h-2 bg-stone-800 rounded-full"
+                onChange={(e) => setThinkingTokens(Number(e.target.value))}
+                className="w-full accent-gold cursor-pointer h-1.5 bg-[#292524] rounded-full"
               />
               {/* Presets */}
-              <div className="flex flex-wrap gap-1.5 mt-2.5">
+              <div className="flex flex-wrap gap-1.5 mt-3">
                 {[
                   { label: isZh ? '0 (直觉)' : '0 (Fast)', val: 0 },
                   { label: isZh ? '1K (轻度)' : '1K (Light)', val: 1024 },
@@ -341,11 +299,11 @@ export const LiquidParadigmWidget: React.FC = () => {
                   <button
                     key={item.val}
                     type="button"
-                    onClick={() => handlePresetTokens(item.val)}
-                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
+                    onClick={() => setThinkingTokens(item.val)}
+                    className={`px-2.5 py-1 mono transition-colors border ${
                       thinkingTokens === item.val
-                        ? 'bg-amber-500/25 text-amber-200 border border-amber-400/40 font-bold'
-                        : 'bg-white/5 text-stone-400 hover:text-white border border-white/5'
+                        ? 'border-gold text-gold bg-[rgba(201,168,106,0.08)]'
+                        : 'border-[#44403C] text-[#78716C] hover:text-pearl hover:border-[#78716C]'
                     }`}
                   >
                     {item.label}
@@ -356,11 +314,11 @@ export const LiquidParadigmWidget: React.FC = () => {
 
             {/* Base Model Parameters Slider */}
             <div>
-              <div className="flex justify-between text-xs font-mono mb-2">
-                <span className="text-stone-300 font-medium">
+              <div className="flex justify-between mono mb-3">
+                <span className="text-[#A8A29E]">
                   {isZh ? '预训练基座规模 (Base Parameters):' : 'Base Model Parameters:'}
                 </span>
-                <span className="text-amber-300 font-bold text-sm font-mono">{modelSize}B {isZh ? '参数' : 'Params'}</span>
+                <span className="text-gold font-mono text-sm">{modelSize}B {isZh ? '参数' : 'Params'}</span>
               </div>
               <input
                 type="range"
@@ -368,11 +326,11 @@ export const LiquidParadigmWidget: React.FC = () => {
                 max="405"
                 step="1"
                 value={modelSize}
-                onChange={(e) => handleModelChange(Number(e.target.value))}
-                className="w-full accent-amber-400 cursor-pointer h-2 bg-stone-800 rounded-full"
+                onChange={(e) => setModelSize(Number(e.target.value))}
+                className="w-full accent-gold cursor-pointer h-1.5 bg-[#292524] rounded-full"
               />
               {/* Presets */}
-              <div className="flex flex-wrap gap-1.5 mt-2.5">
+              <div className="flex flex-wrap gap-1.5 mt-3">
                 {[
                   { label: isZh ? '7B (端侧微型)' : '7B (Edge)', val: 7 },
                   { label: isZh ? '14B (桌面主力)' : '14B (Desktop)', val: 14 },
@@ -383,11 +341,11 @@ export const LiquidParadigmWidget: React.FC = () => {
                   <button
                     key={item.val}
                     type="button"
-                    onClick={() => handlePresetModel(item.val)}
-                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
+                    onClick={() => setModelSize(item.val)}
+                    className={`px-2.5 py-1 mono transition-colors border ${
                       modelSize === item.val
-                        ? 'bg-amber-500/25 text-amber-200 border border-amber-400/40 font-bold'
-                        : 'bg-white/5 text-stone-400 hover:text-white border border-white/5'
+                        ? 'border-gold text-gold bg-[rgba(201,168,106,0.08)]'
+                        : 'border-[#44403C] text-[#78716C] hover:text-pearl hover:border-[#78716C]'
                     }`}
                   >
                     {item.label}
@@ -396,127 +354,97 @@ export const LiquidParadigmWidget: React.FC = () => {
               </div>
             </div>
 
-            {/* Dynamic Interactive System 2 Search Tree Visualizer */}
-            <div className="p-4 rounded-2xl liquid-glass border border-white/10 space-y-3 font-mono">
+            {/* Dynamic System 2 Search Tree Visualizer */}
+            <div className="panel-dark-2 p-4 space-y-3 font-mono">
               <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center space-x-1.5 text-amber-300 font-semibold">
-                  <GitBranch className="w-3.5 h-3.5 text-amber-400" />
+                <span className="flex items-center gap-1.5 text-gold">
+                  <GitBranch className="w-3.5 h-3.5" />
                   <span>{isZh ? '测试时思维链树展开模拟' : 'Test-Time Search Tree Visualizer'}</span>
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-stone-400 border border-white/10">
+                <span className="mono px-2 py-0.5 border border-[#44403C] text-[#78716C]">
                   {isZh ? `搜索深度: ${scalingStats.treeDepth} 级` : `Depth: ${scalingStats.treeDepth}`}
                 </span>
               </div>
 
-              {/* Dynamic Branching Node Visual */}
-              <div className="h-16 flex items-center justify-between px-3 bg-black/40 rounded-xl border border-white/5 relative overflow-hidden">
+              {/* Branching Node Visual */}
+              <div className="h-16 flex items-center justify-between px-3 bg-black/40 border border-[#292524] relative overflow-hidden">
                 {/* Root node */}
                 <div className="flex flex-col items-center z-10">
-                  <div className="w-3.5 h-3.5 rounded-full bg-amber-400 flex items-center justify-center shadow-lg shadow-amber-400/50">
-                    <span className="w-1.5 h-1.5 rounded-full bg-black" />
+                  <div className="w-3.5 h-3.5 rounded-full bg-gold flex items-center justify-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-ob" />
                   </div>
-                  <span className="text-[8px] text-amber-300 mt-1">Root</span>
+                  <span className="text-[8px] text-gold mt-1">Root</span>
                 </div>
 
-                {/* Connecting Search Beams */}
-                <div className="flex-1 h-0.5 mx-2 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500/40 relative">
-                  <div 
-                    className="absolute inset-y-0 left-0 bg-amber-200 shadow-md transition-all duration-300"
+                {/* Connecting Search Beam */}
+                <div className="flex-1 h-px mx-2 bg-[#44403C] relative">
+                  <div
+                    className="absolute inset-y-0 left-0 bg-gold transition-all duration-300"
                     style={{ width: `${Math.min(100, (thinkingTokens / 16384) * 100)}%` }}
                   />
                 </div>
 
                 {/* Search Exploration Nodes */}
-                <div className="flex items-center space-x-2 z-10">
+                <div className="flex items-center gap-2 z-10">
                   {Array.from({ length: Math.min(5, scalingStats.treeDepth) }).map((_, nIdx) => (
                     <div key={nIdx} className="flex flex-col items-center">
-                      <div 
-                        className={`w-3 h-3 rounded-full transition-all duration-300 flex items-center justify-center ${
-                          nIdx < scalingStats.treeDepth
-                            ? 'bg-amber-400/80 ring-2 ring-amber-400/30 scale-110'
-                            : 'bg-stone-700 opacity-40'
-                        }`}
-                      >
-                        <span className="w-1 h-1 rounded-full bg-white" />
+                      <div className="w-3 h-3 rounded-full transition-all duration-300 flex items-center justify-center bg-gold/80">
+                        <span className="w-1 h-1 rounded-full bg-ob" />
                       </div>
-                      <span className="text-[8px] text-stone-400 mt-1">D{nIdx + 1}</span>
+                      <span className="text-[8px] text-[#78716C] mt-1">D{nIdx + 1}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="flex justify-between text-[10px] text-stone-400">
+              <div className="flex justify-between text-[10px] text-[#78716C]">
                 <span>{isZh ? `已探索思考节点: ~${scalingStats.treeNodes * 128} 状态` : `Explored States: ~${scalingStats.treeNodes * 128}`}</span>
-                <span className="text-amber-300">{isZh ? `搜索耗时: ~${scalingStats.latencySec}s` : `Latency: ~${scalingStats.latencySec}s`}</span>
+                <span className="text-gold">{isZh ? `搜索耗时: ~${scalingStats.latencySec}s` : `Latency: ~${scalingStats.latencySec}s`}</span>
               </div>
             </div>
           </div>
 
-          {/* Real-time Meter Glass Panel */}
-          <div className="lg:col-span-6 liquid-glass p-5 sm:p-6 rounded-2xl border border-amber-400/20 font-mono">
-            <div className="flex justify-between items-center text-xs text-stone-400 mb-4 pb-2 border-b border-white/10">
-              <span className="font-semibold text-stone-200">
+          {/* Real-time Meter Panel */}
+          <div className="lg:col-span-6 panel-dark-2 p-5 sm:p-6 font-mono">
+            <div className="flex justify-between items-center text-xs mb-5 pb-3 border-b border-[#292524]">
+              <span className="mono text-pearl">
                 {isZh ? '前沿基准能力投射 (Benchmark Projections)' : 'Reasoning Benchmark Projections'}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center space-x-1">
-                <Activity className="w-2.5 h-2.5 animate-pulse" />
-                <span>LIVE TELEMETRY</span>
+              <span className="mono px-2 py-0.5 border border-[rgba(201,168,106,0.4)] text-gold flex items-center gap-1">
+                <Activity className="w-2.5 h-2.5" />
+                <span>LIVE</span>
               </span>
             </div>
 
-            <div className="space-y-4">
-              {/* Benchmark 1 */}
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-stone-300">MATH-500 (竞赛数学):</span>
-                  <span className="text-amber-300 font-bold">{scalingStats.math500}%</span>
+            <div className="space-y-5">
+              {[
+                { label: 'MATH-500 (竞赛数学):', val: scalingStats.math500 },
+                { label: 'SWE-bench Verified (真实代码仓库解决率):', val: scalingStats.sweBench },
+                { label: 'GPQA Diamond (博士级高难科学推理):', val: scalingStats.gpqa },
+              ].map((b) => (
+                <div key={b.label}>
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="text-[#A8A29E]">{b.label}</span>
+                    <span className="text-gold font-semibold">{b.val}%</span>
+                  </div>
+                  <div className="w-full bg-black/40 h-1.5 overflow-hidden border border-[#292524]">
+                    <div
+                      className="bg-gold h-full transition-all duration-500"
+                      style={{ width: `${b.val}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/5">
-                  <div 
-                    className="bg-gradient-to-r from-amber-500 to-amber-300 h-full rounded-full transition-all duration-400"
-                    style={{ width: `${scalingStats.math500}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Benchmark 2 */}
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-stone-300">SWE-bench Verified (真实代码仓库解决率):</span>
-                  <span className="text-amber-300 font-bold">{scalingStats.sweBench}%</span>
-                </div>
-                <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/5">
-                  <div 
-                    className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-200 h-full rounded-full transition-all duration-400"
-                    style={{ width: `${scalingStats.sweBench}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Benchmark 3 */}
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-stone-300">GPQA Diamond (博士级高难科学推理):</span>
-                  <span className="text-amber-300 font-bold">{scalingStats.gpqa}%</span>
-                </div>
-                <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/5">
-                  <div 
-                    className="bg-gradient-to-r from-amber-500 to-yellow-300 h-full rounded-full transition-all duration-400"
-                    style={{ width: `${scalingStats.gpqa}%` }}
-                  />
-                </div>
-              </div>
+              ))}
             </div>
 
             {/* Intuition vs Search Delta */}
-            <div className="mt-6 p-4 rounded-xl bg-black/30 border border-white/5 space-y-2 text-xs">
-              <div className="flex justify-between text-stone-400">
+            <div className="mt-7 pt-4 border-t border-[#292524] space-y-2.5 text-xs">
+              <div className="flex justify-between text-[#78716C]">
                 <span>{isZh ? '系统一前向直觉准确率:' : 'System 1 Instinct Acc:'}</span>
-                <span className="text-stone-200">{scalingStats.baseAcc}%</span>
+                <span className="text-pearl">{scalingStats.baseAcc}%</span>
               </div>
-              <div className="flex justify-between text-amber-300 font-bold pt-1 border-t border-white/5">
+              <div className="flex justify-between text-gold font-semibold">
                 <span className="flex items-center">
-                  <Zap className="w-3 h-3 mr-1 text-amber-400" />
                   {isZh ? '系统二测试时搜索净增益:' : 'System 2 Test-Time Delta:'}
                 </span>
                 <span>+{scalingStats.gain}%</span>
@@ -526,95 +454,84 @@ export const LiquidParadigmWidget: React.FC = () => {
         </div>
       </div>
 
-      {/* Real-time Hardware Provisioning & 1-Click Replication Card (Monetization Funnel) */}
-      <div className="liquid-glass rounded-3xl p-6 sm:p-8 border border-amber-400/30 shadow-2xl relative overflow-hidden glass-sheen">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
+      {/* Hardware Provisioning & 1-Click Replication */}
+      <div className="rv panel-dark p-6 sm:p-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-7 pb-6 border-b border-[#292524]">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
-              <Server className="w-4 h-4 text-amber-400 animate-pulse" />
-              <span className="font-semibold tracking-wider">COMPUTE PROVISIONING · 算力实机部署与一键复现</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-wide">
+            <p className="eyebrow on-dark mb-2">
+              <i />
+              {isZh ? '算力实机部署与一键复现' : 'Compute Provisioning · 1-Click Deploy'}
+            </p>
+            <h3 className="text-xl sm:text-2xl font-serif font-medium text-pearl">
               {isZh ? `${modelSize}B 模型实机复现算力配置与一键起机` : `Hardware Provisioning & 1-Click Deploy for ${modelSize}B Model`}
             </h3>
-            <p className="text-xs sm:text-sm text-stone-300 font-light mt-1 max-w-2xl leading-relaxed">
-              {isZh 
+            <p className="text-xs sm:text-sm text-[#A8A29E] mt-2 max-w-2xl leading-relaxed">
+              {isZh
                 ? '根据您在上方设定的模型参数量与测试时思考长度，动态推算最低与最优显存。直达认证算力云，领取开发者专属算力礼包。'
                 : 'Dynamically calculated VRAM footprint and recommended compute nodes based on your model size and search horizon.'}
             </p>
           </div>
 
-          <div className="flex items-center gap-2 self-start md:self-auto bg-amber-500/10 border border-amber-400/20 px-3.5 py-2 rounded-2xl">
-            <Cpu className="w-4 h-4 text-amber-400 flex-shrink-0" />
+          <div className="flex items-center gap-3 self-start md:self-auto border border-[rgba(201,168,106,0.35)] px-4 py-3 flex-shrink-0">
+            <Cpu className="w-4 h-4 text-gold flex-shrink-0" />
             <div className="text-xs font-mono">
-              <span className="text-stone-400 block text-[10px] uppercase">{isZh ? '推荐硬件规格' : 'Recommended Spec'}</span>
-              <span className="text-amber-200 font-bold">{hardwareRec.gpuName}</span>
+              <span className="text-[#78716C] block text-[10px] uppercase tracking-wider">{isZh ? '推荐硬件规格' : 'Recommended Spec'}</span>
+              <span className="text-gold2 font-semibold">{hardwareRec.gpuName}</span>
             </div>
           </div>
         </div>
 
         {/* Dynamic Spec Badges */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
-            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? 'FP16 权重显存' : 'FP16 VRAM'}</span>
-            <span className="text-sm sm:text-base font-mono font-bold text-white mt-1 block">{hardwareRec.vramFp16}</span>
-            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? '不含 KV Cache 冗余' : 'Raw weight space'}</span>
-          </div>
-          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
-            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? 'INT4 量化最低显存' : 'INT4 Quant VRAM'}</span>
-            <span className="text-sm sm:text-base font-mono font-bold text-amber-300 mt-1 block">{hardwareRec.vramInt4}</span>
-            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? 'AWQ / GPTQ 压缩' : 'AWQ / GPTQ footprint'}</span>
-          </div>
-          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
-            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? '国内 AutoDL 参考单价' : 'AutoDL Est. Cost'}</span>
-            <span className="text-sm sm:text-base font-mono font-bold text-emerald-300 mt-1 block">{hardwareRec.autoDlCost}</span>
-            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? '支持微信/支付宝按时计费' : 'Hourly billing'}</span>
-          </div>
-          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5">
-            <span className="text-[10px] font-mono text-stone-400 block uppercase">{isZh ? '全球 RunPod 参考单价' : 'RunPod Est. Cost'}</span>
-            <span className="text-sm sm:text-base font-mono font-bold text-cyan-300 mt-1 block">{hardwareRec.runpodCost}</span>
-            <span className="text-[10px] text-stone-500 mt-0.5 block">{isZh ? '按秒计费 · 即开即停' : 'Per-second billing'}</span>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#292524] border border-[#292524] mb-6">
+          {[
+            { label: isZh ? 'FP16 权重显存' : 'FP16 VRAM', val: hardwareRec.vramFp16, sub: isZh ? '不含 KV Cache 冗余' : 'Raw weight space' },
+            { label: isZh ? 'INT4 量化最低显存' : 'INT4 Quant VRAM', val: hardwareRec.vramInt4, sub: isZh ? 'AWQ / GPTQ 压缩' : 'AWQ / GPTQ footprint' },
+            { label: isZh ? '国内 AutoDL 参考单价' : 'AutoDL Est. Cost', val: hardwareRec.autoDlCost, sub: isZh ? '支持微信/支付宝按时计费' : 'Hourly billing' },
+            { label: isZh ? '全球 RunPod 参考单价' : 'RunPod Est. Cost', val: hardwareRec.runpodCost, sub: isZh ? '按秒计费 · 即开即停' : 'Per-second billing' },
+          ].map((s) => (
+            <div key={s.label} className="bg-ob p-4">
+              <span className="mono text-[#78716C] block">{s.label}</span>
+              <span className="text-sm sm:text-base font-mono font-semibold text-gold2 mt-1.5 block">{s.val}</span>
+              <span className="text-[10px] text-[#57534E] mt-1 block">{s.sub}</span>
+            </div>
+          ))}
         </div>
 
-        <div className="text-xs text-stone-300 font-light mb-6 p-3 rounded-2xl bg-stone-900/40 border border-white/5 flex items-center gap-2">
-          <Activity className="w-4 h-4 text-amber-400 flex-shrink-0" />
+        <div className="text-xs text-[#A8A29E] mb-7 py-3 border-y border-[#292524] flex items-center gap-2">
+          <Activity className="w-4 h-4 text-gold flex-shrink-0" />
           <span>{isZh ? hardwareRec.descZh : hardwareRec.descEn}</span>
         </div>
 
         {/* Dual Provider Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#292524] border border-[#292524]">
           {/* Provider 1: AutoDL */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-black/40 to-black/60 border border-emerald-400/30 flex flex-col justify-between">
+          <div className="bg-ob2 p-5 sm:p-6 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span className="font-bold text-white text-sm font-mono">{autodlPartner.name}</span>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <div className="flex items-center justify-between gap-2 mb-2.5">
+                <span className="font-semibold text-pearl text-sm font-mono">{autodlPartner.name}</span>
+                <span className="mono px-2 py-0.5 border border-[#44403C] text-gold flex-shrink-0">
                   {isZh ? autodlPartner.perkBadgeZh : autodlPartner.perkBadgeEn}
                 </span>
               </div>
-              <p className="text-xs text-stone-300 font-light leading-relaxed mb-4">
-                {isZh 
+              <p className="text-xs text-[#A8A29E] leading-relaxed mb-4">
+                {isZh
                   ? '国内极速低延迟网络，预装 PyTorch、vLLM、Ollama 等常用大模型镜像与中文网盘加速通道，高校与个人首选。'
                   : 'Leading domestic GPU cloud for researchers with pre-configured weights and localized bandwidth.'}
               </p>
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-white/5">
+            <div className="space-y-2 pt-3 border-t border-[#292524]">
               {autodlPartner.promoCode && (
-                <div className="flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-xl border border-white/5 text-xs font-mono">
-                  <div className="flex items-center space-x-1.5 text-stone-400">
-                    <Tag className="w-3 h-3 text-emerald-400" />
+                <div className="flex items-center justify-between bg-black/40 px-3 py-1.5 border border-[#292524] text-xs font-mono">
+                  <div className="flex items-center gap-1.5 text-[#78716C]">
+                    <Tag className="w-3 h-3 text-gold" />
                     <span>{isZh ? '新人立减码:' : 'Promo Code:'}</span>
-                    <span className="text-white font-bold">{autodlPartner.promoCode}</span>
+                    <span className="text-pearl font-semibold">{autodlPartner.promoCode}</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleCopyPromo(autodlPartner.promoCode!, autodlPartner)}
-                    className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 text-[11px]"
+                    className="text-gold hover:text-gold2 flex items-center gap-1 text-[11px]"
                   >
                     {copiedPartnerId === autodlPartner.id ? (
                       <>
@@ -636,7 +553,7 @@ export const LiquidParadigmWidget: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => handlePartnerClick(autodlPartner)}
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-mono text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-emerald-900/30 hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-2.5 px-4 border border-[rgba(201,168,106,0.35)] text-gold2 hover:bg-gold hover:text-ob hover:border-gold font-mono text-xs flex items-center justify-center gap-1.5 transition-all"
               >
                 <span>{isZh ? '前往 AutoDL 一键起机开跑' : 'Launch on AutoDL Cloud'}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -645,36 +562,33 @@ export const LiquidParadigmWidget: React.FC = () => {
           </div>
 
           {/* Provider 2: RunPod */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-cyan-500/10 via-black/40 to-black/60 border border-cyan-400/30 flex flex-col justify-between">
+          <div className="bg-ob2 p-5 sm:p-6 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                  <span className="font-bold text-white text-sm font-mono">{runpodPartner.name}</span>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+              <div className="flex items-center justify-between gap-2 mb-2.5">
+                <span className="font-semibold text-pearl text-sm font-mono">{runpodPartner.name}</span>
+                <span className="mono px-2 py-0.5 border border-[#44403C] text-gold flex-shrink-0">
                   {isZh ? runpodPartner.perkBadgeZh : runpodPartner.perkBadgeEn}
                 </span>
               </div>
-              <p className="text-xs text-stone-300 font-light leading-relaxed mb-4">
-                {isZh 
+              <p className="text-xs text-[#A8A29E] leading-relaxed mb-4">
+                {isZh
                   ? '全球顶级高性价比算力，提供 H100、A100、L40S 与 RTX 4090 裸金属容器，按秒计费，支持海外信用卡与加密结算。'
                   : 'Global hyperscale GPU instances with per-second billing, spot instances, and instant vLLM/PyTorch deployments.'}
               </p>
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-white/5">
+            <div className="space-y-2 pt-3 border-t border-[#292524]">
               {runpodPartner.promoCode && (
-                <div className="flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-xl border border-white/5 text-xs font-mono">
-                  <div className="flex items-center space-x-1.5 text-stone-400">
-                    <Tag className="w-3 h-3 text-cyan-400" />
+                <div className="flex items-center justify-between bg-black/40 px-3 py-1.5 border border-[#292524] text-xs font-mono">
+                  <div className="flex items-center gap-1.5 text-[#78716C]">
+                    <Tag className="w-3 h-3 text-gold" />
                     <span>{isZh ? '专属返利码:' : 'Promo Code:'}</span>
-                    <span className="text-white font-bold">{runpodPartner.promoCode}</span>
+                    <span className="text-pearl font-semibold">{runpodPartner.promoCode}</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleCopyPromo(runpodPartner.promoCode!, runpodPartner)}
-                    className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[11px]"
+                    className="text-gold hover:text-gold2 flex items-center gap-1 text-[11px]"
                   >
                     {copiedPartnerId === runpodPartner.id ? (
                       <>
@@ -696,7 +610,7 @@ export const LiquidParadigmWidget: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => handlePartnerClick(runpodPartner)}
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-mono text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-cyan-900/30 hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-2.5 px-4 border border-[rgba(201,168,106,0.35)] text-gold2 hover:bg-gold hover:text-ob hover:border-gold font-mono text-xs flex items-center justify-center gap-1.5 transition-all"
               >
                 <span>{isZh ? '前往 RunPod 拉起算力' : 'Deploy on RunPod'}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -705,9 +619,9 @@ export const LiquidParadigmWidget: React.FC = () => {
           </div>
         </div>
 
-        {/* Supplementary Serverless & Bare-Metal Fast Channels */}
-        <div className="mt-4 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          <span className="text-stone-400 text-[11px]">
+        {/* Supplementary Channels */}
+        <div className="mt-6 pt-5 border-t border-[#292524] flex flex-wrap items-center justify-between gap-3">
+          <span className="mono text-[#57534E]">
             {isZh ? '更多极速推演与集群选型通道：' : 'Additional inference & bare-metal channels:'}
           </span>
           <div className="flex flex-wrap items-center gap-2">
@@ -715,75 +629,75 @@ export const LiquidParadigmWidget: React.FC = () => {
               href={togetherPartner.affiliateUrl || togetherPartner.officialFallbackUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => handlePartnerClick(togetherPartner as any)}
-              className="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-400/20 text-purple-200 hover:text-white flex items-center space-x-1.5 transition-all"
+              onClick={() => handlePartnerClick(togetherPartner as MonetizationPartner)}
+              className="mono px-3 py-1.5 border border-[#44403C] text-[#A8A29E] hover:text-gold2 hover:border-gold flex items-center gap-1.5 transition-all"
             >
-              <Zap className="w-3 h-3 text-purple-400" />
               <span>Together.ai ({isZh ? togetherPartner.perkBadgeZh : togetherPartner.perkBadgeEn})</span>
-              <ArrowUpRight className="w-3 h-3 text-purple-400" />
+              <ArrowUpRight className="w-3 h-3" />
             </a>
             <a
               href={lambdaPartner.affiliateUrl || lambdaPartner.officialFallbackUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => handlePartnerClick(lambdaPartner as any)}
-              className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-400/20 text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all"
+              onClick={() => handlePartnerClick(lambdaPartner as MonetizationPartner)}
+              className="mono px-3 py-1.5 border border-[#44403C] text-[#A8A29E] hover:text-gold2 hover:border-gold flex items-center gap-1.5 transition-all"
             >
-              <Server className="w-3 h-3 text-amber-400" />
+              <Server className="w-3 h-3" />
               <span>Lambda Labs ({isZh ? lambdaPartner.perkBadgeZh : lambdaPartner.perkBadgeEn})</span>
-              <ArrowUpRight className="w-3 h-3 text-amber-400" />
+              <ArrowUpRight className="w-3 h-3" />
             </a>
           </div>
         </div>
 
-        {/* Affiliate Commission & Transparency Footer */}
-        <p className="text-[10px] text-stone-400 font-mono text-center mt-5 pt-4 border-t border-white/5">
-          {isZh 
-            ? '⚡ 算力生态合作说明：本站所推荐算力通道均经实测验证，点击通道注册即可享受对应折扣优惠；收益全数用于通史开源与独立维护。' 
-            : '⚡ Affiliate Transparency: Verified GPU partner links provide discount perks. Commissions support our independent AI research.'}
+        {/* Affiliate Transparency Footer */}
+        <p className="mono text-[#57534E] text-center mt-6 pt-4 border-t border-[#292524]">
+          {isZh
+            ? '算力生态合作说明：本站所推荐算力通道均经实测验证，点击通道注册即可享受对应折扣优惠；收益全数用于通史开源与独立维护。'
+            : 'Affiliate Transparency: Verified GPU partner links provide discount perks. Commissions support our independent AI research.'}
         </p>
       </div>
 
       {/* Part 3: Paradigm Matrix Deep Comparison */}
-      <div className="liquid-glass rounded-3xl p-6 sm:p-8 border border-white/10 shadow-xl overflow-x-auto">
-        <h3 className="text-lg font-serif font-semibold text-white mb-4">
+      <div className="rv panel-dark p-6 sm:p-8 overflow-x-auto">
+        <p className="eyebrow on-dark mb-5">
+          <i />
           {isZh ? '三大 AI 范式横向对比矩阵 (1943 - 2026)' : 'AI Paradigm Comparison Matrix'}
-        </h3>
+        </p>
         <table className="w-full text-left text-xs font-mono border-collapse min-w-[600px]">
           <thead>
-            <tr className="border-b border-white/10 text-stone-400">
-              <th className="py-2.5 px-3">{isZh ? '对比维度' : 'Dimension'}</th>
-              <th className="py-2.5 px-3 text-amber-300">{isZh ? '符号主义 (1956)' : 'Symbolism (1956)'}</th>
-              <th className="py-2.5 px-3 text-amber-300">{isZh ? '连接主义 (1986)' : 'Connectionism (1986)'}</th>
-              <th className="py-2.5 px-3 text-amber-200 font-bold bg-amber-500/10 rounded-t-lg">
+            <tr className="border-b border-[#44403C] text-[#78716C]">
+              <th className="py-3 px-3 font-normal mono">{isZh ? '对比维度' : 'Dimension'}</th>
+              <th className="py-3 px-3 font-normal mono text-gold2">{isZh ? '符号主义 (1956)' : 'Symbolism (1956)'}</th>
+              <th className="py-3 px-3 font-normal mono text-gold2">{isZh ? '连接主义 (1986)' : 'Connectionism (1986)'}</th>
+              <th className="py-3 px-3 mono text-gold bg-[rgba(201,168,106,0.07)]">
                 {isZh ? '自主智能体 (2026.09)' : 'Autonomous Agents (2026.09)'}
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5 text-stone-300">
+          <tbody className="divide-y divide-[#292524] text-[#A8A29E]">
             <tr>
-              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '核心表征' : 'Representation'}</td>
+              <td className="py-3 px-3 text-[#78716C]">{isZh ? '核心表征' : 'Representation'}</td>
               <td className="py-3 px-3">{isZh ? '离散符号、谓词公理' : 'Discrete symbols'}</td>
               <td className="py-3 px-3">{isZh ? '连续稠密向量、流形' : 'Dense continuous vectors'}</td>
-              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '神经直觉 + 离散检验/树搜索' : 'Neuro-symbolic search trees'}</td>
+              <td className="py-3 px-3 text-gold2 bg-[rgba(201,168,106,0.05)]">{isZh ? '神经直觉 + 离散检验/树搜索' : 'Neuro-symbolic search trees'}</td>
             </tr>
             <tr>
-              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '知识获取' : 'Acquisition'}</td>
+              <td className="py-3 px-3 text-[#78716C]">{isZh ? '知识获取' : 'Acquisition'}</td>
               <td className="py-3 px-3">{isZh ? '专家手工形式化编码' : 'Manual expert rules'}</td>
               <td className="py-3 px-3">{isZh ? '海量互联网文本梯度自监督' : 'Large-scale self-supervision'}</td>
-              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '环境自闭环强化学习 + 慢思考自省' : 'RL on verifiable environments'}</td>
+              <td className="py-3 px-3 text-gold2 bg-[rgba(201,168,106,0.05)]">{isZh ? '环境自闭环强化学习 + 慢思考自省' : 'RL on verifiable environments'}</td>
             </tr>
             <tr>
-              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '推理机制' : 'Reasoning'}</td>
+              <td className="py-3 px-3 text-[#78716C]">{isZh ? '推理机制' : 'Reasoning'}</td>
               <td className="py-3 px-3">{isZh ? '形式推导、归结消解' : 'Strict deductive deduction'}</td>
               <td className="py-3 px-3">{isZh ? '单向前向传播 (System 1)' : 'Forward pass (System 1)'}</td>
-              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '测试时动态多步自反思 (System 2)' : 'Runtime test-time search (System 2)'}</td>
+              <td className="py-3 px-3 text-gold2 bg-[rgba(201,168,106,0.05)]">{isZh ? '测试时动态多步自反思 (System 2)' : 'Runtime test-time search (System 2)'}</td>
             </tr>
             <tr>
-              <td className="py-3 px-3 font-semibold text-stone-400">{isZh ? '致命软肋' : 'Key Flaw'}</td>
+              <td className="py-3 px-3 text-[#78716C]">{isZh ? '致命软肋' : 'Key Flaw'}</td>
               <td className="py-3 px-3">{isZh ? '常识获取瓶颈、组合爆炸' : 'Combinatorial explosion'}</td>
               <td className="py-3 px-3">{isZh ? '概率幻觉、黑盒不可溯' : 'Hallucination & lack of rigor'}</td>
-              <td className="py-3 px-3 text-amber-200 bg-amber-500/10">{isZh ? '长程执行漂移、对齐与安全边界' : 'Long-horizon drift & alignment'}</td>
+              <td className="py-3 px-3 text-gold2 bg-[rgba(201,168,106,0.05)]">{isZh ? '长程执行漂移、对齐与安全边界' : 'Long-horizon drift & alignment'}</td>
             </tr>
           </tbody>
         </table>

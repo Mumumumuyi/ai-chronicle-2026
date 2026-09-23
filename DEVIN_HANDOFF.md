@@ -5,6 +5,33 @@
 
 ---
 
+## 第三轮：整站 UI v2 重建（本轮，分支 `devin/ui-v2`）
+
+**目标**：按已批准原型 `design/prototype-v2.html` 全站重建为「编辑博物馆」风格（黑曜石 × 珍珠白交替区块、香槟金强调、Cormorant Garamond/Noto Serif SC/Inter/JetBrains Mono 四字体），替换旧液态玻璃体系。分块明细见 `DEVIN_HANDOFF_UI.md`（五个块全部 [x]）。
+
+**当前状态**：五个块代码均已写完（全局 token/Navbar/Footer → 首页 → 里程碑页 → 长卷 → 实验室/工具页/三个弹窗/赞助条）。**未经任何构建或浏览器验证**——本轮按组长规则禁止执行命令，tsc/vite/截图全部待组长跑。
+
+**本轮改动文件**（均在 `scratch_wb-ui` worktree 内）：
+
+- 全局：`tailwind.config.js`、`src/index.css`（原型组件类全量移植 + 旧 liquid-glass 类系删除）、`index.html`（字体链接 + meta 文案）、`src/components/Navbar.tsx`、`LanguageDropdown.tsx`、`Footer.tsx`、`src/App.tsx`
+- 首页：`src/hooks/usePrefersReducedMotion.ts`、`src/hooks/useScrollReveal.ts`、`src/components/EpochSpecimen.tsx`、`src/components/HomePage.tsx`（新增）
+- 详情/长卷：`src/components/MilestonePage.tsx`、`src/components/ArticleReader.tsx`（重写）
+- 变现层：`src/components/LiquidParadigmWidget.tsx`、`AffiliateEcosystem.tsx`、`MonetizationBanner.tsx`、`SponsorCoffeeModal.tsx`、`PremiumBundleModal.tsx`、`SponsorCalculator.tsx`（重写/定点换肤，业务逻辑与埋点保留）
+
+**关键决定**：
+- 展品图全部自绘 SVG（`EpochSpecimen`，7 幅时代线稿逐行移植自原型），零外部图片、零新依赖；动效纯 CSS + IntersectionObserver + rAF，`prefers-reduced-motion` 下关闭。
+- 首页数字全部由 `timelineData.ts`/`historyArticle.ts` 实时计算，不写死；路由保留真实 href + `history.pushState` + `popstate`，SEO/预渲染/sitemap 链路未动。
+- 变现文案真实性不回退：第二轮清理掉的假码/假价/假荣誉榜未回来；弹窗只换皮不换逻辑。
+- 音效开关从导航移除（`audioEffects` 文件保留未删）。
+- 五个无引用旧组件文件保留未删：`TimelineView.tsx`、`HeroSection.tsx`、`LiquidEpochStage.tsx`、`MilestoneModal.tsx`、`ParadigmSimulator.tsx`——其中残留已删 CSS 类，但因无引用不影响构建；确认后可删。
+- Admin 三件套核查过：只用标准 Tailwind 类；`index.css` 补回了它仍在用的 `.animate-fadeIn`。
+
+**下一步（组长）**：`npm run build`（tsc + vite + 预渲染）+ 五尺寸截图；重点核：① 首页对原型还原度与 hero 动效；② 移动端 Dock/汉堡/横滚；③ 五语言切换；④ `/milestone/<slug>/` 路由与上/下一件导航；⑤ 三弹窗开合与下载；⑥ 后台三连击入口。报错原样贴回给我修。
+
+**追记（首轮 build 后）**：组长报的 14 个 tsc 错误已全部修复——误删的 lucide import（`Server`/`Code2`/`Cpu`/`FileText`/`Zap` 实为数组 icon 字段引用，非 JSX）补回；`HomePage` 对 `ALL_MILESTONES: MilestoneRef[]` 的 4 处直接字段访问改为 `.milestone.*`，`categories` 标注 `MilestoneCategory[]`。同类自查已过一遍，明细见 `DEVIN_HANDOFF_UI.md` 末节。仍未经本机编译验证，请组长重跑 build。
+
+---
+
 ## 第二轮：诚实化改造（本轮改动明细）
 
 **目标**：站长未给收款链接，本轮只"去掉假的"，不接真的。所有改动均可对应任务卡条目。

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
-import { BookOpen, Clock, Share2, Quote, ArrowUp, Check, X, Printer, FileText, Copy, Server, ArrowUpRight, Code, Download, Coffee, DollarSign, Sparkles } from 'lucide-react';
+import { BookOpen, Clock, Share2, ArrowUp, Check, X, Printer, FileText, Copy, ArrowUpRight, Download, Coffee, DollarSign } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getMonetizationPartners, DEFAULT_PARTNERS, MonetizationPartner } from '../utils/monetizationConfig';
 import { recordAffiliateAction } from '../utils/analyticsTracker';
 import { PremiumBundleModal } from './PremiumBundleModal';
 import { SponsorCoffeeModal } from './SponsorCoffeeModal';
 import { SponsorCalculator } from './SponsorCalculator';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const CHAPTER_TITLES_I18N: Record<string, Record<string, { num: string; title: string }>> = {
   'chap-0': {
@@ -70,6 +71,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
   const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
   const [partners, setPartners] = useState<MonetizationPartner[]>([]);
   const [copiedPartnerId, setCopiedPartnerId] = useState<string | null>(null);
+  const revealRef = useScrollReveal<HTMLDivElement>([currentLang]);
 
   useEffect(() => {
     setPartners(getMonetizationPartners());
@@ -154,97 +156,96 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
   const metaTitle = isZh ? ARTICLE_META.title : 'Fire, Winter & Silicon Singularity: A Panoramic History of AI (1943 — 2026.09)';
   const metaSubtitle = isZh ? ARTICLE_META.subtitle : 'From Turing’s Question and the Dialectics of Symbolism & Connectionism to Autonomous Agent Runtime Loops';
-  const metaAbstract = isZh 
-    ? ARTICLE_META.abstract 
+  const metaAbstract = isZh
+    ? ARTICLE_META.abstract
     : 'An exhaustive academic treatise spanning eight decades of artificial intelligence philosophy, algorithmic history, and geopolitics. From Alan Turing’s 1950 operational definition of machine thinking and the 1956 Dartmouth summit, through the two harsh AI winters, the quiet triumph of backpropagation, to contemporary test-time compute, System 2 reasoning, and autonomous agent loops on the eve of the Silicon Singularity.';
 
   const abstractLabel = isZh ? '【史学立论与导言摘要】' : '[ Epistemological Abstract & Historical Thesis ]';
 
   return (
-    <div className="relative min-h-screen pt-20 sm:pt-24 pb-24 px-3 sm:px-8 max-w-6xl mx-auto">
-      {/* Top Reading Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-transparent z-50 no-print">
-        <div 
-          className="h-full bg-gradient-to-r from-amber-500 to-amber-300 transition-all duration-150"
+    <div ref={revealRef} className="relative min-h-screen bg-ob pt-24 sm:pt-28 pb-24 px-5 sm:px-8 max-w-6xl mx-auto">
+      {/* Top Reading Progress Bar — a single gold hairline above the navbar */}
+      <div className="fixed top-0 left-0 right-0 h-[2px] z-50 no-print">
+        <div
+          className="h-full bg-gold transition-all duration-150"
           style={{ width: `${readProgress}%` }}
         />
       </div>
 
-      {/* Reader Header Pill */}
-      <div className="liquid-glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 mb-8 sm:mb-10 shadow-2xl relative">
+      {/* Reader Header — editorial masthead */}
+      <header className="rv pb-10 border-b border-[#292524] mb-10 relative">
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute top-4 sm:top-6 right-4 sm:right-6 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white no-print"
+            className="absolute top-0 right-0 w-9 h-9 border border-[#44403C] flex items-center justify-center text-[#78716C] hover:text-gold2 hover:border-gold transition-colors no-print"
             title={isZh ? '返回展台' : 'Back to Stage'}
           >
             <X className="w-4 h-4" />
           </button>
         )}
 
-        <div className="flex flex-wrap items-center gap-2 mb-3 text-xs font-mono text-amber-300">
-          <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/30">
-            {t.readerBadge}
-          </span>
-          <span className="text-stone-500">·</span>
-          <span className="text-stone-400">{ARTICLE_META.version}</span>
-          <span className="text-stone-500">·</span>
-          <span className="text-stone-400 flex items-center">
-            <Clock className="w-3 h-3 mr-1 text-amber-400" />
+        <p className="eyebrow on-dark mb-6">
+          <i />
+          {t.readerBadge}
+        </p>
+
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-4 mono text-[#78716C]">
+          <span className="text-gold">{ARTICLE_META.version}</span>
+          <span className="text-[#44403C]">·</span>
+          <span className="flex items-center">
+            <Clock className="w-3 h-3 mr-1.5 text-gold" />
             {ARTICLE_META.readingTimeMinutes} {t.readerReadingTime}
           </span>
-          <span className="text-stone-500">·</span>
-          <span className="text-stone-400">{ARTICLE_META.wordCountTotal}</span>
+          <span className="text-[#44403C]">·</span>
+          <span>{ARTICLE_META.wordCountTotal}</span>
         </div>
 
-        <h1 className="text-2xl sm:text-4xl font-serif font-bold text-white tracking-tight mb-2 leading-snug">
+        <h1 className="font-serif font-medium text-3xl sm:text-5xl text-pearl tracking-[-0.01em] mb-4 leading-[1.2]">
           {metaTitle}
         </h1>
-        <p className="text-xs sm:text-sm font-mono text-amber-300/80 mb-5">
+        <p className="text-sm sm:text-base font-serif text-gold2/85 mb-8 max-w-3xl leading-relaxed">
           {metaSubtitle}
         </p>
 
-        <div className="p-3.5 sm:p-4 rounded-2xl liquid-glass border border-white/5 text-stone-300 text-xs sm:text-sm leading-relaxed font-light mb-6">
-          <span className="text-amber-300 font-mono text-xs block mb-1">{abstractLabel}</span>
+        <div className="panel-dark-2 border-l-2 !border-l-gold p-4 sm:p-5 text-[#D6D3D1] text-xs sm:text-sm leading-[1.9] mb-8">
+          <span className="mono text-gold block mb-2">{abstractLabel}</span>
           {metaAbstract}
         </div>
 
         {/* Academic Utility Action Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10 no-print">
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => window.print()}
-              className="liquid-glass-amber px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-200 hover:text-white flex items-center space-x-1.5 transition-all shadow-sm"
-              title="Print / Save as Academic PDF"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>{t.readerExportPDF}</span>
-            </button>
+        <div className="flex flex-wrap items-center gap-3 no-print">
+          <button
+            onClick={() => window.print()}
+            className="btn-gold !py-2.5 !px-5 text-xs"
+            title="Print / Save as Academic PDF"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>{t.readerExportPDF}</span>
+          </button>
 
-            <button
-              onClick={() => setShowCiteModal(true)}
-              className="liquid-glass-pill px-3 py-1.5 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center space-x-1.5 transition-all"
-            >
-              <FileText className="w-3.5 h-3.5 text-amber-400" />
-              <span>{t.readerCiteBibtex}</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setShowCiteModal(true)}
+            className="btn-ghost"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>{t.readerCiteBibtex}</span>
+          </button>
         </div>
-      </div>
+      </header>
 
       {/* Grid Layout: TOC Sidebar + Academic Body */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Sticky Chapter Navigator */}
-        <aside className="hidden lg:block lg:col-span-3 sticky top-24 liquid-glass p-4 rounded-3xl border border-white/10 font-mono text-xs">
-          <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/10 text-stone-400">
-            <span className="font-semibold text-stone-200 flex items-center">
-              <BookOpen className="w-3.5 h-3.5 mr-1 text-amber-400" />
+        {/* Sticky Chapter Navigator — hairline editorial index */}
+        <aside className="hidden lg:block lg:col-span-3 sticky top-24 font-mono text-xs no-print">
+          <div className="flex items-center justify-between pb-3 mb-1 border-b border-[#292524]">
+            <span className="mono text-gold flex items-center">
+              <BookOpen className="w-3.5 h-3.5 mr-1.5" />
               {t.readerTOC}
             </span>
-            <span className="text-[10px] text-amber-300">{Math.round(readProgress)}%</span>
+            <span className="mono text-[#78716C]">{Math.round(readProgress)}%</span>
           </div>
 
-          <nav className="space-y-1">
+          <nav>
             {ARTICLE_CHAPTERS.map((chapter) => {
               const isActive = activeChapterId === chapter.id;
               const chInfo = getChapterDisplay(chapter);
@@ -252,16 +253,16 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                 <button
                   key={chapter.id}
                   onClick={() => scrollToChapter(chapter.id)}
-                  className={`w-full text-left p-2 rounded-xl transition-all flex items-start space-x-2 ${
+                  className={`w-full text-left px-3 py-2.5 border-l-2 transition-all flex items-start gap-2.5 ${
                     isActive
-                      ? 'liquid-glass-amber text-amber-200 font-semibold'
-                      : 'text-stone-400 hover:text-stone-200 hover:bg-white/5'
+                      ? 'border-gold text-gold2 bg-[rgba(201,168,106,0.06)]'
+                      : 'border-transparent text-[#78716C] hover:text-pearl hover:bg-[rgba(244,241,234,0.03)]'
                   }`}
                 >
-                  <span className="text-[10px] text-stone-500 flex-shrink-0 mt-0.5">
+                  <span className={`mono flex-shrink-0 mt-px ${isActive ? 'text-gold' : 'text-[#57534E]'}`}>
                     {chInfo.num}
                   </span>
-                  <span className="line-clamp-1">{chInfo.title.split('：')[0]}</span>
+                  <span className="line-clamp-1 leading-snug">{chInfo.title.split('：')[0].split(':')[0]}</span>
                 </button>
               );
             })}
@@ -269,79 +270,78 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
         </aside>
 
         {/* Main Article Content */}
-        <main className="lg:col-span-9 space-y-12">
+        <main className="lg:col-span-9">
           {ARTICLE_CHAPTERS.map((chapter, idx) => {
             const chInfo = getChapterDisplay(chapter);
             return (
               <React.Fragment key={chapter.id}>
                 <article
                   id={chapter.id}
-                  className="liquid-glass rounded-3xl p-6 sm:p-10 border border-white/10 space-y-8 scroll-mt-24 shadow-xl"
+                  className="border-t border-[#292524] pt-10 sm:pt-14 mt-10 sm:mt-14 first:mt-0 first:border-t-0 first:pt-0 scroll-mt-28"
                 >
                 <div>
-                  <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
-                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/30">
+                  <div className="flex items-center gap-3 mono text-gold mb-4">
+                    <span className="px-3 py-1 border border-[rgba(201,168,106,0.4)]">
                       {chInfo.num}
                     </span>
-                    <span className="text-stone-500">/</span>
-                    <span className="text-stone-400">{chapter.timeSpan}</span>
+                    <span className="text-[#44403C]">/</span>
+                    <span className="text-[#78716C]">{chapter.timeSpan}</span>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-3">
+                  <h2 className="text-2xl sm:text-4xl font-serif font-medium text-pearl tracking-[-0.01em] mb-5 leading-[1.25]">
                     {chInfo.title}
                   </h2>
 
-                {/* Lead Epigraph Quote */}
-                <div className="relative my-4 p-4 rounded-2xl liquid-glass border-l-4 border-amber-400 text-stone-300 font-serif italic text-sm">
-                  <Quote className="w-4 h-4 text-amber-400/40 absolute top-3 right-3" />
-                  <p className="mb-2">&ldquo;{chapter.leadQuote.text}&rdquo;</p>
-                  <div className="flex items-center justify-between text-xs font-mono text-stone-400 not-italic">
+                {/* Lead Epigraph Quote — gold left rule, serif voice */}
+                <div className="relative my-6 border-l-2 border-gold pl-5 sm:pl-7 py-1 text-[#D6D3D1] font-serif text-sm sm:text-base">
+                  <p className="mb-3 leading-[1.9]">&ldquo;{chapter.leadQuote.text}&rdquo;</p>
+                  <div className="flex items-center justify-between mono text-[#78716C]">
                     <span>—— {chapter.leadQuote.attribution}</span>
                     <button
                       onClick={() => handleCopyQuote(chapter.leadQuote.text)}
-                      className="hover:text-amber-300 transition-colors flex items-center space-x-1"
+                      className="hover:text-gold2 transition-colors flex items-center gap-1.5 flex-shrink-0 ml-4"
                     >
                       {copiedQuote === chapter.leadQuote.text ? (
                         <>
-                          <Check className="w-3 h-3 text-amber-400" />
-                          <span className="text-amber-400 text-[10px]">已复制</span>
+                          <Check className="w-3 h-3 text-gold" />
+                          <span className="text-gold">{isZh ? '已复制' : 'Copied'}</span>
                         </>
                       ) : (
                         <>
                           <Share2 className="w-3 h-3" />
-                          <span className="text-[10px]">引用</span>
+                          <span>{isZh ? '引用' : 'Cite'}</span>
                         </>
                       )}
                     </button>
                   </div>
                 </div>
 
-                <p className="text-stone-300/90 font-light leading-relaxed text-sm sm:text-base text-justify">
+                <p className="text-[#D6D3D1] leading-[1.9] text-sm sm:text-base text-justify">
                   {chapter.introParagraph}
                 </p>
               </div>
 
               {/* Chapter Sections */}
-              <div className="space-y-6 pt-4 border-t border-white/5">
+              <div className="space-y-8 pt-8 mt-8 border-t border-[#292524]">
                 {chapter.sections.map((section, sIdx) => (
-                  <section key={sIdx} className="space-y-3">
-                    <h3 className="text-base sm:text-lg font-serif font-semibold text-white flex items-center">
-                      <span className="w-1.5 h-3.5 bg-amber-400 mr-2 rounded-full" />
+                  <section key={sIdx} className="space-y-4">
+                    <h3 className="text-lg sm:text-xl font-serif font-medium text-pearl flex items-center">
+                      <span className="w-3 h-px bg-gold mr-3" />
                       {section.subtitle}
                     </h3>
 
                     {section.content.map((p, pIdx) => (
-                      <p key={pIdx} className="text-stone-300/90 text-xs sm:text-sm font-light leading-relaxed text-justify">
+                      <p key={pIdx} className="text-[#A8A29E] text-sm sm:text-[15px] leading-[1.9] text-justify">
                         {p}
                       </p>
                     ))}
 
                     {section.highlightInsight && (
-                      <div className="p-3.5 rounded-2xl liquid-glass border border-amber-400/25 bg-amber-500/[0.03]">
-                        <div className="text-[10px] font-mono text-amber-400 uppercase tracking-wider mb-1">
-                          ✦ 核心史学洞见
+                      <div className="panel-dark-2 border-l-2 !border-l-gold p-4 sm:p-5">
+                        <div className="mono text-gold mb-2">
+                          ✦ {isZh ? '核心史学洞见' : 'Key Historical Insight'}
                         </div>
-                        <div className="text-xs text-stone-200 font-serif leading-relaxed">
+                        <div className="text-sm text-[#D6D3D1] font-serif leading-[1.8]">
                           {section.highlightInsight}
                         </div>
                       </div>
@@ -351,45 +351,45 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
               </div>
             </article>
 
-            {/* High-Converting In-Article Sponsored Placement 1: GPU Compute (After Chapter II) */}
+            {/* In-Article Sponsored Placement 1: GPU Compute (After Chapter II) */}
             {idx === 2 && (
-              <div className="my-8 p-6 sm:p-8 rounded-3xl liquid-glass border border-amber-400/30 bg-gradient-to-r from-amber-500/[0.05] via-transparent to-amber-500/[0.03] no-print shadow-2xl relative glass-sheen">
-                <div className="flex items-center justify-center space-x-2 text-xs font-mono text-amber-300 mb-2">
-                  <Server className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isZh ? '算力与工程工具直达' : 'COMPUTE & ENGINEERING TOOLS'}</span>
-                </div>
-                <h4 className="text-base sm:text-xl font-serif font-bold text-white text-center mb-2">
+              <div className="my-12 panel-dark p-6 sm:p-8 no-print">
+                <p className="eyebrow on-dark justify-center mb-4">
+                  <i />
+                  {isZh ? '算力与工程工具直达' : 'Compute & Engineering Tools'}
+                </p>
+                <h4 className="text-lg sm:text-2xl font-serif font-medium text-pearl text-center mb-3">
                   {isZh ? '深度学习与模型复现算力受限？可直达主流 GPU 算力云' : 'Scaling Constraints? Deploy On-Demand Cloud GPUs'}
                 </h4>
-                <p className="text-xs text-stone-300 font-light max-w-2xl mx-auto text-center mb-6 leading-relaxed">
-                  {isZh 
+                <p className="text-xs sm:text-sm text-[#A8A29E] max-w-2xl mx-auto text-center mb-8 leading-relaxed">
+                  {isZh
                     ? '通过下方官网直达入口启动前沿模型微调与大并发推理，秒级拉起 PyTorch 与 vLLM 容器环境。'
                     : 'Provision on-demand H100, A100, and RTX 4090 instances in seconds via the official sites below.'}
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[#292524] border border-[#292524] max-w-2xl mx-auto">
                   {/* AutoDL Domestic Card */}
-                  <div className="p-4 rounded-2xl bg-black/40 border border-emerald-500/30 flex flex-col justify-between">
+                  <div className="bg-ob p-5 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span className="font-mono text-xs font-bold text-white">{autodlPartner.name}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="font-mono text-xs font-semibold text-pearl">{autodlPartner.name}</span>
+                        <span className="mono px-2 py-0.5 border border-[#44403C] text-gold flex-shrink-0">
                           {isZh ? autodlPartner.perkBadgeZh : autodlPartner.perkBadgeEn}
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                      <p className="text-[11px] text-[#A8A29E] leading-relaxed mb-3">
                         {isZh ? '国内高校与团队首选，预装主流框架镜像，微信/支付宝按时计费。' : 'Domestic low-latency mirrors & instant framework containers.'}
                       </p>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-white/5">
+                    <div className="space-y-2 pt-3 border-t border-[#292524]">
                       {autodlPartner.promoCode && (
-                        <div className="flex items-center justify-between bg-black/50 px-2.5 py-1 rounded-lg text-[11px] font-mono">
-                          <span className="text-stone-400">{isZh ? '立减码:' : 'Code:'} <b className="text-white">{autodlPartner.promoCode}</b></span>
+                        <div className="flex items-center justify-between bg-black/40 px-2.5 py-1.5 text-[11px] font-mono border border-[#292524]">
+                          <span className="text-[#78716C]">{isZh ? '立减码:' : 'Code:'} <b className="text-pearl">{autodlPartner.promoCode}</b></span>
                           <button
                             type="button"
                             onClick={() => handleCopyPromo(autodlPartner.promoCode!, autodlPartner)}
-                            className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1"
+                            className="text-gold hover:text-gold2 flex items-center gap-1"
                           >
                             {copiedPartnerId === autodlPartner.id ? (
                               <>
@@ -410,7 +410,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => handleAffiliateClick(autodlPartner)}
-                        className="w-full py-2 px-3 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                        className="w-full py-2 px-3 border border-[rgba(201,168,106,0.35)] text-gold2 hover:bg-gold hover:text-ob hover:border-gold font-mono text-xs text-center flex items-center justify-center gap-1.5 transition-all"
                       >
                         <span>{isZh ? '直通 AutoDL 开机' : 'Launch AutoDL'}</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
@@ -419,27 +419,27 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                   </div>
 
                   {/* RunPod Global Card */}
-                  <div className="p-4 rounded-2xl bg-black/40 border border-cyan-500/30 flex flex-col justify-between">
+                  <div className="bg-ob p-5 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span className="font-mono text-xs font-bold text-white">{runpodPartner.name}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="font-mono text-xs font-semibold text-pearl">{runpodPartner.name}</span>
+                        <span className="mono px-2 py-0.5 border border-[#44403C] text-gold flex-shrink-0">
                           {isZh ? runpodPartner.perkBadgeZh : runpodPartner.perkBadgeEn}
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                      <p className="text-[11px] text-[#A8A29E] leading-relaxed mb-3">
                         {isZh ? '全球海外按秒计费，H100 / RTX 4090 裸金属即开即停。' : 'Global hyperscale GPU containers with spot pricing.'}
                       </p>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-white/5">
+                    <div className="space-y-2 pt-3 border-t border-[#292524]">
                       {runpodPartner.promoCode && (
-                        <div className="flex items-center justify-between bg-black/50 px-2.5 py-1 rounded-lg text-[11px] font-mono">
-                          <span className="text-stone-400">{isZh ? '返利码:' : 'Code:'} <b className="text-white">{runpodPartner.promoCode}</b></span>
+                        <div className="flex items-center justify-between bg-black/40 px-2.5 py-1.5 text-[11px] font-mono border border-[#292524]">
+                          <span className="text-[#78716C]">{isZh ? '返利码:' : 'Code:'} <b className="text-pearl">{runpodPartner.promoCode}</b></span>
                           <button
                             type="button"
                             onClick={() => handleCopyPromo(runpodPartner.promoCode!, runpodPartner)}
-                            className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1"
+                            className="text-gold hover:text-gold2 flex items-center gap-1"
                           >
                             {copiedPartnerId === runpodPartner.id ? (
                               <>
@@ -460,7 +460,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => handleAffiliateClick(runpodPartner)}
-                        className="w-full py-2 px-3 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-cyan-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                        className="w-full py-2 px-3 border border-[rgba(201,168,106,0.35)] text-gold2 hover:bg-gold hover:text-ob hover:border-gold font-mono text-xs text-center flex items-center justify-center gap-1.5 transition-all"
                       >
                         <span>{isZh ? '前往 RunPod' : 'Visit RunPod'}</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
@@ -471,33 +471,33 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
               </div>
             )}
 
-            {/* High-Converting In-Article Sponsored Placement 2: Dev Tools & AdSense Container (After Chapter IV) */}
+            {/* In-Article Sponsored Placement 2: Dev Tools (After Chapter IV) */}
             {idx === 4 && (
-              <div className="my-8 p-6 sm:p-8 rounded-3xl liquid-glass border border-amber-400/30 bg-gradient-to-r from-amber-500/[0.04] via-transparent to-amber-500/[0.02] no-print shadow-xl relative glass-sheen">
-                <div className="flex items-center justify-center space-x-2 text-xs font-mono text-amber-300 mb-2">
-                  <Code className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isZh ? 'DEVELOPER ECOSYSTEM · 智能体研发与极速推理工具' : 'DEVELOPER ECOSYSTEM · AI IDEs & LPU INFERENCE'}</span>
-                </div>
-                <h4 className="text-base sm:text-xl font-serif font-bold text-white text-center mb-2">
+              <div className="my-12 panel-dark p-6 sm:p-8 no-print">
+                <p className="eyebrow on-dark justify-center mb-4">
+                  <i />
+                  {isZh ? '开发者生态 · 智能体研发与极速推理工具' : 'Developer Ecosystem · AI IDEs & LPU Inference'}
+                </p>
+                <h4 className="text-lg sm:text-2xl font-serif font-medium text-pearl text-center mb-3">
                   {isZh ? '打造下一代自主 Agent：前沿研发工具直达' : 'Accelerate Your AI Engineering: Frontier Tools'}
                 </h4>
-                <p className="text-xs text-stone-300 font-light max-w-2xl mx-auto text-center mb-6 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#A8A29E] max-w-2xl mx-auto text-center mb-8 leading-relaxed">
                   {isZh
                     ? '工欲善其事，必先利其器。精选主流的代码感知 IDE 与极速推理引擎，均为官网直达。'
                     : 'Frontier developer tooling: context-aware code editors and deterministic LPU inference chips.'}
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[#292524] border border-[#292524] max-w-2xl mx-auto">
                   {/* Cursor Card */}
-                  <div className="p-4 rounded-2xl bg-black/40 border border-amber-400/20 flex flex-col justify-between">
+                  <div className="bg-ob p-5 flex flex-col justify-between gap-3">
                     <div>
-                      <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span className="font-mono text-xs font-bold text-white">{cursorPartner.name}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="font-mono text-xs font-semibold text-pearl">{cursorPartner.name}</span>
+                        <span className="mono px-2 py-0.5 border border-[#44403C] text-gold flex-shrink-0">
                           {isZh ? cursorPartner.perkBadgeZh : cursorPartner.perkBadgeEn}
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                      <p className="text-[11px] text-[#A8A29E] leading-relaxed">
                         {isZh ? '全库语义索引与 Claude 3.5 智能改写，现代工程师必备的 AI IDE。' : 'Next-gen code editor with deep codebase indexing and contextual generation.'}
                       </p>
                     </div>
@@ -507,7 +507,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => handleAffiliateClick(cursorPartner)}
-                      className="w-full py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                      className="w-full py-2 px-3 border border-[rgba(201,168,106,0.35)] text-gold2 hover:bg-gold hover:text-ob hover:border-gold font-mono text-xs text-center flex items-center justify-center gap-1.5 transition-all"
                     >
                       <span>{isZh ? '免费体验 Cursor Pro' : 'Try Cursor Pro Free'}</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
@@ -515,15 +515,15 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                   </div>
 
                   {/* Groq Card */}
-                  <div className="p-4 rounded-2xl bg-black/40 border border-purple-400/20 flex flex-col justify-between">
+                  <div className="bg-ob p-5 flex flex-col justify-between gap-3">
                     <div>
-                      <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span className="font-mono text-xs font-bold text-white">{groqPartner.name}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="font-mono text-xs font-semibold text-pearl">{groqPartner.name}</span>
+                        <span className="mono px-2 py-0.5 border border-[#44403C] text-gold flex-shrink-0">
                           {isZh ? groqPartner.perkBadgeZh : groqPartner.perkBadgeEn}
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-300 font-light mb-3">
+                      <p className="text-[11px] text-[#A8A29E] leading-relaxed">
                         {isZh ? '500+ Tokens/秒硬件级极速 LPU，为智能体多步反思提供瞬间响应。' : '500+ Tokens/sec hardware LPU engine for deterministic low-latency agents.'}
                       </p>
                     </div>
@@ -533,7 +533,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => handleAffiliateClick(groqPartner)}
-                      className="w-full py-2 px-3 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/30 text-purple-200 hover:text-white font-mono text-xs text-center flex items-center justify-center space-x-1 transition-all"
+                      className="w-full py-2 px-3 border border-[rgba(201,168,106,0.35)] text-gold2 hover:bg-gold hover:text-ob hover:border-gold font-mono text-xs text-center flex items-center justify-center gap-1.5 transition-all"
                     >
                       <span>{isZh ? '获取免费极速 API Key' : 'Get Free Groq API Key'}</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
@@ -541,11 +541,11 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                   </div>
                 </div>
 
-                {/* Optional Google AdSense Responsive Slot with Fallback */}
-                <div className="mt-4 pt-4 border-t border-white/5 text-center">
-                  <div className="text-[10px] font-mono text-stone-400">
-                    {isZh ? '⚡ 站点支持通道 · 广告与工具推荐帮助覆盖本站运维开销' : '⚡ Support Channel · Ads and recommendations help cover hosting costs'}
-                  </div>
+                {/* Support note */}
+                <div className="mt-5 pt-4 border-t border-[#292524] text-center">
+                  <span className="mono text-[#57534E]">
+                    {isZh ? '站点支持通道 · 广告与工具推荐帮助覆盖本站运维开销' : 'Support Channel · Ads and recommendations help cover hosting costs'}
+                  </span>
                 </div>
               </div>
             )}
@@ -553,29 +553,29 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
         );
       })}
 
-          {/* Post-Monograph Academic Bundle & Patron Support Card (Monetization Funnel) */}
-          <div className="my-10 p-6 sm:p-8 rounded-3xl liquid-glass border border-amber-400/40 bg-gradient-to-br from-amber-500/[0.08] via-black/40 to-stone-900/60 shadow-2xl relative overflow-hidden glass-sheen no-print">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-              <div className="space-y-2 max-w-xl">
-                <div className="flex items-center space-x-2 text-xs font-mono text-amber-300">
-                  <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-                  <span className="font-semibold tracking-wider">ACADEMIC ASSET PACK & PATRON GRANTS</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-serif font-bold text-white leading-snug">
-                  {isZh ? '《2026 AI 全景通史》学术典藏离线包与创作者支持' : 'AI Chronicle Academic Bundle & Patron Support'}
+          {/* Post-Monograph Academic Bundle & Patron Support Strip */}
+          <div className="my-12 border-t-2 border-gold pt-8 no-print">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-3 max-w-xl">
+                <p className="eyebrow on-dark">
+                  <i />
+                  {isZh ? '学术典藏离线包与创作者支持' : 'Academic Asset Pack & Patron Support'}
+                </p>
+                <h3 className="text-xl sm:text-2xl font-serif font-medium text-pearl leading-snug">
+                  {isZh ? '《2026 AI 全景通史》离线长卷' : 'AI Chronicle Academic Bundle & Patron Support'}
                 </h3>
-                <p className="text-xs sm:text-sm text-stone-300 font-light leading-relaxed">
-                  {isZh 
+                <p className="text-xs sm:text-sm text-[#A8A29E] leading-relaxed">
+                  {isZh
                     ? '恭喜读完 1.8 万字全卷。本通史由独立极客潜心研创，您可以免费下载完整 Markdown 离线长卷（内嵌 BibTeX 引用附录与缩放定律公式附录），或为服务器与带宽开销添一杯咖啡。'
                     : 'Thank you for reading this 18,000-word canonical treatise. Download the complete offline Markdown treatise with embedded BibTeX citations and the scaling-law appendix, or tip a coffee toward hosting costs.'}
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+              <div className="flex flex-wrap items-center gap-3 flex-shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowBundleModal(true)}
-                  className="liquid-glass-amber px-4 py-2.5 rounded-full text-xs font-mono font-bold text-amber-200 hover:text-white flex items-center justify-center space-x-1.5 transition-all shadow-md"
+                  className="btn-gold !py-2.5 !px-5 text-xs"
                 >
                   <Download className="w-4 h-4" />
                   <span>{isZh ? '免费下载离线长卷' : 'Download Free Treatise'}</span>
@@ -584,32 +584,32 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                 <button
                   type="button"
                   onClick={() => setShowCoffeeModal(true)}
-                  className="liquid-glass-pill px-4 py-2.5 rounded-full text-xs font-mono text-stone-200 hover:text-white flex items-center justify-center space-x-1.5 transition-all border border-amber-400/20"
+                  className="btn-ghost"
                 >
-                  <Coffee className="w-4 h-4 text-amber-400" />
-                  <span>{isZh ? '赞助打赏 ☕' : 'Tip Coffee ☕'}</span>
+                  <Coffee className="w-4 h-4" />
+                  <span>{isZh ? '赞助打赏' : 'Tip Coffee'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setShowSponsorModal(true)}
-                  className="liquid-glass-pill px-4 py-2.5 rounded-full text-xs font-mono text-stone-300 hover:text-white flex items-center justify-center space-x-1.5 transition-all"
+                  className="btn-ghost"
                 >
-                  <DollarSign className="w-4 h-4 text-amber-400" />
+                  <DollarSign className="w-4 h-4" />
                   <span>{isZh ? '特约品牌合作' : 'B2B Partner'}</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-between items-center font-mono text-xs text-stone-400 pt-6 no-print">
-            <span>通史长卷完 · 截至 2026.09.13 定本</span>
+          <div className="flex justify-between items-center mono text-[#78716C] pt-6 border-t border-[#292524] no-print">
+            <span>{isZh ? '通史长卷完 · 截至 2026.09.13 定本' : 'End of Treatise · Canonical 2026.09.13'}</span>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="liquid-glass-pill px-4 py-2 rounded-full text-stone-300 hover:text-white flex items-center space-x-1"
+              className="text-[#A8A29E] hover:text-gold2 flex items-center gap-1.5 transition-colors"
             >
               <ArrowUp className="w-3.5 h-3.5" />
-              <span>回至卷首</span>
+              <span>{isZh ? '回至卷首' : 'Back to Top'}</span>
             </button>
           </div>
         </main>
@@ -617,37 +617,37 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
       {/* BibTeX Citation Modal */}
       {showCiteModal && (
-        <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+        <div
+          className="modal-backdrop anim-fade no-print"
           onClick={() => setShowCiteModal(false)}
         >
-          <div 
-            className="relative w-full max-w-lg liquid-glass-strong rounded-3xl p-6 text-stone-100 shadow-2xl border border-amber-400/40"
+          <div
+            className="modal-panel max-w-lg p-6 sm:p-7"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setShowCiteModal(false)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 hover:text-white"
+              className="absolute top-4 right-4 w-8 h-8 border border-[#44403C] flex items-center justify-center text-[#78716C] hover:text-gold2 hover:border-gold transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center space-x-2 text-xs font-mono text-amber-300 mb-2">
-              <FileText className="w-3.5 h-3.5" />
-              <span>ACADEMIC CITATION · BIBTEX</span>
-            </div>
+            <p className="eyebrow on-dark mb-4">
+              <i />
+              ACADEMIC CITATION · BIBTEX
+            </p>
 
-            <h3 className="text-xl font-serif font-bold text-white mb-3">
-              引用本篇通史
+            <h3 className="text-xl font-serif font-medium text-pearl mb-4">
+              {isZh ? '引用本篇通史' : 'Cite This Treatise'}
             </h3>
 
-            <pre className="p-4 rounded-2xl bg-black/60 border border-white/10 text-[11px] font-mono text-amber-200/90 overflow-x-auto mb-4 select-all">
+            <pre className="p-4 bg-black/60 border border-[#292524] text-[11px] font-mono text-gold2/90 overflow-x-auto mb-5 select-all">
               {bibtexCitation}
             </pre>
 
-            <div className="flex justify-between items-center">
-              <span className="text-[11px] font-mono text-stone-400">
-                可直接粘贴至 LaTeX、Overleaf 或 Zotero
+            <div className="flex justify-between items-center gap-4">
+              <span className="mono text-[#78716C]">
+                {isZh ? '可直接粘贴至 LaTeX、Overleaf 或 Zotero' : 'Paste into LaTeX, Overleaf or Zotero'}
               </span>
               <button
                 onClick={() => {
@@ -655,17 +655,15 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                   setCopiedCite(true);
                   setTimeout(() => setCopiedCite(false), 2000);
                 }}
-                className="liquid-glass-amber px-4 py-1.5 rounded-full text-xs font-mono text-amber-200 hover:text-white transition-all flex items-center space-x-1"
+                className="btn-ghost flex-shrink-0"
               >
                 {copiedCite ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>已复制 BibTeX</span>
+                    <Check className="w-3.5 h-3.5 text-gold" />
+                    <span>{isZh ? '已复制' : 'Copied'}</span>
                   </>
                 ) : (
-                  <>
-                    <span>复制 BibTeX</span>
-                  </>
+                  <span>{isZh ? '复制 BibTeX' : 'Copy BibTeX'}</span>
                 )}
               </button>
             </div>
@@ -677,7 +675,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
       <div className="fixed bottom-20 right-4 z-40 lg:hidden no-print">
         <button
           onClick={() => setShowMobileTOC(true)}
-          className="liquid-glass-amber px-3.5 py-2 rounded-full text-xs font-mono text-amber-200 shadow-xl flex items-center space-x-1.5 backdrop-blur-xl border border-amber-400/40 hover:scale-105 transition-transform"
+          className="bg-gold text-ob px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase flex items-center gap-1.5 border border-gold hover:bg-gold2 transition-colors"
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>{Math.round(readProgress)}% {t.readerTOC}</span>
@@ -686,28 +684,28 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
       {/* Mobile Bottom Sheet TOC Drawer */}
       {showMobileTOC && (
-        <div 
-          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200 no-print"
+        <div
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[rgba(12,10,9,0.9)] anim-fade no-print"
           onClick={() => setShowMobileTOC(false)}
         >
-          <div 
-            className="w-full sm:max-w-md max-h-[80vh] overflow-y-auto liquid-glass-strong rounded-t-3xl sm:rounded-3xl p-6 text-stone-100 shadow-2xl border border-amber-400/40"
+          <div
+            className="w-full sm:max-w-md max-h-[80vh] overflow-y-auto bg-ob2 border-t sm:border border-[#44403C] p-6 text-pearl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
-              <span className="font-serif font-bold text-white flex items-center text-sm">
-                <BookOpen className="w-4 h-4 mr-2 text-amber-400" />
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#292524]">
+              <span className="mono text-gold flex items-center">
+                <BookOpen className="w-4 h-4 mr-2" />
                 {t.readerTOC} ({Math.round(readProgress)}%)
               </span>
               <button
                 onClick={() => setShowMobileTOC(false)}
-                className="w-7 h-7 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400"
+                className="w-8 h-8 border border-[#44403C] flex items-center justify-center text-[#78716C] hover:text-gold2"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-1.5">
+            <div>
               {ARTICLE_CHAPTERS.map((ch) => {
                 const isActive = activeChapterId === ch.id;
                 const chInfo = getChapterDisplay(ch);
@@ -718,16 +716,16 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                       scrollToChapter(ch.id);
                       setShowMobileTOC(false);
                     }}
-                    className={`w-full text-left p-3 rounded-2xl transition-all flex items-start space-x-2.5 ${
+                    className={`w-full text-left px-3 py-3 border-l-2 transition-all flex items-start gap-2.5 ${
                       isActive
-                        ? 'liquid-glass-amber text-amber-200 font-semibold'
-                        : 'liquid-glass text-stone-300 hover:text-white'
+                        ? 'border-gold text-gold2 bg-[rgba(201,168,106,0.06)]'
+                        : 'border-transparent text-[#A8A29E] hover:text-pearl'
                     }`}
                   >
-                    <span className="text-[10px] font-mono text-amber-400/80 flex-shrink-0 mt-0.5">
+                    <span className="mono text-gold/80 flex-shrink-0 mt-0.5">
                       {chInfo.num}
                     </span>
-                    <span className="text-xs line-clamp-1">{chInfo.title}</span>
+                    <span className="text-xs line-clamp-1 leading-snug">{chInfo.title}</span>
                   </button>
                 );
               })}
@@ -749,5 +747,3 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
     </div>
   );
 };
-
-
