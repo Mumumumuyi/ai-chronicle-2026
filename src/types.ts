@@ -17,6 +17,8 @@ export type MilestoneCategory =
 
 export interface Milestone {
   id: string;
+  /** URL slug for the standalone dossier page: /milestone/<slug>/ */
+  slug: string;
   year: number | string;
   exactDate?: string;
   title: string;

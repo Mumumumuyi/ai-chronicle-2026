@@ -1,4 +1,6 @@
 import type { ActiveTab } from '../components/Navbar';
+import { EPOCHS } from '../data/timelineData';
+import type { Epoch, Milestone } from '../types';
 
 // The root domain is the canonical home of the site. The /ai-chronicle-2026/
 // deployment serves the same pages but points every canonical link back here,
@@ -47,6 +49,21 @@ export const ROUTES: RouteMeta[] = [
 /** Vite injects the deployment base; it always starts and ends with '/'. */
 const BASE = import.meta.env.BASE_URL;
 
+export interface MilestoneRef {
+  milestone: Milestone;
+  epoch: Epoch;
+}
+
+/** Every milestone in chronological order (epoch order, then in-epoch order). */
+export const ALL_MILESTONES: MilestoneRef[] = EPOCHS.flatMap((epoch) =>
+  epoch.milestones.map((milestone) => ({ milestone, epoch }))
+);
+
+export function findMilestoneBySlug(slug: string): { ref: MilestoneRef; index: number } | null {
+  const index = ALL_MILESTONES.findIndex((r) => r.milestone.slug === slug);
+  return index >= 0 ? { ref: ALL_MILESTONES[index], index } : null;
+}
+
 function routeFor(tab: ActiveTab): RouteMeta {
   return ROUTES.find((r) => r.tab === tab) ?? ROUTES[0];
 }
@@ -57,26 +74,63 @@ export function hrefForTab(tab: ActiveTab): string {
   return segment ? `${BASE}${segment}/` : BASE;
 }
 
+/** In-site href for a milestone dossier page: <base>milestone/<slug>/ */
+export function hrefForMilestone(slug: string): string {
+  return `${BASE}milestone/${slug}/`;
+}
+
 /** Canonical URL for a tab - always on the root domain, whatever the base. */
 export function canonicalForTab(tab: ActiveTab): string {
   const { segment } = routeFor(tab);
   return segment ? `${CANONICAL_ORIGIN}/${segment}/` : `${CANONICAL_ORIGIN}/`;
 }
 
-/** Resolve the tab from the current URL, still honouring the legacy #hash links. */
-export function tabFromLocation(): ActiveTab {
+/** Canonical URL for a milestone dossier page - always on the root domain. */
+export function canonicalForMilestone(slug: string): string {
+  return `${CANONICAL_ORIGIN}/milestone/${slug}/`;
+}
+
+export interface LocationResolution {
+  tab: ActiveTab;
+  /** Set when the URL is <base>milestone/<slug>/; slug validity is resolved by the caller. */
+  milestoneSlug: string | null;
+}
+
+/**
+ * Resolve the current URL to a view. Milestone deep links take precedence,
+ * then the four tab routes, then the legacy #hash upgrade at the base path.
+ */
+export function resolveLocation(): LocationResolution {
   const path = window.location.pathname;
   const relative = path.startsWith(BASE) ? path.slice(BASE.length) : path.replace(/^\//, '');
-  const segment = relative.replace(/\/+$/, '').split('/')[0];
+  const segments = relative.replace(/\/+$/, '').split('/').filter(Boolean);
 
-  // Only a non-empty segment identifies a route by path; an empty one means we
-  // are at the base, where a legacy #hash still gets to decide the view.
-  const byPath = segment ? ROUTES.find((r) => r.segment === segment) : undefined;
-  if (byPath) return byPath.tab;
+  if (segments[0] === 'milestone' && segments[1]) {
+    return { tab: 'stage', milestoneSlug: decodeURIComponent(segments[1]) };
+  }
 
+  const byPath = segments[0] ? ROUTES.find((r) => r.segment === segments[0]) : undefined;
+  if (byPath) return { tab: byPath.tab, milestoneSlug: null };
+
+  // Only a bare base URL lets a legacy #hash decide the view.
   const hash = window.location.hash.replace('#', '');
   const byHash = ROUTES.find((r) => r.tab === hash);
-  return byHash ? byHash.tab : 'stage';
+  return { tab: byHash ? byHash.tab : 'stage', milestoneSlug: null };
+}
+
+/** Per-page meta for a milestone dossier, or null when the slug is unknown. */
+export function milestoneMeta(
+  slug: string
+): { title: string; description: string; canonical: string } | null {
+  const found = findMilestoneBySlug(slug);
+  if (!found) return null;
+  const m = found.ref.milestone;
+  const description = m.summary.length > 150 ? `${m.summary.slice(0, 147)}…` : m.summary;
+  return {
+    title: `${m.title}（${m.year}）· 人工智能通史 | AI Chronicle 2026`,
+    description,
+    canonical: canonicalForMilestone(slug),
+  };
 }
 
 function setMetaContent(selector: string, content: string): void {
@@ -85,9 +139,20 @@ function setMetaContent(selector: string, content: string): void {
 }
 
 /** Keep <head> in step with the active route so each URL has its own metadata. */
-export function applyRouteMeta(tab: ActiveTab): void {
-  const { title, description } = routeFor(tab);
-  const canonical = canonicalForTab(tab);
+export function applyRouteMeta(tab: ActiveTab, milestoneSlug?: string | null): void {
+  const mm = milestoneSlug ? milestoneMeta(milestoneSlug) : null;
+
+  let title: string;
+  let description: string;
+  let canonical: string;
+  if (mm) {
+    ({ title, description, canonical } = mm);
+  } else {
+    const route = routeFor(tab);
+    title = route.title;
+    description = route.description;
+    canonical = canonicalForTab(tab);
+  }
 
   document.title = title;
   setMetaContent('meta[name="title"]', title);
@@ -101,7 +166,4 @@ export function applyRouteMeta(tab: ActiveTab): void {
 
   const canonicalLink = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
   if (canonicalLink) canonicalLink.href = canonical;
-
-  const xDefault = document.head.querySelector<HTMLLinkElement>('link[rel="alternate"][hreflang="x-default"]');
-  if (xDefault) xDefault.href = canonical;
 }

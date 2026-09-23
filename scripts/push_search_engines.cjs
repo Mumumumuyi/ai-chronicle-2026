@@ -3,25 +3,18 @@
 const https = require('https');
 const http = require('http');
 
+const { getSegments } = require('./site_segments.cjs');
+
 const HOST = 'mumumumuyi.github.io';
 const SITEMAP_ROOT = `https://${HOST}/sitemap.xml`;
-const SITEMAP_SUBSITE = `https://${HOST}/ai-chronicle-2026/sitemap.xml`;
 const KEY = 'c7a456e3f281483ea190105307b22108';
 const KEY_LOCATION = `https://${HOST}/${KEY}.txt`;
 
+// Canonical URLs only: the /ai-chronicle-2026/ mirror canonicalises to the
+// root domain, so its URLs are deliberately not submitted.
 const URL_LIST = [
-  // 1. Root Domain Canonical URLs
-  `https://${HOST}/`,
-  `https://${HOST}/reader/`,
-  `https://${HOST}/lab/`,
-  `https://${HOST}/ecosystem/`,
-  `https://${HOST}/sitemap.xml`,
-  // 2. Subsite URLs
-  `https://${HOST}/ai-chronicle-2026/`,
-  `https://${HOST}/ai-chronicle-2026/reader/`,
-  `https://${HOST}/ai-chronicle-2026/lab/`,
-  `https://${HOST}/ai-chronicle-2026/ecosystem/`,
-  `https://${HOST}/ai-chronicle-2026/sitemap.xml`,
+  ...getSegments().map((s) => `https://${HOST}/${s ? s + '/' : ''}`),
+  SITEMAP_ROOT,
 ];
 
 async function pingUrl(targetUrl) {
@@ -81,7 +74,6 @@ async function runPush() {
   console.log('====================================================');
   console.log('🚀 正在启动全自动搜索引擎推送与收录提速引擎...');
   console.log(`- 根域名 Sitemap: ${SITEMAP_ROOT}`);
-  console.log(`- 子站 Sitemap: ${SITEMAP_SUBSITE}`);
   console.log(`- 推送深度路由数: ${URL_LIST.length}`);
   console.log('====================================================\n');
 
@@ -98,8 +90,6 @@ async function runPush() {
   console.log('\n2. 向 Microsoft Bing 提交最新 Sitemap 变更通知...');
   const bingPingRoot = await pingUrl(`https://www.bing.com/ping?sitemap=${encodeURIComponent(SITEMAP_ROOT)}`);
   console.log(`   ✓ Bing Root Sitemap Ping [${bingPingRoot.status}]: ${bingPingRoot.msg}`);
-  const bingPingSub = await pingUrl(`https://www.bing.com/ping?sitemap=${encodeURIComponent(SITEMAP_SUBSITE)}`);
-  console.log(`   ✓ Bing Subsite Sitemap Ping [${bingPingSub.status}]: ${bingPingSub.msg}`);
 
   // 3. Google Sitemap Ping
   console.log('\n3. 向 Google 搜索引擎提交最新 Sitemap 变动通知...');

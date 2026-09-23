@@ -3,14 +3,16 @@
 
 const https = require('https');
 
-const HOST = 'mumumumuyi.github.io';
-const KEY = 'c7a456e3f281483ea190105307b22108'; // Example 32-char key for IndexNow
-const KEY_LOCATION = `https://${HOST}/ai-chronicle-2026/${KEY}.txt`;
+const { getSegments } = require('./site_segments.cjs');
 
+const HOST = 'mumumumuyi.github.io';
+const KEY = 'c7a456e3f281483ea190105307b22108';
+const KEY_LOCATION = `https://${HOST}/${KEY}.txt`;
+
+// Canonical root-domain URLs only; the /ai-chronicle-2026/ mirror
+// canonicalises to the root and is deliberately not submitted.
 const URL_LIST = [
-  `https://${HOST}/ai-chronicle-2026/`,
-  `https://${HOST}/ai-chronicle-2026/index.html`,
-  `https://${HOST}/ai-chronicle-2026/sitemap.xml`,
+  ...getSegments().map((s) => `https://${HOST}/${s ? s + '/' : ''}`),
 ];
 
 const payload = JSON.stringify({

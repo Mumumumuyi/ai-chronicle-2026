@@ -13,10 +13,19 @@ import { EPOCHS } from './data/timelineData';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 import { isSessionValid, checkSecretUrlTrigger } from './utils/securityWall';
 import { recordVisitorLog } from './utils/analyticsTracker';
-import { applyRouteMeta, hrefForTab, tabFromLocation } from './utils/routes';
+import { MilestonePage } from './components/MilestonePage';
+import {
+  applyRouteMeta,
+  hrefForMilestone,
+  hrefForTab,
+  resolveLocation,
+  type LocationResolution,
+} from './utils/routes';
 
 const AppContent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>(() => tabFromLocation());
+  const [routeState, setRouteState] = useState<LocationResolution>(() => resolveLocation());
+  const activeTab = routeState.tab;
+  const milestoneSlug = routeState.milestoneSlug;
   const [activeEpochIndex, setActiveEpochIndex] = useState<number>(6); // Default to current 2024-2026 epoch
   const [activeMilestone, setActiveMilestone] = useState<Milestone | null>(null);
   
@@ -58,29 +67,45 @@ const AppContent: React.FC = () => {
     // Old links used #reader / #lab style hashes; upgrade them to the real path
     // in place so they keep working and stop competing as separate URLs.
     if (window.location.hash) {
-      const landed = tabFromLocation();
-      window.history.replaceState({}, '', hrefForTab(landed));
+      const landed = resolveLocation();
+      window.history.replaceState(
+        {},
+        '',
+        landed.milestoneSlug ? hrefForMilestone(landed.milestoneSlug) : hrefForTab(landed.tab)
+      );
     }
 
     recordVisitorLog({ path: window.location.pathname });
 
-    const handlePopState = () => setActiveTab(tabFromLocation());
+    const handlePopState = () => setRouteState(resolveLocation());
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [handleOpenAdmin]);
 
   // 3. Keep <head> metadata in step with the active route
   useEffect(() => {
-    applyRouteMeta(activeTab);
-  }, [activeTab]);
+    applyRouteMeta(routeState.tab, routeState.milestoneSlug);
+  }, [routeState]);
 
   // 4. Navigate to a real URL and track the tab telemetry
   const handleTabChange = (tab: ActiveTab) => {
-    setActiveTab(tab);
+    setRouteState({ tab, milestoneSlug: null });
     const href = hrefForTab(tab);
     if (window.location.pathname !== href) {
       window.history.pushState({}, '', href);
     }
+    window.scrollTo({ top: 0 });
+    recordVisitorLog({ path: href });
+  };
+
+  // 4b. Navigate to a milestone dossier page (/milestone/<slug>/)
+  const handleOpenMilestonePage = (slug: string) => {
+    setRouteState({ tab: 'stage', milestoneSlug: slug });
+    const href = hrefForMilestone(slug);
+    if (window.location.pathname !== href) {
+      window.history.pushState({}, '', href);
+    }
+    window.scrollTo({ top: 0 });
     recordVisitorLog({ path: href });
   };
 
@@ -97,7 +122,7 @@ const AppContent: React.FC = () => {
   // Keyboard navigation for epochs (ArrowLeft / ArrowRight)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (activeMilestone || showAdminCheckpoint || showAdminDashboard || activeTab !== 'stage') return;
+      if (activeMilestone || showAdminCheckpoint || showAdminDashboard || milestoneSlug || activeTab !== 'stage') return;
       if (e.key === 'ArrowLeft' && activeEpochIndex > 0) {
         setActiveEpochIndex((prev) => prev - 1);
       } else if (e.key === 'ArrowRight' && activeEpochIndex < EPOCHS.length - 1) {
@@ -107,7 +132,7 @@ const AppContent: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeEpochIndex, activeMilestone, showAdminCheckpoint, showAdminDashboard, activeTab]);
+  }, [activeEpochIndex, activeMilestone, showAdminCheckpoint, showAdminDashboard, milestoneSlug, activeTab]);
 
   return (
     <div className="relative min-h-screen bg-[#070709] text-[#F4F4F2] overflow-x-hidden selection:bg-amber-500/30 selection:text-amber-200">
@@ -143,37 +168,50 @@ const AppContent: React.FC = () => {
       />
 
       {/* 3. Main Stage Content */}
-      <main className="relative" key={activeTab}>
-        {activeTab === 'stage' && (
+      <main className="relative" key={milestoneSlug ? `milestone:${milestoneSlug}` : activeTab}>
+        {milestoneSlug ? (
           <div className="animate-tab-enter">
-            <LiquidEpochStage
-              activeEpochIndex={activeEpochIndex}
-              onSelectEpoch={setActiveEpochIndex}
-              onOpenMilestone={handleOpenMilestone}
-              onOpenReader={() => handleTabChange('reader')}
+            <MilestonePage
+              slug={milestoneSlug}
+              onSelectMilestone={handleOpenMilestonePage}
+              onSelectTab={handleTabChange}
             />
-            <div className="max-w-6xl mx-auto px-3 sm:px-8 pb-10">
-              <MonetizationBanner />
-            </div>
           </div>
-        )}
+        ) : (
+          <>
+            {activeTab === 'stage' && (
+              <div className="animate-tab-enter">
+                <LiquidEpochStage
+                  activeEpochIndex={activeEpochIndex}
+                  onSelectEpoch={setActiveEpochIndex}
+                  onOpenMilestone={handleOpenMilestone}
+                  onOpenMilestonePage={handleOpenMilestonePage}
+                  onOpenReader={() => handleTabChange('reader')}
+                />
+                <div className="max-w-6xl mx-auto px-3 sm:px-8 pb-10">
+                  <MonetizationBanner />
+                </div>
+              </div>
+            )}
 
-        {activeTab === 'lab' && (
-          <div className="animate-tab-enter">
-            <LiquidParadigmWidget />
-          </div>
-        )}
+            {activeTab === 'lab' && (
+              <div className="animate-tab-enter">
+                <LiquidParadigmWidget />
+              </div>
+            )}
 
-        {activeTab === 'ecosystem' && (
-          <div className="animate-tab-enter">
-            <AffiliateEcosystem />
-          </div>
-        )}
+            {activeTab === 'ecosystem' && (
+              <div className="animate-tab-enter">
+                <AffiliateEcosystem />
+              </div>
+            )}
 
-        {activeTab === 'reader' && (
-          <div className="animate-tab-enter">
-            <ArticleReader onClose={() => handleTabChange('stage')} />
-          </div>
+            {activeTab === 'reader' && (
+              <div className="animate-tab-enter">
+                <ArticleReader onClose={() => handleTabChange('stage')} />
+              </div>
+            )}
+          </>
         )}
       </main>
 
