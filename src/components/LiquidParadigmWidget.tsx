@@ -22,11 +22,11 @@ export const LiquidParadigmWidget: React.FC = () => {
   const runpodPartner = partners.find(p => p.id === 'runpod') || {
     id: 'runpod',
     name: 'RunPod Cloud GPUs',
-    affiliateUrl: 'https://runpod.io/?ref=ai-chronicle',
+    affiliateUrl: 'https://runpod.io',
     officialFallbackUrl: 'https://runpod.io',
-    promoCode: 'CHRONICLE10',
-    perkBadgeZh: '立享 10% 算力返利',
-    perkBadgeEn: '10% Rebate',
+    promoCode: '',
+    perkBadgeZh: '按秒计费 GPU 容器',
+    perkBadgeEn: 'Per-second billing',
   };
 
   const autodlPartner = partners.find(p => p.id === 'autodl') || {
@@ -34,9 +34,9 @@ export const LiquidParadigmWidget: React.FC = () => {
     name: 'AutoDL 算力云 (国内首选)',
     affiliateUrl: 'https://www.autodl.com',
     officialFallbackUrl: 'https://www.autodl.com',
-    promoCode: 'AUTODL2026',
-    perkBadgeZh: '新人立减 ¥20',
-    perkBadgeEn: '¥20 Voucher',
+    promoCode: '',
+    perkBadgeZh: '国内低延迟算力云',
+    perkBadgeEn: 'China-local GPU cloud',
   };
 
   const togetherPartner = partners.find(p => p.id === 'together') || {
@@ -44,9 +44,8 @@ export const LiquidParadigmWidget: React.FC = () => {
     name: 'Together.ai API',
     affiliateUrl: 'https://together.ai',
     officialFallbackUrl: 'https://together.ai',
-    promoCode: 'TOGETHER2026',
-    perkBadgeZh: '立赠 $5 额度',
-    perkBadgeEn: '$5 Instant Credit',
+    perkBadgeZh: '开源模型 Serverless API',
+    perkBadgeEn: 'Serverless inference',
   };
 
   const lambdaPartner = partners.find(p => p.id === 'lambdalabs') || {
@@ -54,8 +53,8 @@ export const LiquidParadigmWidget: React.FC = () => {
     name: 'Lambda Labs GPU Cloud',
     affiliateUrl: 'https://lambdalabs.com/service/gpu-cloud',
     officialFallbackUrl: 'https://lambdalabs.com/service/gpu-cloud',
-    perkBadgeZh: '单卡低至 $0.50/h',
-    perkBadgeEn: 'From $0.50/hr',
+    perkBadgeZh: 'H100 裸金属集群',
+    perkBadgeEn: 'Bare-metal clusters',
   };
 
   const handlePartnerClick = (partner: { id: string; name: string; affiliateUrl?: string; officialFallbackUrl?: string }) => {
@@ -699,7 +698,7 @@ export const LiquidParadigmWidget: React.FC = () => {
                 onClick={() => handlePartnerClick(runpodPartner)}
                 className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-mono text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-cyan-900/30 hover:scale-[1.02] active:scale-[0.98]"
               >
-                <span>{isZh ? '在 RunPod 领取 $10 并拉起算力' : 'Claim $10 & Deploy on RunPod'}</span>
+                <span>{isZh ? '前往 RunPod 拉起算力' : 'Deploy on RunPod'}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
             </div>

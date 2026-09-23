@@ -24,17 +24,17 @@ export const MonetizationBanner: React.FC = () => {
     : 'Global AI Builders, Compute Brands & Commercial Partners';
 
   const titleText = isZh
-    ? '特约品牌展位 · 资产包下载 · 独立创作者赞助支持通道开启'
+    ? '特约品牌展位 · 离线长卷免费下载 · 独立创作者赞助支持通道开启'
     : currentLang === 'es'
-    ? 'Espacios de Marca · Paquete de Activos 4K · Apoyo a Creadores Independientes'
+    ? 'Espacios de Marca · Edición Offline Gratuita · Apoyo a Creadores Independientes'
     : currentLang === 'de'
-    ? 'Exklusive Markenplätze · 4K-Asset-Paket · Unterstützung unabhängiger Forschung'
+    ? 'Exklusive Markenplätze · Kostenlose Offline-Ausgabe · Unterstützung unabhängiger Forschung'
     : currentLang === 'fr'
-    ? 'Emplacements de Marque · Pack d’Actifs 4K · Soutien à la Recherche Indépendante'
-    : 'Featured Brand Placements · 4K Digital Asset Pack · Independent Research Support';
+    ? 'Emplacements de Marque · Édition Hors Ligne Gratuite · Soutien à la Recherche Indépendante'
+    : 'Featured Brand Placements · Free Offline Edition · Independent Research Support';
 
   const tipBtnText = isZh ? '赞助打赏 ☕' : currentLang === 'es' ? 'Apoyar ☕' : currentLang === 'de' ? 'Spenden ☕' : currentLang === 'fr' ? 'Soutenir ☕' : 'Tip Coffee ☕';
-  const bundleBtnText = isZh ? '4K 离线资产包' : currentLang === 'es' ? 'Paquete 4K' : currentLang === 'de' ? '4K-Asset-Paket' : currentLang === 'fr' ? 'Pack 4K' : '4K Asset Bundle';
+  const bundleBtnText = isZh ? '免费离线长卷' : currentLang === 'es' ? 'Edición Gratuita' : currentLang === 'de' ? 'Gratis-Paket' : currentLang === 'fr' ? 'Pack Gratuit' : 'Free Offline Pack';
   const sponsorBtnText = isZh ? '商业入驻 / 智能测算' : currentLang === 'es' ? 'Patrocinio y Tarifas' : currentLang === 'de' ? 'B2B-Präsenz & Preise' : currentLang === 'fr' ? 'Partenariat B2B' : 'B2B Placement & Pricing';
 
   return (

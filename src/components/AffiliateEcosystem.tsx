@@ -9,8 +9,7 @@ import {
   Check, 
   Tag, 
   ArrowUpRight, 
-  DollarSign, 
-  ShieldCheck,
+  DollarSign,
   Zap,
   X,
   Mail,
@@ -44,30 +43,29 @@ export const AffiliateEcosystem: React.FC = () => {
   }, [showSubmitModal]);
 
   const texts = {
-    badge: isZh ? 'AI 商业化生态与开发者特权' : 'AI ECOSYSTEM & AFFILIATE PERKS',
-    subBadge: isZh ? '2026 算力底座与工具推荐' : '2026 Verified AI Compute & Tools',
-    title: isZh 
-      ? '严选 AI 算力底座、前沿 Agent 与开发特权' 
+    badge: isZh ? 'AI 生态与开发者工具' : 'AI ECOSYSTEM & DEVELOPER TOOLS',
+    subBadge: isZh ? '2026 算力底座与工具推荐' : '2026 AI Compute & Tools',
+    title: isZh
+      ? '严选 AI 算力底座与前沿开发工具'
       : currentLang === 'es'
-      ? 'Ecosistema de Cómputo IA, Modelos y Beneficios Exclusivos'
+      ? 'Ecosistema de Cómputo IA y Herramientas de Desarrollo'
       : currentLang === 'de'
-      ? 'Verifiziertes KI-Rechenökosystem & Entwickler-Vorteile'
+      ? 'KI-Rechenökosystem & Entwickler-Tools'
       : currentLang === 'fr'
-      ? 'Écosystème Calcul IA & Avantages Développeurs'
-      : 'Frontier Compute Infrastructure, Coding Agents & Perks',
+      ? 'Écosystème Calcul IA & Outils Développeurs'
+      : 'Frontier Compute Infrastructure & Developer Tools',
     subtitle: isZh
-      ? '为探索通用人工智能的学者与工程师严选最具生产力价值的算力云、IDE 与推理 API。通过独家特权兑换码享受立减折扣，同时支持本通史项目的持续运维。'
-      : 'Curated GPU infrastructure, agentic IDEs, and high-throughput inference APIs. Activate exclusive partner discounts while sustaining our open research.',
+      ? '为探索通用人工智能的学者与工程师严选最具生产力价值的算力云、IDE 与推理 API，全部为官方网站直达链接。'
+      : 'Curated GPU infrastructure, agentic IDEs, and high-throughput inference APIs — all linking directly to official sites.',
     submitBtn: isZh ? '提交你的 AI 产品 / 品牌赞助' : 'Submit AI Tool / Sponsorship',
-    verifiedBadge: isZh ? '所有优惠码与推荐位官方验证有效' : 'All coupons & referral links officially verified',
     promoLabel: isZh ? '优惠码:' : 'Code:',
-    directPerkText: isZh ? '点击直达激活专属特权' : 'Click to activate partner tier',
+    directPerkText: isZh ? '点击直达官网' : 'Visit official site',
     directVisitBtn: isZh ? '立即直达' : 'Visit Partner',
     featuredBadge: isZh ? '★ 推荐' : '★ Featured',
-    disclaimerTitle: isZh ? '商业化变现与透明声明' : 'Affiliate Transparency Notice',
+    disclaimerTitle: isZh ? '生态工具声明' : 'Tool Directory Notice',
     disclaimerBody: isZh
-      ? '本页面包含部分合作伙伴的返利推荐链接（Affiliate Links）。当您通过链接注册或购买云算力服务时，您将获得专属折扣或额外体验额度，同时平台可能会获得小额返佣以维持本站服务器托管与持续内容更新。这不会向您产生任何额外费用。'
-      : 'This directory contains verified affiliate and partnership links. Registering or provisioning compute via these links grants you exclusive promo credits while supporting our infrastructure. It incurs no additional cost to you.',
+      ? '本页所列均为官方网站直达链接，为站长实测推荐的工具清单，当前不包含任何付费推广位。'
+      : 'All links above go directly to official sites. This directory lists tools the maintainer recommends; no paid placements are currently active.',
     submitModalBadge: isZh ? '入驻 AI 全景生态与品牌赞助' : 'SUBMIT YOUR AI TOOL & SPONSORSHIP',
     submitModalTitle: isZh ? '申请入驻生态专区与展台' : 'List in AI Chronicle Directory',
     submitModalDesc: isZh 
@@ -156,10 +154,6 @@ export const AffiliateEcosystem: React.FC = () => {
               <DollarSign className="w-4 h-4" />
               <span>{texts.submitBtn}</span>
             </button>
-            <div className="text-[10px] sm:text-[11px] font-mono text-stone-400 flex items-center justify-center space-x-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-              <span>{texts.verifiedBadge}</span>
-            </div>
           </div>
         </div>
       </div>
@@ -341,6 +335,7 @@ export const AffiliateEcosystem: React.FC = () => {
 
             {/* Direct Contact Channels */}
             <div className="space-y-2.5 mb-5">
+              {ownerContact.contactEmail && (
               <div className="p-3 sm:p-3.5 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="min-w-0">
                   <div className="text-[10px] font-mono text-amber-300 flex items-center space-x-1">
@@ -369,6 +364,7 @@ export const AffiliateEcosystem: React.FC = () => {
                   </button>
                 </div>
               </div>
+              )}
 
               {ownerContact.wechatId && (
                 <div className="p-3 sm:p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-between gap-2">

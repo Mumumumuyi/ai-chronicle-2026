@@ -1,11 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Download, Check, Sparkles, FileText, Image, ShieldCheck, X, ArrowDownToLine, Zap, QrCode, Copy, ArrowLeft, CreditCard, ArrowUpRight } from 'lucide-react';
+import { Download, Check, Sparkles, FileText, ShieldCheck, X, ArrowDownToLine, Zap, Copy, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
-import { saveLead } from '../utils/leadStorage';
 import { ARTICLE_META, ARTICLE_CHAPTERS } from '../data/historyArticle';
-import { getOwnerContact } from '../utils/monetizationConfig';
-import { recordAffiliateAction } from '../utils/analyticsTracker';
 
 interface PremiumBundleModalProps {
   onClose: () => void;
@@ -17,9 +14,7 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
 
   const [step, setStep] = useState<'details' | 'checkout' | 'delivered'>('details');
   const [orderId] = useState<string>(() => `AC-${Math.floor(1000 + Math.random() * 9000)}`);
-  const [buyerEmail, setBuyerEmail] = useState<string>('');
   const [copiedOrder, setCopiedOrder] = useState<boolean>(false);
-  const ownerContact = getOwnerContact();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,47 +24,41 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
   }, [step]);
 
   const texts = {
-    badge: isZh ? '数字化资产包与学术典藏' : 'CANONICAL DIGITAL ASSET BUNDLE',
-    subBadge: isZh ? '4K 离线图谱与学术全集' : 'Offline Pack & Citation Graph',
-    titleDetails: isZh 
-      ? '获取《2026 AGI 全景通史》完整数字化资产包' 
+    badge: isZh ? '离线长卷与学术典藏' : 'CANONICAL OFFLINE EDITION',
+    subBadge: isZh ? 'Markdown 全文与引用附录' : 'Markdown Treatise & Citations',
+    titleDetails: isZh
+      ? '免费下载《2026 AGI 全景通史》离线长卷'
       : currentLang === 'es'
-      ? 'Paquete Canónico Completo de Activos Digitales AGI 2026'
+      ? 'Descargar Gratis la Edición Offline de la Crónica AGI 2026'
       : currentLang === 'de'
-      ? 'Vollständiges digitales AGI-Asset-Paket 2026'
+      ? 'KI-Chronik 2026 Offline-Ausgabe kostenlos herunterladen'
       : currentLang === 'fr'
-      ? 'Pack Complet d’Actifs Numériques AGI 2026'
-      : 'Get The Complete 2026 AGI Chronicle Asset Pack',
-    titleCheckout: isZh ? '订单核销与资产包交付' : 'Order Verification & Immediate Delivery',
-    titleDelivered: isZh ? '🎉 交付成功！资产已开始下载' : '🎉 Delivered! Download Triggered',
+      ? 'Télécharger Gratuitement l’Édition Hors Ligne de la Chronique AGI 2026'
+      : 'Download the 2026 AGI Chronicle Offline Edition for Free',
+    titleCheckout: isZh ? '免费下载' : 'Free Download',
+    titleDelivered: isZh ? '🎉 已开始下载' : '🎉 Download Triggered',
     descDetails: isZh
-      ? '专为高校研究团队、AI 算法工程师、科技博主与投资人打造的完整离线典藏版。包含全部高清矢量图谱、离线排版文档与仿真器源码。'
-      : 'Engineered for researchers, ML teams, and technology writers. Complete offline bundle with 4K diagram assets, LaTeX citations, and the standalone scaling law simulator.',
+      ? '完整收录 1.8 万字通史正文、BibTeX 引用附录与缩放定律公式附录的单一 Markdown 文件，供离线研读、归档与学术引用。'
+      : 'A single Markdown file containing the full 18,000-word treatise, an embedded BibTeX citation appendix, and the scaling-law formula appendix.',
     descCheckout: isZh
-      ? '请扫码赞助特惠金额并在付款备注中填入专属订单号，输入邮箱即可秒级触发全量离线资产包下载。'
-      : 'Scan to support the promotional price. Input your email below to instantly trigger full offline delivery.',
+      ? '点击下方按钮即可免费下载完整离线长卷（Markdown 单文件）。'
+      : 'Click below to download the complete offline treatise as a single Markdown file, free of charge.',
     descDelivered: isZh
-      ? '全量资产包已自动触发浏览器下载，同时离线备份凭据已登记至系统。'
-      : 'The complete asset bundle has been dispatched to your browser download queue.',
+      ? '完整离线长卷已触发浏览器下载。'
+      : 'The complete offline treatise has been dispatched to your browser download queue.',
     backBtn: isZh ? '返回详情' : 'Back to Details',
-    priceBadge: isZh ? '限时研学特惠礼包' : 'Limited Research Edition',
-    priceLine: isZh ? '¥19.9 (原价 ¥99.0) / $2.99 USD' : '$2.99 USD (Reg. $14.99) / ¥19.9 CNY',
+    priceBadge: isZh ? '研学离线包' : 'Offline Research Edition',
+    priceLine: isZh ? '免费开放 · 无需支付' : 'Free · No payment required',
     sampleBtn: isZh ? '免费试读样章' : 'Free Sample Chapter',
-    checkoutBtn: isZh ? '立即购买解锁' : 'Unlock Full Bundle',
+    checkoutBtn: isZh ? '免费下载全卷' : 'Download for Free',
     licenseNote: isZh ? '支持个人永久研读、团队内部培训演示及教学自由引用' : 'Personal & academic perpetual license for presentations and teaching.',
-    orderIdLabel: isZh ? '专属订单号:' : 'Order ID:',
-    pendingPay: isZh ? '待付: ¥19.9 / $2.99' : 'Due: $2.99 / ¥19.9',
-    qrScanTip: isZh ? '微信 / 支付宝 扫一扫' : 'Scan to Tip (WeChat / Alipay / Card)',
-    qrRemarkTip: isZh ? `备注订单号: ${orderId}` : `Note Order: ${orderId}`,
-    qrSubNote: isZh ? '扫码赞助 ¥19.9（或海外通过 Stripe/PayPal 支付 $2.99）' : 'Tip $2.99 USD (or ¥19.9 CNY via mobile pay)',
-    emailLabel: isZh ? '接收下载凭据与更新通知的邮箱:' : 'Email for delivery & lifetime updates:',
-    emailPlaceholder: 'your.email@organization.com',
-    downloadNowBtn: isZh ? '已扫码支付，立即下载全量离线资产包' : 'Download Full Digital Asset Pack Now',
+    orderIdLabel: isZh ? '下载编号:' : 'Reference ID:',
+    downloadNowBtn: isZh ? '免费下载完整离线长卷' : 'Download the Full Offline Treatise',
     sampleDownloadedAlert: isZh ? '样章已开始下载！' : 'Sample chapter downloading!',
-    deliveredHeading: isZh ? '已交付典藏全量包' : 'Asset Bundle Dispatched',
-    deliveredSummary: (id: string, email: string) => isZh 
-      ? `订单号: ${id} · 绑定邮箱: ${email}` 
-      : `Order: ${id} · Email: ${email}`,
+    deliveredHeading: isZh ? '离线长卷已生成' : 'Offline Treatise Downloaded',
+    deliveredSummary: (id: string) => isZh
+      ? `下载编号: ${id}`
+      : `Reference: ${id}`,
     finishBtn: isZh ? '完成' : 'Done',
     returnBtn: isZh ? '返回礼包详情' : 'Return to Details'
   };
@@ -77,27 +66,21 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
   const bundleItems = [
     {
       title: isZh ? '《AI 全景通史》学术定本离线全集' : 'AI Chronicle Academic Treatise (Offline Edition)',
-      format: 'PDF + EPUB + Markdown',
-      desc: isZh ? '1.8 万字纯文本、精校注释、7大章节排版，适合 Kindle、iPad 及离线深度研读。' : '18,000-word canonical treatise formatted for Kindle, iPad, and offline reference.',
+      format: 'Markdown (.md)',
+      desc: isZh ? '1.8 万字纯文本、精校注释、7 大章节完整全文，含每章纪元洞见与文献出处标注。' : '18,000-word canonical treatise with per-chapter insights and source annotations.',
       icon: FileText,
     },
     {
-      title: isZh ? '4K 超清 3D 纪元图谱与架构壁纸包' : '4K Ultra-HD 3D Epoch Wallpapers & Vector Graphics',
-      format: '3840x2160 PNG / SVG',
-      desc: isZh ? '自研 3D 暖光流体玻璃全景时空图谱，可作桌面壁纸、学术演讲 PPT 背景与展厅素材。' : 'Liquid glass 3D rendered diagrams suitable for keynote presentations and displays.',
-      icon: Image,
-    },
-    {
-      title: isZh ? '双重缩放定律离线单页计算仿真器' : 'Dual Scaling Laws Offline Simulator (Single-file HTML)',
-      format: 'Standalone HTML',
-      desc: isZh ? '无需联网，双击即用的测试时算力（Test-Time Compute）与预训练算力交互仿真工具。' : 'Zero-dependency single-file HTML application simulating pre-training & test-time compute tradeoffs.',
-      icon: Zap,
-    },
-    {
-      title: isZh ? 'LaTeX 学术引用与 BibTeX 知识图谱库' : 'LaTeX BibTeX Citation Database & Reference Graph',
-      format: 'BibTeX (.bib)',
-      desc: isZh ? '包含 25+ 项里程碑核心论文的规范 BibTeX 条目，一键直接导入 Overleaf 与 Zotero。' : 'Standardized .bib entries for 25+ foundational AI milestone papers for Overleaf & Zotero.',
+      title: isZh ? 'LaTeX 学术引用附录' : 'LaTeX BibTeX Citation Appendix',
+      format: '内嵌 BibTeX 代码块',
+      desc: isZh ? '内嵌里程碑核心论文的规范 BibTeX 条目，可直接导入 Overleaf 与 Zotero。' : 'Standardized .bib entries for foundational AI milestone papers, ready for Overleaf & Zotero.',
       icon: Sparkles,
+    },
+    {
+      title: isZh ? '双重缩放定律公式附录' : 'Dual Scaling Laws Formula Appendix',
+      format: '附录',
+      desc: isZh ? '测试时计算（Test-Time Compute）核心数学公式与参数说明，随文附赠。' : 'Core mathematical formulas and parameter notes for test-time compute scaling.',
+      icon: Zap,
     },
   ];
 
@@ -105,7 +88,7 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
     const chapters = ARTICLE_CHAPTERS.slice(0, 2);
     let md = `# ${ARTICLE_META.title} · 【免费研读样章】\n`;
     md += `> ${ARTICLE_META.subtitle}\n\n`;
-    md += `**出版版本**: ${ARTICLE_META.version} | **作者**: ${ARTICLE_META.author} | **样章订单参考**: ${orderId}\n\n`;
+    md += `**出版版本**: ${ARTICLE_META.version} | **作者**: ${ARTICLE_META.author} | **样章编号**: ${orderId}\n\n`;
     md += `---\n\n## 导言与立论摘要\n\n${ARTICLE_META.abstract}\n\n---\n\n`;
     
     chapters.forEach(ch => {
@@ -129,26 +112,19 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
       md += `---\n\n`;
     });
 
-    md += `\n### 获取后续 5 大章节与 4K 矢量图谱\n访问完整通史交互门户: https://mumumumuyi.github.io/ai-chronicle-2026/\n`;
+    md += `\n### 阅读后续 5 大章节完整内容\n访问完整通史交互门户: https://mumumumuyi.github.io/ai-chronicle-2026/\n`;
     triggerFileDownload(`AI_Chronicle_Sample_Chapter_${orderId}.md`, md);
   };
 
   const handleCompleteCheckout = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!buyerEmail || !buyerEmail.includes('@')) {
-      alert(isZh ? '请输入有效的邮箱以便接收资产包与更新！' : 'Please enter a valid email address!');
-      return;
-    }
-
-    saveLead(buyerEmail, 'bundle_download', currentLang);
     setStep('delivered');
 
     let md = `# ${ARTICLE_META.title}\n`;
     md += `> ${ARTICLE_META.subtitle}\n\n`;
     md += `================================================================================\n`;
-    md += `【官方典藏数字资产包认证凭据 / CERTIFICATE OF CANONICAL ARCHIVE】\n`;
-    md += `订单编号: ${orderId}\n`;
-    md += `授权邮箱: ${buyerEmail}\n`;
+    md += `【离线长卷下载凭据 / OFFLINE EDITION DOWNLOAD REFERENCE】\n`;
+    md += `下载编号: ${orderId}\n`;
     md += `定本版本: ${ARTICLE_META.version}\n`;
     md += `出版日期: ${ARTICLE_META.publishedDate}\n`;
     md += `字数规模: ${ARTICLE_META.wordCountTotal} (全量无删减学术长卷)\n`;
@@ -374,9 +350,8 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
                 <div>
                   <div className="text-xs font-mono text-amber-300 font-bold">{texts.priceBadge}</div>
                   <div className="flex items-baseline space-x-2 mt-0.5">
-                    <span className="text-2xl font-mono font-bold text-white">¥19.9</span>
-                    <span className="text-xs text-stone-400 line-through">¥99.0</span>
-                    <span className="text-xs text-stone-400">/ $2.99 USD</span>
+                    <span className="text-2xl font-mono font-bold text-emerald-300">{isZh ? '免费' : 'Free'}</span>
+                    <span className="text-xs text-stone-400">{texts.priceLine}</span>
                   </div>
                 </div>
 
@@ -426,74 +401,6 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
                   {copiedOrder ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                 </button>
               </div>
-              <div className="text-amber-200 font-bold">{texts.pendingPay}</div>
-            </div>
-
-            {/* Direct 1-Click Online Payment Channels */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {ownerContact.afdianUrl && (
-                <a
-                  href={ownerContact.afdianUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => recordAffiliateAction('bundle_pay', 'Afdian Bundle Unlock', 'click')}
-                  className="p-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-200 hover:text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all text-center"
-                >
-                  <Zap className="w-3.5 h-3.5 text-purple-300" />
-                  <span>{isZh ? '爱发电在线支持 ¥19.9' : 'Tip ¥19.9 via Afdian'}</span>
-                  <ArrowUpRight className="w-3 h-3 text-purple-300" />
-                </a>
-              )}
-              {ownerContact.buyMeACoffeeUrl && (
-                <a
-                  href={ownerContact.buyMeACoffeeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => recordAffiliateAction('bundle_pay', 'BuyMeACoffee Bundle Unlock', 'click')}
-                  className="p-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 hover:text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all text-center"
-                >
-                  <CreditCard className="w-3.5 h-3.5 text-amber-300" />
-                  <span>{isZh ? '国际卡支付 $2.99 USD' : 'Pay $2.99 USD via Card'}</span>
-                  <ArrowUpRight className="w-3 h-3 text-amber-300" />
-                </a>
-              )}
-            </div>
-
-            {/* QR Code Container */}
-            <div className="p-4 sm:p-5 rounded-2xl liquid-glass border border-amber-400/30 flex flex-col items-center justify-center text-center">
-              <div className="w-36 h-36 sm:w-40 sm:h-40 rounded-xl bg-white p-2 shadow-xl flex flex-col items-center justify-center border-2 border-amber-400/40 mb-2.5 overflow-hidden">
-                {ownerContact.qrCodeUrl ? (
-                  <img
-                    src={ownerContact.qrCodeUrl}
-                    alt="收款二维码"
-                    className="w-full h-full object-contain rounded-lg"
-                  />
-                ) : (
-                  <>
-                    <QrCode className="w-16 h-16 sm:w-20 sm:h-20 text-stone-900" />
-                    <span className="text-[10px] font-mono font-bold text-stone-800 mt-1">{texts.qrScanTip}</span>
-                    <span className="text-[9px] font-mono text-amber-700">{texts.qrRemarkTip}</span>
-                  </>
-                )}
-              </div>
-              <p className="text-[11px] text-stone-300 font-mono leading-snug">
-                {texts.qrSubNote}
-              </p>
-            </div>
-
-            {/* Email input */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-mono text-stone-300 block">
-                {texts.emailLabel}
-              </label>
-              <input
-                type="email"
-                required
-                placeholder={texts.emailPlaceholder}
-                value={buyerEmail}
-                onChange={(e) => setBuyerEmail(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/10 text-stone-100 text-sm sm:text-xs font-mono focus:outline-none focus:border-amber-400"
-              />
             </div>
 
             <button
@@ -518,9 +425,9 @@ export const PremiumBundleModal: React.FC<PremiumBundleModalProps> = ({ onClose 
             </h4>
 
             <p className="text-xs text-stone-300 font-mono leading-relaxed max-w-md mx-auto">
-              {texts.deliveredSummary(orderId, buyerEmail)}
+              {texts.deliveredSummary(orderId)}
               <br />
-              <code className="text-white text-[11px]">AI_Chronicle_2026_Full_Bundle_{orderId}.md</code>
+              <code className="text-white text-[11px]">AI_Chronicle_2026_Full_Academic_Bundle_{orderId}.md</code>
             </p>
 
             <div className="pt-2 flex justify-center space-x-3">
