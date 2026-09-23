@@ -5,11 +5,13 @@ import { ChevronLeft, ChevronRight, Sparkles, ArrowUpRight, Cpu, Compass, BookOp
 import { useLanguage } from '../i18n/LanguageContext';
 import { getLocalizedEpoch } from '../data/timelineTranslations';
 import { soundFX } from '../utils/audioEffects';
+import { hrefForMilestone } from '../utils/routes';
 
 interface LiquidEpochStageProps {
   activeEpochIndex: number;
   onSelectEpoch: (index: number) => void;
   onOpenMilestone: (milestone: Milestone) => void;
+  onOpenMilestonePage: (slug: string) => void;
   onOpenReader: () => void;
 }
 
@@ -17,6 +19,7 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
   activeEpochIndex,
   onSelectEpoch,
   onOpenMilestone,
+  onOpenMilestonePage,
   onOpenReader,
 }) => {
   const { t, currentLang } = useLanguage();
@@ -83,6 +86,15 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
   const handleMilestoneCardClick = (milestone: Milestone) => {
     soundFX.playClick(900);
     onOpenMilestone(milestone);
+  };
+
+  // Milestone deep links are real <a href> so crawlers can follow them; a
+  // plain left click stays a client-side transition to the dossier page.
+  const handleMilestoneLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    soundFX.playClick(750);
+    onOpenMilestonePage(slug);
   };
 
   // Filter & Search Milestones
@@ -437,6 +449,18 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
                         <p className="text-xs text-stone-300/80 font-light mt-1.5 line-clamp-2 leading-relaxed">
                           {milestone.summary}
                         </p>
+
+                        <a
+                          href={hrefForMilestone(milestone.slug)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMilestoneLinkClick(e, milestone.slug);
+                          }}
+                          className="inline-flex items-center space-x-1 mt-2 text-[11px] font-mono text-amber-400/90 hover:text-amber-300 transition-colors"
+                        >
+                          <span>{currentLang === 'zh' ? '阅读详情' : 'Full dossier'}</span>
+                          <ArrowUpRight className="w-3 h-3" />
+                        </a>
                       </div>
 
                       <div className="w-8 h-8 rounded-full liquid-glass-pill flex items-center justify-center text-stone-400 group-hover:text-amber-300 group-hover:scale-110 transition-all flex-shrink-0 mt-1">
@@ -461,6 +485,51 @@ export const LiquidEpochStage: React.FC<LiquidEpochStageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Complete Milestone Index: every dossier gets a real crawlable link */}
+      <section className="mt-10 sm:mt-14">
+        <div className="liquid-glass rounded-2xl sm:rounded-3xl border border-white/10 p-5 sm:p-8">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-5 sm:mb-7">
+            <BookOpen className="w-4 h-4 text-amber-400 flex-shrink-0 self-center" />
+            <h2 className="font-serif text-lg sm:text-2xl font-semibold text-stone-100 tracking-tight">
+              {currentLang === 'zh' ? '完整里程碑索引' : 'Complete Milestone Index'}
+            </h2>
+            <span className="text-[10px] sm:text-xs font-mono text-stone-500">
+              1943 — 2026.09 · {EPOCHS.reduce((n, e) => n + e.milestones.length, 0)} {currentLang === 'zh' ? '条断代档案' : 'dossiers'}
+            </span>
+          </div>
+          <div className="space-y-5 sm:space-y-6">
+            {EPOCHS.map((epoch) => {
+              const localizedEpoch = getLocalizedEpoch(epoch, currentLang);
+              return (
+                <div key={epoch.id}>
+                  <h3 className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[11px] font-mono uppercase tracking-wider text-amber-300/80 mb-2.5 pb-2 border-b border-white/5">
+                    <span className="flex-shrink-0">{localizedEpoch.romanId}</span>
+                    <span className="text-stone-300 normal-case">{localizedEpoch.title}</span>
+                    <span className="text-stone-600">{localizedEpoch.era}</span>
+                  </h3>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
+                    {localizedEpoch.milestones.map((milestone) => (
+                      <li key={milestone.id}>
+                        <a
+                          href={hrefForMilestone(milestone.slug)}
+                          onClick={(e) => handleMilestoneLinkClick(e, milestone.slug)}
+                          className="group flex items-baseline gap-2 py-1 text-xs sm:text-[13px] text-stone-300 hover:text-amber-200 transition-colors"
+                        >
+                          <span className="font-mono text-amber-400/80 flex-shrink-0">{milestone.year}</span>
+                          <span className="leading-snug group-hover:underline underline-offset-4 decoration-amber-400/40">
+                            {milestone.title}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       {/* Dynamic Liquid Glass Scrubber Dock with Auto-Tour Mode */}
       <div className="mt-8 liquid-glass rounded-full p-2.5 sm:p-3.5 flex items-center justify-between gap-2 sm:gap-4 shadow-xl border border-white/10">

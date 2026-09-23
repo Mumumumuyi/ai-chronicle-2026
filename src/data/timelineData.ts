@@ -20,6 +20,7 @@ export const EPOCHS: Epoch[] = [
     milestones: [
       {
         id: 'm-1943',
+        slug: 'mcculloch-pitts-neuron',
         year: 1943,
         title: 'McCulloch-Pitts 神经元模型',
         subtitle: '神经活动逻辑的初次数学形式化',
@@ -36,6 +37,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1950',
+        slug: 'turing-test',
         year: 1950,
         title: '图灵测试与《计算机器与智能》',
         subtitle: '将“思考”定义为可被行为检验的模仿游戏',
@@ -52,6 +54,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1956',
+        slug: 'dartmouth-workshop',
         year: 1956,
         title: '达特茅斯夏季研讨会',
         subtitle: '“人工智能”（Artificial Intelligence）正式确立学科地位',
@@ -87,6 +90,7 @@ export const EPOCHS: Epoch[] = [
     milestones: [
       {
         id: 'm-1958',
+        slug: 'perceptron',
         year: 1958,
         title: '感知机（Perceptron）问世',
         subtitle: '物理硬件上实现的第一个可自学习神经网络',
@@ -103,6 +107,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1965',
+        slug: 'eliza',
         year: 1965,
         title: 'ELIZA 心理咨询对话程序',
         subtitle: '模式匹配展现出的“拟人幻觉”',
@@ -119,6 +124,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1969',
+        slug: 'perceptrons-book',
         year: 1969,
         title: '《感知机》专著与连接主义冰封',
         subtitle: '明斯基与帕珀特对单层神经网络的致命数学裁决',
@@ -135,6 +141,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1973',
+        slug: 'lighthill-report',
         year: 1973,
         title: '莱特希尔报告（Lighthill Report）',
         subtitle: '第一次全球 AI 寒冬全面降临',
@@ -170,6 +177,7 @@ export const EPOCHS: Epoch[] = [
     milestones: [
       {
         id: 'm-1976',
+        slug: 'mycin',
         year: 1976,
         title: 'MYCIN 医疗诊断专家系统',
         subtitle: '基于产生式规则的不确定性医学推理',
@@ -186,6 +194,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1982',
+        slug: 'hopfield-network',
         year: 1982,
         title: 'Hopfield 网络与联想记忆',
         subtitle: '物理统计力学为神经网络注入新的严密数学工具',
@@ -202,6 +211,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1986',
+        slug: 'backpropagation',
         year: 1986,
         title: '反向传播算法（Backpropagation）的广泛确立',
         subtitle: '破解多层感知机梯度传导难题，连接主义绝地反击',
@@ -218,6 +228,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1989',
+        slug: 'lenet',
         year: 1989,
         title: 'LeNet 早期雏形：卷积神经网络读取手写邮编',
         subtitle: '空间权重共享、池化与现代视觉神经网络的奠基',
@@ -234,6 +245,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1990',
+        slug: 'fifth-generation-computer',
         year: 1990,
         title: '日本第五代计算机计划溃败与专用硬件崩塌',
         subtitle: '第二次 AI 寒冬：知识获取瓶颈与商品化微处理器的降维打击',
@@ -269,6 +281,7 @@ export const EPOCHS: Epoch[] = [
     milestones: [
       {
         id: 'm-1995',
+        slug: 'support-vector-machine',
         year: 1995,
         title: '支持向量机（SVM）与核方法',
         subtitle: '结构风险最小化与凸优化的巅峰之作',
@@ -285,6 +298,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1997',
+        slug: 'deep-blue',
         year: 1997,
         title: '深蓝（Deep Blue）战胜卡斯帕罗夫',
         subtitle: '经典搜索算法、评估函数与超大规模算力的工程结晶',
@@ -301,6 +315,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-1997-lstm',
+        slug: 'lstm',
         year: 1997,
         title: '长短期记忆网络（LSTM）发明',
         subtitle: '门控机制克服循环神经网络梯度消失与爆炸宿疾',
@@ -317,6 +332,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2009',
+        slug: 'imagenet',
         year: 2009,
         title: '李飞飞构建 ImageNet 视觉数据集',
         subtitle: '数据驱动新范式：在算法成熟前，先给世界准备一本视觉大百科',
@@ -352,6 +368,7 @@ export const EPOCHS: Epoch[] = [
     milestones: [
       {
         id: 'm-2012',
+        slug: 'alexnet',
         year: 2012,
         title: 'AlexNet 斩获 ImageNet 冠军',
         subtitle: '现代深度学习纪元的破晓之雷',
@@ -368,6 +385,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2014',
+        slug: 'gan',
         year: 2014,
         title: '生成对抗网络（GAN）诞生',
         subtitle: '生成者与判别者的博弈论零和演化',
@@ -384,6 +402,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2015',
+        slug: 'resnet',
         year: 2015,
         title: 'ResNet（残差网络）攻破百层深度瓶颈',
         subtitle: '短路连接（Skip Connection）驯服深度退化恶魔',
@@ -400,6 +419,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2016',
+        slug: 'alphago',
         year: 2016,
         title: 'AlphaGo 战胜李世石',
         subtitle: '深度卷积表征、蒙特卡洛树搜索与强化学习的惊世融合',
@@ -416,6 +436,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2017',
+        slug: 'attention-is-all-you-need',
         year: 2017,
         title: 'Transformer 诞生：《Attention Is All You Need》',
         subtitle: '自注意力机制废黜循环结构，并行化计算的新神降临',
@@ -432,6 +453,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2020',
+        slug: 'alphafold-2',
         year: 2020,
         title: 'AlphaFold 2 破解蛋白质折叠世纪难题',
         subtitle: 'AI为自然科学带来范式剧变（AI for Science）',
@@ -467,6 +489,7 @@ export const EPOCHS: Epoch[] = [
     milestones: [
       {
         id: 'm-2020-gpt3',
+        slug: 'gpt-3-scaling-laws',
         year: 2020,
         title: 'GPT-3 与规模法则（Scaling Laws）确立',
         subtitle: '1750亿参数展现的少样本上下文学习（Few-shot In-Context Learning）',
@@ -483,6 +506,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2022',
+        slug: 'chatgpt',
         year: 2022,
         title: 'ChatGPT 问世与 InstructGPT（RLHF）',
         subtitle: '人类反馈强化学习对齐，AI正式成为社会级通用基础设施',
@@ -499,6 +523,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2023',
+        slug: 'gpt-4',
         year: 2023,
         title: 'GPT-4 跨越专业人类基准与多模态破局',
         subtitle: 'MoE 混合专家架构、长上下文与超越90%人类考生的通用理解',
@@ -515,6 +540,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2023-open',
+        slug: 'llama-open-source',
         year: 2023,
         title: '开源生态破壁：LLaMA、Mistral 与去中心化力量',
         subtitle: 'Meta权重开源让全人类极客在自己的消费级显卡上拥抱大模型',
@@ -550,6 +576,7 @@ export const EPOCHS: Epoch[] = [
     milestones: [
       {
         id: 'm-2024-reasoning',
+        slug: 'openai-o1',
         year: 2024,
         title: '系统二推理范式转移：OpenAI o1 与思维链搜索',
         subtitle: '测试时计算（Test-Time Compute）第二缩放定律的诞生',
@@ -566,6 +593,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2025-r1',
+        slug: 'deepseek-r1',
         year: 2025,
         title: 'DeepSeek R1 与纯强化学习冷启动奇迹',
         subtitle: '开源推理模型与大算力架构创新的全球地缘震荡',
@@ -582,6 +610,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2025-agents',
+        slug: 'agentic-runtime',
         year: 2025,
         title: 'Agentic Runtime 与自主软件工程闭环',
         subtitle: '从单轮代码生成跃迁至“目标编译 → 方案图 → 验证引擎 → 自动返工”的操作系统',
@@ -598,6 +627,7 @@ export const EPOCHS: Epoch[] = [
       },
       {
         id: 'm-2026-present',
+        slug: 'neuro-symbolic-convergence',
         year: '2026.09',
         exactDate: '2026-09-13',
         title: '神经符号收敛与自主科学发现集群（当前时刻）',
