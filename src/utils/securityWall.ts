@@ -15,7 +15,7 @@ const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes session duration
 // The plaintext token is NEVER stored in this repo or shipped in the bundle - only
 // its salted SHA-256 fingerprint lives here. Rotating the key means replacing this
 // hash; the owner keeps the plaintext outside the codebase.
-const SOVEREIGN_AUTHORIZED_HASH = '1ca27dee19b7fa481da9e8e60e8831d0e71f65f8262f08a74e9184a7d365188a';
+const SOVEREIGN_AUTHORIZED_HASH = '474bcfe50b07b6e014cd704115302a3d73b486fbba74c5d4474ba29091eca9c7';
 
 export interface SecurityAuditEntry {
   id: string;
