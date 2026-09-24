@@ -1,5 +1,6 @@
 # One-click deploy: root site (mumumumuyi.github.io), subsite (ai-chronicle-2026 gh-pages), and source (main).
-# Run from the repo root:  powershell -ExecutionPolicy Bypass -File scripts\deploy.ps1
+# Run from the repo root:  powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1 [-SkipRoot]
+param([switch]$SkipRoot)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $root = Join-Path $env:TEMP 'root_gh_pages'
@@ -11,6 +12,7 @@ function Sync($from, $to) {
   Copy-Item (Join-Path $from '*') $to -Recurse -Force
 }
 
+if (-not $SkipRoot) {
 Write-Host '== 1/3 root site ==' -ForegroundColor Cyan
 npm run build; if ($LASTEXITCODE) { throw 'root build failed' }
 if (-not (Test-Path "$root\.git")) { git clone https://github.com/Mumumumuyi/mumumumuyi.github.io.git $root }
@@ -19,10 +21,14 @@ Sync "$repo\dist" $root
 git -C $root add -A
 git -C $root commit -m "deploy: $(git log --oneline -1)"
 git -C $root push origin HEAD
+}
 
 Write-Host '== 2/3 subsite (gh-pages) ==' -ForegroundColor Cyan
 npm run build:subsite; if ($LASTEXITCODE) { throw 'subsite build failed' }
-if (-not (Test-Path "$sub\.git")) { git worktree add $sub gh-pages }
+git worktree prune
+# Reuse an existing gh-pages worktree if one is already checked out somewhere.
+$existing = (git worktree list --porcelain) -join "`n" -split "`n`n" | Where-Object { $_ -match 'branch refs/heads/gh-pages' } | ForEach-Object { ($_ -split "`n")[0] -replace '^worktree ', '' }
+if ($existing) { $sub = $existing } elseif (-not (Test-Path "$sub\.git")) { git worktree add $sub gh-pages }
 git -C $sub pull --ff-only origin gh-pages
 Sync "$repo\dist" $sub
 git -C $sub add -A
