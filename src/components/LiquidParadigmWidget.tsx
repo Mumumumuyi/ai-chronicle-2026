@@ -412,7 +412,7 @@ export const LiquidParadigmWidget: React.FC = () => {
               </span>
               <span className="mono px-2 py-0.5 border border-[rgba(201,168,106,0.4)] text-gold flex items-center gap-1">
                 <Activity className="w-2.5 h-2.5" />
-                <span>LIVE</span>
+                <span>{isZh ? '模型推演' : 'SIMULATED'}</span>
               </span>
             </div>
 

@@ -111,7 +111,7 @@ export const DEFAULT_PARTNERS: MonetizationPartner[] = [
     perkBadgeEn: 'AI-first code editor',
     taglineZh: '基于深度仓库感知的下一代 AI 编程编辑器',
     taglineEn: 'The AI-first code editor with deep repository awareness',
-    descZh: '深度集成 Claude 3.5 Sonnet 与 GPT-4o 的全新代码编辑器。支持全库语义索引、多文件自动改写与终端自动排障。',
+    descZh: '可接入多家前沿大模型的 AI 代码编辑器。支持全库语义索引、多文件自动改写与终端自动排障。',
     descEn: 'Seamless multi-file edits, codebase indexing, and contextual generation with frontier LLMs.',
     commissionNote: 'Cursor 推广员计划：邀请新开发者注册使用，获赠 Pro 账户时长或官方大使返利',
     featured: true,

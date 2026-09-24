@@ -21,7 +21,7 @@ const YEAR_MAX = 2026.75;
 
 const yearNum = (y: string | number) => parseFloat(String(y));
 
-const CATEGORY_LABEL: Record<MilestoneCategory, { zh: string; en: string }> = {
+export const CATEGORY_LABEL: Record<MilestoneCategory, { zh: string; en: string }> = {
   theory: { zh: '理论', en: 'Theory' },
   algorithm: { zh: '算法', en: 'Algorithm' },
   compute: { zh: '算力', en: 'Compute' },

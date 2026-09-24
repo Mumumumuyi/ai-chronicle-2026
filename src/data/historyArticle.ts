@@ -1,7 +1,7 @@
 import { ArticleChapter } from '../types';
 
 export const ARTICLE_META = {
-  title: '火种、严冬与硅基奇点：人工智能演进全景通史（1950 — 2026.09）',
+  title: '火种、严冬与硅基奇点：人工智能演进全景通史（1943 — 2026.09）',
   subtitle: '从图灵之问、符号与连接的百年辩证，到自主智能体集群与神经符号范式的终极收敛',
   author: 'Antigravity 智能体编年史工作组 · 深度学术特稿',
   publishedDate: '2026年9月13日',

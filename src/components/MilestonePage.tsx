@@ -12,6 +12,7 @@ import { getLocalizedEpoch, getLocalizedMilestone } from '../data/timelineTransl
 import { EPOCHS } from '../data/timelineData';
 import { EpochSpecimen } from './EpochSpecimen';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { CATEGORY_LABEL } from './HomePage';
 
 interface MilestonePageProps {
   slug: string;
@@ -103,7 +104,7 @@ export const MilestonePage: React.FC<MilestonePageProps> = ({
               </a>
               <span className="text-[#44403C]">/</span>
               <span className="text-[#A8A29E]">
-                EPOCH {epoch.romanId}
+                {epoch.romanId}
               </span>
               <span className="text-[#44403C]">/</span>
               <span className="text-gold truncate max-w-[200px] sm:max-w-none">{m.title}</span>
@@ -113,7 +114,7 @@ export const MilestonePage: React.FC<MilestonePageProps> = ({
               <i />
               {isZh
                 ? `时代 ${epoch.romanId} · ${epoch.era}`
-                : `Epoch ${epoch.romanId} · ${epoch.era}`}
+                : `${epoch.romanId} · ${epoch.era}`}
             </p>
 
             {/* Giant Cormorant year */}
@@ -136,10 +137,10 @@ export const MilestonePage: React.FC<MilestonePageProps> = ({
         <header className="rv">
           <div className="flex flex-wrap items-center gap-2.5 mono mb-5">
             <span className="px-3 py-1 border border-[rgba(201,168,106,0.4)] text-gold">
-              {m.category}
+              {isZh ? CATEGORY_LABEL[m.category].zh : CATEGORY_LABEL[m.category].en}
             </span>
             <span className="px-3 py-1 border border-[#44403C] text-[#A8A29E]">
-              {m.paradigm}
+              {m.paradigm.replace(/([a-z])([A-Z])/g, '$1 $2')}
             </span>
           </div>
           <h1 className="font-serif text-3xl sm:text-5xl font-medium text-pearl tracking-[-0.01em] leading-[1.2] mb-4">
@@ -218,7 +219,7 @@ export const MilestonePage: React.FC<MilestonePageProps> = ({
           <h2 className="eyebrow on-dark mb-6">
             <i />
             {isZh
-              ? `同纪元藏品 · EPOCH ${epoch.romanId}（${epoch.era}）`
+              ? `同纪元藏品 · ${epoch.romanId}（${epoch.era}）`
               : `Same Epoch · ${epoch.romanId} (${epoch.era})`}
           </h2>
           <ul className="border-t border-[#292524]">

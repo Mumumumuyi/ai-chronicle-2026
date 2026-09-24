@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { Navbar, ActiveTab } from './components/Navbar';
 import { HomePage } from './components/HomePage';
 import { LiquidParadigmWidget } from './components/LiquidParadigmWidget';
@@ -7,7 +7,6 @@ import { AffiliateEcosystem } from './components/AffiliateEcosystem';
 import { MonetizationBanner } from './components/MonetizationBanner';
 import { Footer } from './components/Footer';
 import { AdminSecurityCheckpoint } from './components/admin/AdminSecurityCheckpoint';
-import { AdminDashboard } from './components/admin/AdminDashboard';
 import { LanguageProvider } from './i18n/LanguageContext';
 import { isSessionValid, checkSecretUrlTrigger } from './utils/securityWall';
 import { recordVisitorLog } from './utils/analyticsTracker';
@@ -19,6 +18,11 @@ import {
   resolveLocation,
   type LocationResolution,
 } from './utils/routes';
+
+// Owner-only console: loaded on demand so visitors never download it.
+const AdminDashboard = lazy(() =>
+  import('./components/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
+);
 
 const AppContent: React.FC = () => {
   const [routeState, setRouteState] = useState<LocationResolution>(() => resolveLocation());
@@ -164,10 +168,11 @@ const AppContent: React.FC = () => {
         }}
       />
 
-      <AdminDashboard
-        isOpen={showAdminDashboard}
-        onClose={() => setShowAdminDashboard(false)}
-      />
+      {showAdminDashboard && (
+        <Suspense fallback={null}>
+          <AdminDashboard isOpen onClose={() => setShowAdminDashboard(false)} />
+        </Suspense>
+      )}
 
       <Footer onNavigate={handleTabChange} />
     </div>

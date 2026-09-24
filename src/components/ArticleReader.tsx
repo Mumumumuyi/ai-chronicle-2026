@@ -498,7 +498,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                         </span>
                       </div>
                       <p className="text-[11px] text-[#A8A29E] leading-relaxed">
-                        {isZh ? '全库语义索引与 Claude 3.5 智能改写，现代工程师必备的 AI IDE。' : 'Next-gen code editor with deep codebase indexing and contextual generation.'}
+                        {isZh ? '全库语义索引与多文件智能改写，现代工程师必备的 AI IDE。' : 'Next-gen code editor with deep codebase indexing and contextual generation.'}
                       </p>
                     </div>
 
