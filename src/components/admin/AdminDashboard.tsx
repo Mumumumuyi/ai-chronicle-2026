@@ -813,8 +813,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                     </div>
                     <div className="flex justify-between">
                       <span>零知识哈希指纹:</span>
-                      <span className="text-stone-500 truncate max-w-[200px]" title="1ca27dee19b7fa481da9e8e60e8831d0e71f65f8262f08a74e9184a7d365188a">
-                        1ca27dee...5188a
+                      <span className="text-stone-500 truncate max-w-[200px]" title="474bcfe50b07b6e014cd704115302a3d73b486fbba74c5d4474ba29091eca9c7">
+                        474bcfe5...ca9c7
                       </span>
                     </div>
                     <div className="flex justify-between">
