@@ -412,7 +412,7 @@ export const EPOCHS: Epoch[] = [
         summary: '何恺明团队提出残差学习架构，训练深度高达152层的网络并横扫ILSVRC全部视觉任务。',
         fullNarrative: '在ResNet之前，随着网络层数加深，梯度弥散与网络退化使深层网络精度反而低于浅层。何恺明以惊人的简洁性引入了恒等映射（Identity Mapping）恒等跳连，使梯度能无衰减地直达输入层。这一架构奠定了未来所有超深模型（包括现代大模型内部残差流）的标准骨骼。',
         keyFigures: ['Kaiming He', 'Xiangyu Zhang', 'Shaoqing Ren', 'Jian Sun'],
-        landmarkPaperOrArtifact: 'Deep Residual Learning for Image Recognition (CVPR最佳论文)',
+        landmarkPaperOrArtifact: 'Deep Residual Learning for Image Recognition (CVPR 2016 Best Paper)',
         computeCostEstimate: '8卡 GPU 集群',
         historicalImpact: '彻底移除了网络层数理论上的深度枷锁，是深度学习骨干架构的里程碑。',
         tags: ['ResNet', '残差连接', '何恺明']

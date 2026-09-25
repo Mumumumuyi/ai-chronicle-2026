@@ -308,7 +308,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'McCulloch-Pitts Neuron Model',
       subtitle: 'First Mathematical Formalization of Neural Activity',
       summary: 'Warren McCulloch and Walter Pitts prove that networks of idealized binary threshold switches can implement any logical operation.',
-      historicalImpact: 'Demonstrated that mental phenomena can be executed by equivalent machine logic circuits.'
+      historicalImpact: 'Demonstrated that mental phenomena can be executed by equivalent machine logic circuits.',
+      fullNarrative: 'In 1943 the neurophysiologist Warren McCulloch and the young mathematician Walter Pitts published "A Logical Calculus of the Ideas Immanent in Nervous Activity" in the Bulletin of Mathematical Biophysics. The paper abstracted the all-or-none firing of a biological neuron into a binary weighted summation unit with a threshold. For the first time it built a bridge between neurophysiology and mathematical logic, and it laid the first conceptual cornerstone for every artificial neural network that followed.',
+      computeCostEstimate: 'Pencil-and-paper derivation / relay logic',
+      tags: ['Neuron Model', 'Logic Calculus', 'Cybernetics']
     }
   },
   'm-1950': {
@@ -316,7 +319,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'The Turing Test & "Computing Machinery and Intelligence"',
       subtitle: 'Defining Thinking as an Operable Imitation Game',
       summary: 'Alan Turing bypasses metaphysical debates about "consciousness", proposing the imitation game: if a machine behaves indistinguishably from a human via language, it is intelligent.',
-      historicalImpact: 'Established functional equivalence and natural language dialogue as the foundational benchmark of machine intelligence.'
+      historicalImpact: 'Established functional equivalence and natural language dialogue as the foundational benchmark of machine intelligence.',
+      fullNarrative: 'In his 1950 paper in the journal Mind, Alan Turing proposed the famous Imitation Game. He went further than the test itself: the paper anticipated learning machines (the "child machine"), the role of randomness in decision-making, ways of instilling knowledge, and even the ethical objections to thinking machines. It stands as the founding research programme of twentieth-century AI philosophy and method.',
+      computeCostEstimate: 'Thought experiment / Manchester Mark 1',
+      tags: ['Turing Test', 'Philosophy of AI', 'Natural Language']
     }
   },
   'm-1956': {
@@ -324,7 +330,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'The Dartmouth Summer Research Project on AI',
       subtitle: 'Official Birth and Naming of "Artificial Intelligence"',
       summary: 'John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon organize the historic two-month workshop that established AI as an academic discipline.',
-      historicalImpact: 'Coined the term Artificial Intelligence and charted the research roadmap for the next half-century.'
+      historicalImpact: 'Coined the term Artificial Intelligence and charted the research roadmap for the next half-century.',
+      fullNarrative: 'In the summer of 1956, about a dozen young mathematicians, psychologists and engineers spent eight weeks in the mathematics building at Dartmouth College. John McCarthy coined the term "Artificial Intelligence", with a distinctly computational flavour, partly to step out of the broad shadow of Norbert Wiener\'s cybernetics. Allen Newell and Herbert Simon brought the Logic Theorist, a program that proved theorems from Principia Mathematica and impressed everyone present.',
+      computeCostEstimate: 'IBM 704',
+      tags: ['Dartmouth Workshop', 'Birth of AI', 'Logic Theorist']
     }
   },
   'm-1958': {
@@ -332,7 +341,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Frank Rosenblatt\'s Perceptron',
       subtitle: 'The First Learnable Artificial Neural Network Hardware',
       summary: 'Frank Rosenblatt creates the Mark I Perceptron at Cornell Aeronautical Laboratory, capable of optical pattern recognition via weighted updates.',
-      historicalImpact: 'Ignited worldwide enthusiasm for physical self-organizing learning systems.'
+      historicalImpact: 'Ignited worldwide enthusiasm for physical self-organizing learning systems.',
+      fullNarrative: 'Frank Rosenblatt defined the perceptron as an adaptive system of sensory, association and response layers, and proved the perceptron convergence theorem. The press was electrified: The New York Times described the machine as the embryo of a computer expected to walk, talk, see, write, reproduce itself and be conscious of its existence. Connectionism drew intense public and military attention for the first time.',
+      computeCostEstimate: 'Custom analog circuitry + IBM 704',
+      tags: ['Perceptron', 'Weight Learning', 'Hardware']
     }
   },
   'm-1965': {
@@ -340,7 +352,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'ELIZA: First Psychotherapist Chatbot',
       subtitle: 'Pattern Matching and The Illusion of Machine Empathy',
       summary: 'Joseph Weizenbaum builds ELIZA at MIT. Through simple syntactic keyword substitution, it convincingly simulated a Rogerian psychotherapist, exposing the "ELIZA Effect".',
-      historicalImpact: 'First demonstration of human psychological susceptibility to linguistic AI illusions.'
+      historicalImpact: 'First demonstration of human psychological susceptibility to linguistic AI illusions.',
+      fullNarrative: 'ELIZA\'s code was remarkably simple: it rephrased keywords from the user\'s input as questions ("Why do you feel your mother is hard on you?"). Yet many users believed it had genuine empathy; Weizenbaum\'s own secretary reportedly asked him to leave the room so she could talk to the machine in private. The experience left Weizenbaum deeply troubled and led him to write Computer Power and Human Reason, a lasting critique of technological rationality.',
+      computeCostEstimate: 'IBM 7094',
+      tags: ['NLP', 'ELIZA Effect', 'Philosophy of Technology']
     }
   },
   'm-1969': {
@@ -348,7 +363,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Minsky & Papert\'s "Perceptrons"',
       subtitle: 'The XOR Limitation Proof and The First AI Winter',
       summary: 'Marvin Minsky and Seymour Papert prove mathematically that single-layer perceptrons cannot solve linearly non-separable problems like XOR, freezing neural network funding for a decade.',
-      historicalImpact: 'Drove symbolic logic to dominance while plunging connectionism into its first harsh winter.'
+      historicalImpact: 'Drove symbolic logic to dominance while plunging connectionism into its first harsh winter.',
+      fullNarrative: 'This mathematically rigorous book landed like a blizzard on connectionism\'s hopes in academia and among funding agencies. Multilayer networks already existed, but without an efficient way to compute gradients for their hidden weights (backpropagation), the field generalised Minsky and Papert\'s critique of single-layer perceptrons into a verdict against neural networks as a whole, and funding quickly dried up.',
+      computeCostEstimate: 'Mathematical proof',
+      tags: ['XOR Problem', 'First AI Winter', 'Paradigm Debate']
     }
   },
   'm-1973': {
@@ -356,7 +374,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'The Lighthill Report & DARPA Retrenchment',
       subtitle: 'Academic Skepticism and The Onset of the First AI Winter',
       summary: 'Sir James Lighthill reports to the British Science Research Council that AI research failed to achieve grandiose promises, leading to sweeping budget cancellations in the UK and US.',
-      historicalImpact: 'Established the recurring boom-and-bust paradigm of inflated AI expectations.'
+      historicalImpact: 'Established the recurring boom-and-bust paradigm of inflated AI expectations.',
+      fullNarrative: 'Sir James Lighthill argued that algorithms which performed well in laboratory "toy worlds" collapsed in real-world settings, where the search space grew exponentially and the computation became unaffordable. Soon afterwards DARPA sharply cut funding for basic AI research without a clear military application, and the first AI winter spread worldwide.',
+      computeCostEstimate: 'Policy review and audit',
+      tags: ['First AI Winter', 'Combinatorial Explosion', 'Research Policy']
     }
   },
   'm-1976': {
@@ -364,7 +385,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'The Rise of Expert Systems: MYCIN & DENDRAL',
       subtitle: 'Knowledge Engineering Takes Root in Real-World Domains',
       summary: 'Stanford researchers build MYCIN for infectious disease diagnosis and DENDRAL for chemical mass spectrometry, demonstrating the practical value of specialized heuristic rule engines.',
-      historicalImpact: 'Transitioned AI from toy mathematical problems to high-value industrial and clinical applications.'
+      historicalImpact: 'Transitioned AI from toy mathematical problems to high-value industrial and clinical applications.',
+      fullNarrative: 'MYCIN introduced certainty factors, formalising the heuristic judgement of human experts working with incomplete information as rule-based inference. In evaluations its antibiotic recommendations for specific pathogens were judged comparable to those of Stanford infectious-disease specialists, launching a decade-long commercial boom in expert systems.',
+      computeCostEstimate: 'DEC PDP-10 / SAIL',
+      tags: ['Expert Systems', 'Production Rules', 'Knowledge Engineering']
     }
   },
   'm-1982': {
@@ -372,7 +396,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Hopfield Networks & Physical Energy Formulations',
       subtitle: 'Ising Spin Glasses Meet Associative Memory',
       summary: 'Physicist John Hopfield introduces recurrent symmetric networks with an associative Lyapunov energy function, reviving interdisciplinary physicist interest in neural networks.',
-      historicalImpact: 'Bridged statistical mechanics, physics, and associative computation.'
+      historicalImpact: 'Bridged statistical mechanics, physics, and associative computation.',
+      fullNarrative: 'John Hopfield showed physicists and computer scientists that a network evolving under asynchronous dynamics descends monotonically along an energy surface until it settles in a local minimum. The result drew mainstream physicists to neural networks as complex systems and restored a measure of rigour and respectability to connectionism.',
+      computeCostEstimate: 'Minicomputer batch jobs',
+      tags: ['Hopfield Network', 'Energy-Based Model', 'Nobel Prize in Physics']
     }
   },
   'm-1986': {
@@ -380,7 +407,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Rumelhart, Hinton & Williams: Backpropagation Resurgence',
       subtitle: 'Efficient Gradient Descent for Multi-Layer Perceptrons',
       summary: 'The PDP Research Group publishes "Learning representations by back-propagating errors" in Nature, solving the multi-layer credit assignment problem that broke single-layer perceptrons.',
-      historicalImpact: 'Provided the mathematical engine that powers nearly all modern deep learning systems.'
+      historicalImpact: 'Provided the mathematical engine that powers nearly all modern deep learning systems.',
+      fullNarrative: 'Paul Werbos and others had described similar gradient back-propagation ideas earlier, notably in Werbos\'s doctoral thesis. But the paper by Rumelhart, Hinton and Williams used clear experiments, such as learning nonlinear hidden representations inside an autoencoder, to show the world that multilayer networks can discover abstract internal features on their own. The dead end Minsky had described was broken.',
+      computeCostEstimate: 'VAX-11/780 minicomputer',
+      tags: ['Backpropagation', 'Gradient Descent', 'Hidden Representations']
     }
   },
   'm-1989': {
@@ -388,7 +418,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'LeCun\'s LeNet & Convolutional Neural Networks',
       subtitle: 'Weight Sharing and Spatial Invariance in Visual Recognition',
       summary: 'Yann LeCun and colleagues develop backprop-trained CNNs at Bell Labs, successfully reading handwritten zip codes on US mail.',
-      historicalImpact: 'Laid the foundational architectural template for modern computer vision.'
+      historicalImpact: 'Laid the foundational architectural template for modern computer vision.',
+      fullNarrative: 'Inspired by Hubel and Wiesel\'s experiments on receptive fields in the cat visual cortex, Yann LeCun combined three core ideas: local connectivity, weight sharing and spatial subsampling (pooling). Together they removed the parameter explosion of fully connected layers and their blindness to spatial translation.',
+      computeCostEstimate: 'Dedicated digital signal processor (DSP)',
+      tags: ['CNN', 'Computer Vision', 'LeNet']
     }
   },
   'm-1990': {
@@ -396,7 +429,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Collapse of Lisp Machines & The Second AI Winter',
       subtitle: 'Commercial Brittleness of Rule-Based Systems Exposed',
       summary: 'Specialized Lisp hardware vendors like Symbolics collapsed as commodity PC and Unix workstations overtook their price-performance, exposing the maintenance crisis of millions of brittle rules.',
-      historicalImpact: 'Ended the expert systems bubble and forced the field toward empirical statistical learning.'
+      historicalImpact: 'Ended the expert systems bubble and forced the field toward empirical statistical learning.',
+      fullNarrative: 'The brittleness of expert systems became impossible to ignore. Once a system held thousands of rules, conflicts between them made maintenance extremely hard: the common-sense bottleneck and the knowledge-acquisition bottleneck. On the hardware side, general-purpose Intel x86 chips, riding Moore\'s law, quickly overtook expensive dedicated Lisp machines. The AI market collapsed, and investors once again treated "artificial intelligence" as a pejorative.',
+      computeCostEstimate: 'Dedicated parallel inference machines (PIM)',
+      tags: ['Fifth Generation Computer', 'Second AI Winter', 'Moore\'s Law']
     }
   },
   'm-1995': {
@@ -404,7 +440,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Vapnik & Cortes: Support Vector Machines (SVM)',
       subtitle: 'Structural Risk Minimization & The Kernel Trick',
       summary: 'Vladimir Vapnik and Corinna Cortes introduce SVMs. With maximum margin hyperplanes and non-linear kernel projections, SVMs displaced neural networks in academia for 15 years.',
-      historicalImpact: 'Established convex optimization and statistical learning theory as standard machine learning dogma.'
+      historicalImpact: 'Established convex optimization and statistical learning theory as standard machine learning dogma.',
+      fullNarrative: 'Backed by rigorous VC-dimension theory and a quadratic-programming solution free of local minima, support vector machines dominated the top machine learning conferences from the late 1990s into the early 2000s. Multilayer neural networks, by contrast, were sensitive to hyperparameters, prone to local minima and lacked mathematical elegance, and were pushed to the margins as "alchemy".',
+      computeCostEstimate: 'Workstation quadratic-programming solvers',
+      tags: ['SVM', 'Kernel Trick', 'Statistical Learning Theory']
     }
   },
   'm-1997': {
@@ -412,7 +451,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'IBM Deep Blue Defeats Garry Kasparov',
       subtitle: 'Brute-Force Alpha-Beta Search Vanquishes Human Champion',
       summary: 'IBM Deep Blue evaluates 200 million chess positions per second using specialized VLSI chips, defeating reigning World Chess Champion Garry Kasparov in a 6-game match.',
-      historicalImpact: 'The watershed moment where specialized compute and heuristic search triumphed over human intuition.'
+      historicalImpact: 'The watershed moment where specialized compute and heuristic search triumphed over human intuition.',
+      fullNarrative: 'Deep Blue used 480 custom VLSI chess chips and could evaluate about 200 million positions per second, combining minimax search, alpha-beta pruning and grandmaster opening and endgame databases. It had no general intelligence, but the victory broke a century-old belief that the peak of human intellect could not be reached by a machine.',
+      computeCostEstimate: 'IBM RS/6000 SP parallel supercomputer (11.38 GFLOPS)',
+      tags: ['Deep Blue', 'Chess', 'Game-Tree Search']
     }
   },
   'm-1997-lstm': {
@@ -420,7 +462,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Hochreiter & Schmidhuber Invent LSTM',
       subtitle: 'Conquering the Vanishing Gradient Barrier in Recurrent Nets',
       summary: 'Sepp Hochreiter and Jürgen Schmidhuber introduce Long Short-Term Memory, using constant error carrousels and multiplicative gates to bridge long temporal sequences.',
-      historicalImpact: 'Became the dominant architecture for speech recognition, translation, and audio for two decades.'
+      historicalImpact: 'Became the dominant architecture for speech recognition, translation, and audio for two decades.',
+      fullNarrative: 'When a standard RNN backpropagates through time, repeated multiplication makes its gradients vanish or explode exponentially. LSTM added a cell state that carries information forward unchanged, plus learned gates, so the network can control when memory is written, kept and cleared, much like a register in a computer. It became the workhorse of speech recognition and machine translation for the next two decades.',
+      computeCostEstimate: 'DEC Alpha processors',
+      tags: ['LSTM', 'RNN', 'Sequence Modeling']
     }
   },
   'm-2009': {
@@ -428,7 +473,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Fei-Fei Li Releases ImageNet Dataset',
       subtitle: 'Shifting AI Priority from Algorithm Design to Massive Data Curation',
       summary: 'Fei-Fei Li and Stanford collaborators release ImageNet with 14 million hand-annotated images, establishing the benchmark that made the 2012 deep learning revolution possible.',
-      historicalImpact: 'Proved that algorithms without massive real-world data cannot generalize.'
+      historicalImpact: 'Proved that algorithms without massive real-world data cannot generalize.',
+      fullNarrative: 'While most researchers were refining algorithms, Fei-Fei Li recognised that models failed to learn complex patterns not because the algorithms were weak, but because the training sets were too small. ImageNet made data the turning point among the three pillars of algorithms, data and compute. The ILSVRC challenge, launched in 2010, became the direct trigger of the deep learning explosion.',
+      computeCostEstimate: 'Crowdsourced labelling on Amazon Mechanical Turk',
+      tags: ['ImageNet', 'Big Data', 'Computer Vision']
     }
   },
   'm-2012': {
@@ -436,7 +484,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'AlexNet Wins ImageNet by Staggering Margin',
       subtitle: 'The Big Bang of Modern Deep Learning & GPU Acceleration',
       summary: 'Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton train an 8-layer deep CNN on dual NVIDIA GTX 580 GPUs, crushing the ImageNet error rate by 10.8 percentage points.',
-      historicalImpact: 'Marked the irreversible turning point where deep neural networks with GPU acceleration dominated AI.'
+      historicalImpact: 'Marked the irreversible turning point where deep neural networks with GPU acceleration dominated AI.',
+      fullNarrative: 'AlexNet combined ReLU activations, dropout regularisation, data augmentation and hand-written CUDA code that fitted the model into GPU memory. Against carefully hand-engineered features such as SIFT and HOG, end-to-end backpropagation proved far better at extracting features. The result ended the era of classical computer vision, and Google, Facebook and Baidu all pivoted to deep learning.',
+      computeCostEstimate: '2 × NVIDIA GeForce GTX 580 (5–6 days of training)',
+      tags: ['AlexNet', 'GPU Computing', 'End-to-End Learning']
     }
   },
   'm-2014': {
@@ -444,7 +495,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Ian Goodfellow Invents Generative Adversarial Networks (GANs)',
       subtitle: 'Minimax Game Between Generator and Discriminator',
       summary: 'Goodfellow frames generative synthesis as a zero-sum game between a counterfeit generator and an adversarial detective, synthesizing photorealistic artificial imagery.',
-      historicalImpact: 'Opened the floodgates for generative AI and modern visual synthesis.'
+      historicalImpact: 'Opened the floodgates for generative AI and modern visual synthesis.',
+      fullNarrative: 'Yann LeCun called GANs "the most interesting idea in the last ten years in machine learning". A discriminator tries to tell real images from fakes while a generator tries to fool it; the two improve together in a minimax game. This made it possible to sample complex high-dimensional distributions, such as realistic faces, without labels, and opened the era of AI-generated content.',
+      computeCostEstimate: 'Single GPU',
+      tags: ['GAN', 'Generative Models', 'Game Theory']
     }
   },
   'm-2015': {
@@ -452,7 +506,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'He et al. Introduce ResNet (Deep Residual Learning)',
       subtitle: 'Identity Shortcut Connections Shatter the 100-Layer Ceiling',
       summary: 'Kaiming He and colleagues at Microsoft Research introduce residual skip connections, training 152-layer networks without vanishing gradients and beating human top-5 vision accuracy.',
-      historicalImpact: 'Residual skip connections became an indispensable primitive across all modern architectures.'
+      historicalImpact: 'Residual skip connections became an indispensable primitive across all modern architectures.',
+      fullNarrative: 'Before ResNet, making a network deeper often made it worse: vanishing gradients and degradation meant deep networks were less accurate than shallow ones. Kaiming He and colleagues added identity skip connections, a strikingly simple change that lets gradients flow back to early layers without decaying. The design became the standard skeleton of every very deep model, including the residual stream inside today\'s large language models.',
+      computeCostEstimate: '8-GPU cluster',
+      tags: ['ResNet', 'Residual Connections', 'Kaiming He']
     }
   },
   'm-2016': {
@@ -460,7 +517,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'DeepMind AlphaGo Defeats World Champion Lee Sedol',
       subtitle: 'Deep Reinforcement Learning & Monte Carlo Tree Search Conquer Go',
       summary: 'AlphaGo combines policy networks, value estimation, and MCTS to defeat 18-time world champion Lee Sedol 4-1 in Seoul, executing move 37 that astonished human grandmasters.',
-      historicalImpact: 'Proved that deep reinforcement learning can master complex intuitive games previously thought decades away.'
+      historicalImpact: 'Proved that deep reinforcement learning can master complex intuitive games previously thought decades away.',
+      fullNarrative: 'Go has roughly 10^170 legal positions, more than the number of atoms in the observable universe, and was widely expected to resist machines for decades. AlphaGo used a policy network to narrow the breadth of search and a value network to estimate the outcome and cut its depth, then surpassed human experience through self-play. In 2017 AlphaGo Zero went further, reaching superhuman strength from scratch without any human game records.',
+      computeCostEstimate: '1,920 CPUs + 280 GPUs (distributed version) / TPU v1',
+      tags: ['AlphaGo', 'Reinforcement Learning', 'MCTS', 'DeepMind']
     }
   },
   'm-2017': {
@@ -468,7 +528,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Vaswani et al.: "Attention Is All You Need"',
       subtitle: 'The Universal Transformer Architecture Takes Flight',
       summary: 'Google researchers discard recurrence and convolutions entirely, introducing multi-head self-attention to parallelize sequential compute across entire contexts.',
-      historicalImpact: 'The unified architectural bedrock powering all modern LLMs, multi-modal systems, and vision models.'
+      historicalImpact: 'The unified architectural bedrock powering all modern LLMs, multi-modal systems, and vision models.',
+      fullNarrative: 'The fundamental weakness of RNNs is that they process a sequence step by step, which cannot keep a large GPU cluster busy. The Transformer\'s self-attention lets every token attend directly to every other token in the context in a single step, freeing parallel compute. What followed was a decade-long era of unification in which text, speech, images, video and molecules were all expressed as sequences of tokens.',
+      computeCostEstimate: '8 × NVIDIA P100 GPUs (3.5 days of training)',
+      tags: ['Transformer', 'Self-Attention', 'Parallel Computing']
     }
   },
   'm-2020': {
@@ -476,7 +539,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Kaplan et al.: Empirical Scaling Laws for Neural Language Models',
       subtitle: 'Power-Law Predictability in Compute, Parameters, and Data',
       summary: 'Jared Kaplan and OpenAI colleagues demonstrate that cross-entropy loss scales as a smooth power-law over orders of magnitude in compute, parameters, and dataset size.',
-      historicalImpact: 'Turned AI engineering from black-magic tinkering into a predictable, capital-intensive science.'
+      historicalImpact: 'Turned AI engineering from black-magic tinkering into a predictable, capital-intensive science.',
+      fullNarrative: 'A protein folds from a one-dimensional chain of amino acids into a complex three-dimensional shape that determines its biological function. AlphaFold 2 tightly coupled multiple sequence alignments with the Evoformer\'s geometric attention, and its database later released predicted structures for about 200 million known proteins, saving researchers years of laboratory work in drug discovery, enzyme engineering and basic biology. In 2024 Demis Hassabis and John Jumper shared the Nobel Prize in Chemistry for this work.',
+      computeCostEstimate: '128 TPU v3 cores (weeks of iteration)',
+      tags: ['AlphaFold', 'AI for Science', 'Nobel Prize in Chemistry']
     }
   },
   'm-2020-gpt3': {
@@ -484,7 +550,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'OpenAI Releases GPT-3 (175 Billion Parameters)',
       subtitle: 'In-Context Few-Shot Learning Emerges at Massive Scale',
       summary: 'GPT-3 demonstrates that sufficiently scaled autoregressive models can translate, write code, and solve novel tasks purely from natural language prompts without parameter updates.',
-      historicalImpact: 'Established prompting and foundation models as the new paradigm of software development.'
+      historicalImpact: 'Established prompting and foundation models as the new paradigm of software development.',
+      fullNarrative: 'Jared Kaplan and colleagues\' "Scaling Laws for Neural Language Models" gave the bet its compass: loss falls along a smooth, predictable power law as model size, dataset size and compute budget grow. It convinced Silicon Valley and Wall Street that large models were no longer black-box trial and error but a heavy-industry science in which returns on investment could be planned.',
+      computeCostEstimate: 'About 3.14 × 10^23 FLOPs (estimated training cost ~US$4.6M)',
+      tags: ['GPT-3', 'Scaling Laws', 'Few-Shot Learning']
     }
   },
   'm-2022': {
@@ -492,7 +561,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'OpenAI Launches ChatGPT (The RLHF Phenomenon)',
       subtitle: 'Alignment with Human Intent Sparking Global Adoption',
       summary: 'Combining InstructGPT and Reinforcement Learning from Human Feedback, OpenAI launches ChatGPT, reaching 100 million users in two months—the fastest growing consumer application in history.',
-      historicalImpact: 'Brought conversational generative AI into mainstream culture, business, and geopolitics.'
+      historicalImpact: 'Brought conversational generative AI into mainstream culture, business, and geopolitics.',
+      fullNarrative: 'Base pretrained models hallucinated, rambled and behaved unpredictably. InstructGPT used supervised fine-tuning (SFT) and reinforcement learning from human feedback (RLHF) to align a raw compression model into a modest, well-behaved assistant that follows instructions. ChatGPT set off a worldwide public debate about AI and changed how people write code, write creatively and look up knowledge.',
+      computeCostEstimate: 'Microsoft Azure supercomputing clusters (tens of thousands of GPUs)',
+      tags: ['ChatGPT', 'RLHF', 'Alignment', 'iPhone Moment']
     }
   },
   'm-2023': {
@@ -500,7 +572,9 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'OpenAI Releases GPT-4',
       subtitle: 'Multimodal Frontier Intelligence & Near-Human Professional Reasoning',
       summary: 'GPT-4 passes simulated bar exams, USABO, and GRE at the 90th percentile, proving that massive mixture-of-experts architectures exhibit deep cross-domain reasoning.',
-      historicalImpact: 'Proved the viability of machine intelligence across high-stakes professional knowledge domains.'
+      historicalImpact: 'Proved the viability of machine intelligence across high-stakes professional knowledge domains.',
+      fullNarrative: 'OpenAI did not disclose GPT-4\'s architecture; it was widely reported to be a sparse Mixture-of-Experts model, with one commonly cited estimate of 16 experts of about 110B parameters each. It accepted images as well as text and handled long contexts of 32k and later 128k tokens. Microsoft Research\'s 154-page paper "Sparks of Artificial General Intelligence" set off a fierce debate over whether AGI was beginning to emerge.',
+      computeCostEstimate: 'Estimated ~2.1 × 10^25 FLOPs (~25,000 A100 GPUs)'
     }
   },
   'm-2023-open': {
@@ -508,7 +582,10 @@ export const MILESTONE_TRANSLATIONS: Record<string, Record<string, LocalizedMile
       title: 'Meta Releases LLaMA: The Open-Source Tsunami',
       subtitle: 'Democratizing Frontier Weights to Global Developers and Universities',
       summary: 'Meta releases open-weights LLaMA series, catalyzing an explosion of fine-tunes, quantization techniques (QLoRA, llama.cpp), and independent academic experimentation.',
-      historicalImpact: 'Prevented proprietary monopolization and established open-source AI as a perpetual counterweight.'
+      historicalImpact: 'Prevented proprietary monopolization and established open-source AI as a perpetual counterweight.',
+      fullNarrative: 'A leaked internal Google memo, "We Have No Moat, And Neither Does OpenAI", captured what the industry was seeing: the open-source community was iterating astonishingly fast on quantisation (such as 4-bit GGUF), single-GPU local fine-tuning, retrieval-augmented generation and lightweight architectures. Open weights freed researchers, start-ups and developers from the pricing and policies of any single closed API, and democratised the frontier.',
+      computeCostEstimate: 'Meta AI compute clusters',
+      tags: ['Open Source', 'LLaMA', 'Edge Computing']
     }
   },
   'm-2024-reasoning': {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SupportedLanguage, TranslationDictionary, SUPPORTED_LANGUAGES, LanguageOption } from './types';
 import { TRANSLATIONS } from './translations';
+import { resolveLocation } from '../utils/routes';
 
 interface LanguageContextValue {
   currentLang: SupportedLanguage;
@@ -13,6 +14,11 @@ const LanguageContext = createContext<LanguageContextValue | undefined>(undefine
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentLang, setCurrentLangState] = useState<SupportedLanguage>(() => {
+    // 0. A milestone URL (/milestone/… or /en/milestone/…) fixes the language, so
+    //    crawlers and shared links always see the version the URL promises.
+    const urlLang = resolveLocation().urlLang;
+    if (urlLang) return urlLang;
+
     // 1. Try to read from localStorage
     const saved = localStorage.getItem('ai_chronicle_lang') as SupportedLanguage | null;
     if (saved && TRANSLATIONS[saved]) return saved;

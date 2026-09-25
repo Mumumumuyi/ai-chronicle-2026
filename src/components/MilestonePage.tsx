@@ -5,6 +5,7 @@ import {
   ALL_MILESTONES,
   findMilestoneBySlug,
   hrefForMilestone,
+  milestoneLangFor,
   hrefForTab,
 } from '../utils/routes';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -226,7 +227,7 @@ export const MilestonePage: React.FC<MilestonePageProps> = ({
             {siblings.map((s) => (
               <li key={s.id} className="border-b border-[#292524]">
                 <a
-                  href={hrefForMilestone(s.slug)}
+                  href={hrefForMilestone(s.slug, milestoneLangFor(currentLang))}
                   onClick={(e) => handleLinkClick(e, () => onSelectMilestone(s.slug))}
                   className="group flex items-baseline gap-4 py-3.5 text-[#A8A29E] hover:text-gold2 transition-colors"
                 >
@@ -249,7 +250,7 @@ export const MilestonePage: React.FC<MilestonePageProps> = ({
       >
         {prev ? (
           <a
-            href={hrefForMilestone(prev.slug)}
+            href={hrefForMilestone(prev.slug, milestoneLangFor(currentLang))}
             onClick={(e) => handleLinkClick(e, () => onSelectMilestone(prev.slug))}
             className="group bg-ob p-5 sm:p-6 transition-colors hover:bg-ob2"
           >
@@ -266,7 +267,7 @@ export const MilestonePage: React.FC<MilestonePageProps> = ({
         )}
         {next ? (
           <a
-            href={hrefForMilestone(next.slug)}
+            href={hrefForMilestone(next.slug, milestoneLangFor(currentLang))}
             onClick={(e) => handleLinkClick(e, () => onSelectMilestone(next.slug))}
             className="group bg-ob p-5 sm:p-6 transition-colors hover:bg-ob2 sm:text-right"
           >

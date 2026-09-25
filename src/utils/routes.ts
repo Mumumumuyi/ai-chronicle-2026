@@ -1,6 +1,20 @@
 import type { ActiveTab } from '../components/Navbar';
 import { EPOCHS } from '../data/timelineData';
 import type { Epoch, Milestone } from '../types';
+import type { SupportedLanguage } from '../i18n/types';
+import { getLocalizedMilestone } from '../data/timelineTranslations';
+
+/**
+ * Languages that have their own milestone URLs. Chinese is the original and lives
+ * at /milestone/<slug>/; English has a full translation at /en/milestone/<slug>/.
+ * Other UI languages fall back to English text, so they share the English URL
+ * instead of publishing duplicate pages.
+ */
+export type MilestoneLang = 'zh' | 'en';
+
+export function milestoneLangFor(lang: SupportedLanguage): MilestoneLang {
+  return lang === 'zh' ? 'zh' : 'en';
+}
 
 // The root domain is the canonical home of the site. The /ai-chronicle-2026/
 // deployment serves the same pages but points every canonical link back here,
@@ -74,9 +88,9 @@ export function hrefForTab(tab: ActiveTab): string {
   return segment ? `${BASE}${segment}/` : BASE;
 }
 
-/** In-site href for a milestone dossier page: <base>milestone/<slug>/ */
-export function hrefForMilestone(slug: string): string {
-  return `${BASE}milestone/${slug}/`;
+/** In-site href for a milestone dossier page: <base>[en/]milestone/<slug>/ */
+export function hrefForMilestone(slug: string, lang: MilestoneLang = 'zh'): string {
+  return `${BASE}${lang === 'en' ? 'en/' : ''}milestone/${slug}/`;
 }
 
 /** Canonical URL for a tab - always on the root domain, whatever the base. */
@@ -86,14 +100,16 @@ export function canonicalForTab(tab: ActiveTab): string {
 }
 
 /** Canonical URL for a milestone dossier page - always on the root domain. */
-export function canonicalForMilestone(slug: string): string {
-  return `${CANONICAL_ORIGIN}/milestone/${slug}/`;
+export function canonicalForMilestone(slug: string, lang: MilestoneLang = 'zh'): string {
+  return `${CANONICAL_ORIGIN}/${lang === 'en' ? 'en/' : ''}milestone/${slug}/`;
 }
 
 export interface LocationResolution {
   tab: ActiveTab;
-  /** Set when the URL is <base>milestone/<slug>/; slug validity is resolved by the caller. */
+  /** Set when the URL is <base>[en/]milestone/<slug>/; slug validity is resolved by the caller. */
   milestoneSlug: string | null;
+  /** Language fixed by a milestone URL; null on every other page. */
+  urlLang: MilestoneLang | null;
 }
 
 /**
@@ -106,31 +122,57 @@ export function resolveLocation(): LocationResolution {
   const segments = relative.replace(/\/+$/, '').split('/').filter(Boolean);
 
   if (segments[0] === 'milestone' && segments[1]) {
-    return { tab: 'stage', milestoneSlug: decodeURIComponent(segments[1]) };
+    return { tab: 'stage', milestoneSlug: decodeURIComponent(segments[1]), urlLang: 'zh' };
+  }
+  if (segments[0] === 'en' && segments[1] === 'milestone' && segments[2]) {
+    return { tab: 'stage', milestoneSlug: decodeURIComponent(segments[2]), urlLang: 'en' };
   }
 
   const byPath = segments[0] ? ROUTES.find((r) => r.segment === segments[0]) : undefined;
-  if (byPath) return { tab: byPath.tab, milestoneSlug: null };
+  if (byPath) return { tab: byPath.tab, milestoneSlug: null, urlLang: null };
 
   // Only a bare base URL lets a legacy #hash decide the view.
   const hash = window.location.hash.replace('#', '');
   const byHash = ROUTES.find((r) => r.tab === hash);
-  return { tab: byHash ? byHash.tab : 'stage', milestoneSlug: null };
+  return { tab: byHash ? byHash.tab : 'stage', milestoneSlug: null, urlLang: null };
 }
 
 /** Per-page meta for a milestone dossier, or null when the slug is unknown. */
 export function milestoneMeta(
-  slug: string
+  slug: string,
+  lang: MilestoneLang = 'zh'
 ): { title: string; description: string; canonical: string } | null {
   const found = findMilestoneBySlug(slug);
   if (!found) return null;
-  const m = found.ref.milestone;
+  const m = getLocalizedMilestone(found.ref.milestone, lang);
   const description = m.summary.length > 150 ? `${m.summary.slice(0, 147)}…` : m.summary;
   return {
-    title: `${m.title}（${m.year}）· 人工智能通史 | AI Chronicle 2026`,
+    title:
+      lang === 'en'
+        ? `${m.title} (${m.year}) · History of AI | AI Chronicle`
+        : `${m.title}（${m.year}）· 人工智能通史 | AI Chronicle 2026`,
     description,
-    canonical: canonicalForMilestone(slug),
+    canonical: canonicalForMilestone(slug, lang),
   };
+}
+
+/** Point each milestone page at its other-language version (removed on other pages). */
+function applyHreflang(milestoneSlug: string | null): void {
+  document.head.querySelectorAll('link[data-hreflang]').forEach((el) => el.remove());
+  if (!milestoneSlug) return;
+  const alternates: [string, string][] = [
+    ['zh-CN', canonicalForMilestone(milestoneSlug, 'zh')],
+    ['en', canonicalForMilestone(milestoneSlug, 'en')],
+    ['x-default', canonicalForMilestone(milestoneSlug, 'zh')],
+  ];
+  for (const [hreflang, href] of alternates) {
+    const link = document.createElement('link');
+    link.rel = 'alternate';
+    link.hreflang = hreflang;
+    link.href = href;
+    link.setAttribute('data-hreflang', '');
+    document.head.appendChild(link);
+  }
 }
 
 function setMetaContent(selector: string, content: string): void {
@@ -139,8 +181,13 @@ function setMetaContent(selector: string, content: string): void {
 }
 
 /** Keep <head> in step with the active route so each URL has its own metadata. */
-export function applyRouteMeta(tab: ActiveTab, milestoneSlug?: string | null): void {
-  const mm = milestoneSlug ? milestoneMeta(milestoneSlug) : null;
+export function applyRouteMeta(
+  tab: ActiveTab,
+  milestoneSlug?: string | null,
+  lang: MilestoneLang = 'zh'
+): void {
+  const mm = milestoneSlug ? milestoneMeta(milestoneSlug, lang) : null;
+  applyHreflang(mm ? milestoneSlug ?? null : null);
 
   let title: string;
   let description: string;

@@ -5,7 +5,7 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { EPOCHS } from '../data/timelineData';
 import { getLocalizedEpoch, getLocalizedMilestone } from '../data/timelineTranslations';
-import { ALL_MILESTONES, hrefForMilestone, hrefForTab } from '../utils/routes';
+import { ALL_MILESTONES, hrefForMilestone, hrefForTab, milestoneLangFor } from '../utils/routes';
 import { ARTICLE_META } from '../data/historyArticle';
 import { getOwnerContact } from '../utils/monetizationConfig';
 import { EpochSpecimen } from './EpochSpecimen';
@@ -448,7 +448,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenMilestoneP
                 </div>
               </div>
               <a
-                href={hrefForMilestone(current.slug)}
+                href={hrefForMilestone(current.slug, milestoneLangFor(currentLang))}
                 onClick={goMilestone(current.slug)}
                 className="fade flex items-center gap-4 group"
                 style={{ '--d': '1300ms' } as React.CSSProperties}
@@ -673,7 +673,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenMilestoneP
           {filtered.map((m, i) => (
             <a
               key={`${filter}-${m.slug}`}
-              href={hrefForMilestone(m.slug)}
+              href={hrefForMilestone(m.slug, milestoneLangFor(currentLang))}
               onClick={goMilestone(m.slug)}
               className="arch-card rv"
               style={{ '--d': `${(i % 3) * 80}ms` } as React.CSSProperties}

@@ -23,9 +23,20 @@ function milestoneSlugs() {
   return unique;
 }
 
-/** All route segments: '' (home), the three tab routes, then milestone/<slug> for each dossier. */
+/**
+ * All route segments: '' (home), the three tab routes, then milestone/<slug> and
+ * its English twin en/milestone/<slug> for each dossier.
+ */
 function getSegments() {
-  return ['', 'reader', 'lab', 'ecosystem', ...milestoneSlugs().map((s) => `milestone/${s}`)];
+  const slugs = milestoneSlugs();
+  return [
+    '',
+    'reader',
+    'lab',
+    'ecosystem',
+    ...slugs.map((s) => `milestone/${s}`),
+    ...slugs.map((s) => `en/milestone/${s}`),
+  ];
 }
 
 module.exports = { getSegments, milestoneSlugs };

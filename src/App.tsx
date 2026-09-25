@@ -7,7 +7,7 @@ import { AffiliateEcosystem } from './components/AffiliateEcosystem';
 import { MonetizationBanner } from './components/MonetizationBanner';
 import { Footer } from './components/Footer';
 import { AdminSecurityCheckpoint } from './components/admin/AdminSecurityCheckpoint';
-import { LanguageProvider } from './i18n/LanguageContext';
+import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 import { isSessionValid, checkSecretUrlTrigger } from './utils/securityWall';
 import { recordVisitorLog } from './utils/analyticsTracker';
 import { MilestonePage } from './components/MilestonePage';
@@ -15,6 +15,7 @@ import {
   applyRouteMeta,
   hrefForMilestone,
   hrefForTab,
+  milestoneLangFor,
   resolveLocation,
   type LocationResolution,
 } from './utils/routes';
@@ -28,6 +29,8 @@ const AppContent: React.FC = () => {
   const [routeState, setRouteState] = useState<LocationResolution>(() => resolveLocation());
   const activeTab = routeState.tab;
   const milestoneSlug = routeState.milestoneSlug;
+  const { currentLang } = useLanguage();
+  const mLang = milestoneLangFor(currentLang);
 
   // Sovereign Admin Vault State
   const [showAdminCheckpoint, setShowAdminCheckpoint] = useState<boolean>(false);
@@ -69,7 +72,7 @@ const AppContent: React.FC = () => {
       window.history.replaceState(
         {},
         '',
-        landed.milestoneSlug ? hrefForMilestone(landed.milestoneSlug) : hrefForTab(landed.tab)
+        landed.milestoneSlug ? hrefForMilestone(landed.milestoneSlug, mLang) : hrefForTab(landed.tab)
       );
     }
 
@@ -82,12 +85,21 @@ const AppContent: React.FC = () => {
 
   // 3. Keep <head> metadata in step with the active route
   useEffect(() => {
-    applyRouteMeta(routeState.tab, routeState.milestoneSlug);
-  }, [routeState]);
+    applyRouteMeta(routeState.tab, routeState.milestoneSlug, mLang);
+  }, [routeState, mLang]);
+
+  // 3b. Switching language on a milestone page moves to that language's URL
+  useEffect(() => {
+    if (!milestoneSlug) return;
+    const href = hrefForMilestone(milestoneSlug, mLang);
+    if (window.location.pathname !== href) {
+      window.history.replaceState({}, '', href);
+    }
+  }, [milestoneSlug, mLang]);
 
   // 4. Navigate to a real URL and track the tab telemetry
   const handleTabChange = (tab: ActiveTab) => {
-    setRouteState({ tab, milestoneSlug: null });
+    setRouteState({ tab, milestoneSlug: null, urlLang: null });
     const href = hrefForTab(tab);
     if (window.location.pathname !== href) {
       window.history.pushState({}, '', href);
@@ -98,8 +110,8 @@ const AppContent: React.FC = () => {
 
   // 4b. Navigate to a milestone dossier page (/milestone/<slug>/)
   const handleOpenMilestonePage = (slug: string) => {
-    setRouteState({ tab: 'stage', milestoneSlug: slug });
-    const href = hrefForMilestone(slug);
+    setRouteState({ tab: 'stage', milestoneSlug: slug, urlLang: mLang });
+    const href = hrefForMilestone(slug, mLang);
     if (window.location.pathname !== href) {
       window.history.pushState({}, '', href);
     }
