@@ -20,7 +20,7 @@ git -C $root pull --ff-only
 Sync "$repo\dist" $root
 git -C $root add -A
 git -C $root commit -m "deploy: $(git log --oneline -1)"
-git -C $root push origin HEAD
+git -C $root push origin HEAD; if ($LASTEXITCODE) { throw 'root push failed' }
 }
 
 Write-Host '== 2/3 subsite (gh-pages) ==' -ForegroundColor Cyan
@@ -33,10 +33,10 @@ git -C $sub pull --ff-only origin gh-pages
 Sync "$repo\dist" $sub
 git -C $sub add -A
 git -C $sub commit -m "deploy: $(git log --oneline -1)"
-git -C $sub push origin gh-pages
+git -C $sub push origin gh-pages; if ($LASTEXITCODE) { throw 'subsite push failed' }
 
 Write-Host '== 3/3 source main ==' -ForegroundColor Cyan
 npm run build; if ($LASTEXITCODE) { throw 'rebuild failed' }   # restore root-base dist in the working tree
-git push origin main
+git push origin main; if ($LASTEXITCODE) { throw 'main push failed (sites are already live; just rerun: git push origin main)' }
 
 Write-Host 'Done. Check: https://mumumumuyi.github.io/  and  https://mumumumuyi.github.io/ai-chronicle-2026/' -ForegroundColor Green
