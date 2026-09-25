@@ -65,6 +65,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
   const [readProgress, setReadProgress] = useState<number>(0);
   const [showCiteModal, setShowCiteModal] = useState<boolean>(false);
   const [showMobileTOC, setShowMobileTOC] = useState<boolean>(false);
+  const [abstractOpen, setAbstractOpen] = useState<boolean>(false);
   const [copiedCite, setCopiedCite] = useState<boolean>(false);
   const [showBundleModal, setShowBundleModal] = useState<boolean>(false);
   const [showCoffeeModal, setShowCoffeeModal] = useState<boolean>(false);
@@ -209,7 +210,14 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
 
         <div className="panel-dark-2 border-l-2 !border-l-gold p-4 sm:p-5 text-[#D6D3D1] text-xs sm:text-sm leading-[1.9] mb-8">
           <span className="mono text-gold block mb-2">{abstractLabel}</span>
-          {metaAbstract}
+          {/* Collapsed to 3 lines so the first chapter isn't pushed below the fold */}
+          <p className={abstractOpen ? '' : 'line-clamp-3'}>{metaAbstract}</p>
+          <button
+            onClick={() => setAbstractOpen((v) => !v)}
+            className="mt-2 mono text-gold hover:text-gold2 transition-colors no-print"
+          >
+            {abstractOpen ? (isZh ? '收起' : 'Show less') : (isZh ? '展开全文摘要' : 'Read full abstract')}
+          </button>
         </div>
 
         {/* Academic Utility Action Bar */}
@@ -267,6 +275,18 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
               );
             })}
           </nav>
+
+          {/* Actions stay reachable mid-read instead of only in the masthead */}
+          <div className="mt-4 pt-4 border-t border-[#292524] flex flex-col gap-2">
+            <button onClick={() => window.print()} className="btn-ghost justify-start">
+              <Printer className="w-3.5 h-3.5" />
+              <span>{t.readerExportPDF}</span>
+            </button>
+            <button onClick={() => setShowCiteModal(true)} className="btn-ghost justify-start">
+              <FileText className="w-3.5 h-3.5" />
+              <span>{t.readerCiteBibtex}</span>
+            </button>
+          </div>
         </aside>
 
         {/* Main Article Content */}
@@ -729,6 +749,17 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ onClose }) => {
                   </button>
                 );
               })}
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-[#292524] grid grid-cols-2 gap-2">
+              <button onClick={() => { setShowMobileTOC(false); window.print(); }} className="btn-ghost justify-center">
+                <Printer className="w-3.5 h-3.5" />
+                <span>{isZh ? '导出 PDF' : 'Export PDF'}</span>
+              </button>
+              <button onClick={() => { setShowMobileTOC(false); setShowCiteModal(true); }} className="btn-ghost justify-center">
+                <FileText className="w-3.5 h-3.5" />
+                <span>BibTeX</span>
+              </button>
             </div>
           </div>
         </div>

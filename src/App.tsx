@@ -120,7 +120,9 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-ob text-pearl overflow-x-hidden">
+    // overflow-x-clip (not -hidden): hidden turns this div into a scroll container,
+    // which silently disables every position:sticky inside it (e.g. the reader TOC).
+    <div className="relative min-h-screen bg-ob text-pearl overflow-x-clip">
       {/* Editorial chrome — fixed obsidian navbar + mobile dock */}
       <Navbar
         activeTab={activeTab}

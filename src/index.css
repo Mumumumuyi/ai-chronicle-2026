@@ -98,7 +98,7 @@ body {
   transition: opacity .9s var(--ease), transform .9s var(--ease), background .4s;
   transition-delay: var(--d, 0ms);
 }
-.rv.in {
+.rv[data-in] {
   opacity: 1;
   transform: none;
 }
@@ -495,8 +495,11 @@ g.lp-gold .lp:first-child { fill: var(--pearl); }
   0% { opacity: 0; transform: translateY(14px); }
   100% { opacity: 1; transform: translateY(0); }
 }
+/* `backwards`, not `forwards`: a transform kept after the animation would make this
+   wrapper the containing block for every position:fixed child (reader progress bar,
+   floating TOC button, drawers), pinning them to the page instead of the screen. */
 .animate-tab-enter {
-  animation: tab-enter .32s var(--ease) forwards;
+  animation: tab-enter .32s var(--ease) backwards;
 }
 
 /* Fade-in utility for modals/drawers */

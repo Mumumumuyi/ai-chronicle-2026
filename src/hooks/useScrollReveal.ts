@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Observes `.rv` descendants of the returned element and adds `.in` when they
+ * Observes `.rv` descendants of the returned element and sets `[data-in]` when they
  * scroll into view (prototype reveal). Descendants carrying `[data-n]` get a
  * 1.6s ease-out cubic count-up; `data-fmt="compact-zh"` renders 1.8万-style
  * values, `data-fmt="compact-en"` renders 18k-style values.
@@ -21,7 +21,10 @@ export function useScrollReveal<T extends HTMLElement>(deps: unknown[] = []) {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const el = entry.target as HTMLElement;
-          el.classList.add('in');
+          // An attribute, not a class: React rewrites className on re-render (e.g. a
+          // card turning "selected"), which would silently strip a DOM-added class
+          // and hide the element again.
+          el.setAttribute('data-in', '');
 
           const n = el.querySelector<HTMLElement>('[data-n]');
           if (n && !n.dataset.done) {
